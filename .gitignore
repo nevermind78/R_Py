@@ -1,0 +1,18 @@
+# Version enseignant (avec solutions) : ne jamais publier
+_docs-enseignant/
+
+# Solutions en clair avant chiffrement + codes de déverrouillage : ne jamais publier
+.solutions-src/
+codes-solutions.txt
+
+/.quarto/
+**/*.quarto_ipynb
+
+# Solutions en clair (incluses par les .qmd) : ne jamais publier
+_solutions/
+
+# Fichiers de travail RStudio / Quarto
+.Rproj.user/
+.Rhistory
+*_files/
+!docs/**/*_files/

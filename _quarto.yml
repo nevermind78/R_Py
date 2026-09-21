@@ -1,0 +1,63 @@
+# Deux versions du site (profils Quarto) :
+#  - etudiant  (par défaut)  : solutions CHIFFRÉES, déverrouillées par un code de séance
+#                              -> c'est ce qui est publié dans docs/ (quarto render)
+#  - enseignant              : solutions en clair -> quarto preview --profile enseignant
+# Codes : fichier local codes-solutions.txt (modèle : codes-solutions.exemple.txt)
+profile:
+  default: etudiant
+  group:
+    - [etudiant, enseignant]
+
+# Solutions : « verrouillees » (étudiants : chiffrées, déverrouillées par un code)
+# ou « visibles » (profil enseignant). Voir filters/solutions.lua
+solutions: verrouillees
+
+filters:
+  - filters/solutions.lua
+
+project:
+  type: website
+  output-dir: docs
+  resources:
+    - data/*.csv
+    - .nojekyll
+  post-render: scripts/chiffrer-solutions.ts
+
+website:
+  title: "Mes Cours de Programmation"
+  site-url: https://nevermind78.github.io/R_Py/
+  navbar:
+    left:
+      - text: "Accueil"
+        href: index.qmd
+      - text: "Cours R"
+        menu:
+          - text: "Programme du cours"
+            href: cours-r.qmd
+          - text: "Séance 1 · Introduction à R et RStudio"
+            href: r-seance-1.qmd
+          - text: "Séance 2 · Types de données et fonctions de base"
+            href: r-seance-2.qmd
+          - text: "Séance 3 · Lab : importer et nettoyer"
+            href: r-seance-3.qmd
+          - text: "Séance 4 · Lab : indicateurs avec dplyr"
+            href: r-seance-4.qmd
+          - text: "Séance 5 · Lab : tableau de bord visuel"
+            href: r-seance-5.qmd
+      - text: "Cours Python"
+        href: cours-python.qmd
+    right:
+      - icon: github
+        href: https://github.com/nevermind78/R_Py
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-depth: 2
+    lang: fr
+    include-in-header:
+      - _includes/webr-data.html
+      - _includes/solutions.html
+    encoding: UTF-8

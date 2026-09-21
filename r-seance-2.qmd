@@ -1,0 +1,719 @@
+---
+title: "Séance 2 · Types de données et fonctions de base"
+subtitle: "Programmation statistique avec R · 2 heures"
+format: html
+filters:
+  - webr
+---
+
+```{webr-r}
+#| context: setup
+# Fonction utilisée par les cellules de vérification des exercices
+verifier <- function(condition, succes = "Bravo !") {
+  if (isTRUE(condition)) {
+    cat("✅", succes, "\n")
+  } else {
+    cat("❌ Pas encore : vérifiez les noms des objets demandés, exécutez votre code, puis relancez cette cellule.\n")
+  }
+}
+```
+
+::: {.objectifs}
+**Objectifs de la séance.** À la fin, vous saurez :
+
+- distinguer les **types de données** de base (numérique, entier, texte, logique) et les convertir ;
+- gérer les valeurs spéciales `NA`, `NULL`, `NaN`, `Inf` ;
+- manipuler les **structures de données** : vecteurs, facteurs, matrices, listes, data frames ;
+- **sélectionner** des éléments (indexation) ;
+- utiliser les **fonctions de base** mathématiques, statistiques, textuelles et logiques.
+:::
+
+**Déroulement (2 h)**
+
+| Durée | Étape |
+|:--|:--|
+| 5 min | Rappel de la séance 1 |
+| 15 min | Types de données de base |
+| 20 min | Vecteurs |
+| 20 min | Facteurs, matrices, listes |
+| 15 min | Data frames |
+| 15 min | Fonctions de base |
+| 25 min | Exercices |
+| 5 min | Synthèse et travail à faire |
+
+## Rappel de la séance 1 {#rappel}
+
+Testez vos connaissances, puis ouvrez la réponse.
+
+::: {.callout-note collapse="true" title="Question 1 : quelle est la différence entre R et RStudio ?"}
+R est le langage et le moteur de calcul ; RStudio est l'interface (IDE) qui facilite son utilisation. On installe R d'abord, puis RStudio.
+:::
+
+::: {.callout-note collapse="true" title="Question 2 : pourquoi le code suivant échoue-t-il ?"}
+```r
+prix <- 10
+Prix * 2
+```
+R est sensible à la casse : `Prix` (avec un P majuscule) n'existe pas, seul `prix` a été créé.
+:::
+
+::: {.callout-note collapse="true" title="Question 3 : quelle est la différence entre install.packages() et library() ?"}
+`install.packages("pkg")` télécharge et installe le package **une seule fois** ; `library(pkg)` le **charge** dans la session courante, à faire à chaque nouvelle session.
+:::
+
+## 1. Les types de données de base {#types}
+
+Chaque valeur en R a un **type** (ou *classe*). Les quatre types de base sont :
+
+| Type | Exemple | `class()` | Description |
+|:--|:--|:--|:--|
+| Numérique | `42.5` | `"numeric"` | Nombres réels (type par défaut des nombres) |
+| Entier | `42L` | `"integer"` | Nombres entiers (suffixe `L`) |
+| Texte | `"bonjour"` | `"character"` | Chaînes de caractères, entre `"` ou `'` |
+| Logique | `TRUE`, `FALSE` | `"logical"` | Booléens (`T` et `F` existent mais évitez-les) |
+
+```{webr-r}
+nombre  <- 42.5
+entier  <- 42L
+texte   <- "bonjour"
+vrai    <- TRUE
+
+class(nombre)
+class(entier)
+class(texte)
+class(vrai)
+
+typeof(nombre)   # type de stockage interne : "double"
+```
+
+### Tester et convertir
+
+Les fonctions `is.*()` **testent** le type ; les fonctions `as.*()` **convertissent**.
+
+```{webr-r}
+is.numeric(42)
+is.character(42)
+
+as.numeric("12.5")     # texte -> nombre
+as.character(100)      # nombre -> texte
+as.integer(3.9)        # tronque : 3, et n'arrondit pas !
+as.logical("TRUE")
+as.numeric("abc")      # impossible : NA (et un avertissement)
+```
+
+### La coercition implicite
+
+Un vecteur ne contient **qu'un seul type**. Si vous mélangez, R convertit vers le type le plus général, dans l'ordre : logique → numérique → texte.
+
+```{webr-r}
+c(1, 2, 3)            # numérique
+c(1, "a", TRUE)       # tout devient texte
+c(1, TRUE, FALSE)     # les logiques deviennent 1 et 0
+
+TRUE + TRUE           # 2
+sum(c(TRUE, FALSE, TRUE, TRUE))   # compter les TRUE : 3
+```
+
+::: {.callout-tip title="Astuce"}
+`sum()` et `mean()` sur un vecteur logique comptent et calculent la proportion de `TRUE`. Très pratique : `mean(notes >= 10)` donne le taux de réussite.
+:::
+
+### Valeurs spéciales
+
+| Valeur | Signification | Test |
+|:--|:--|:--|
+| `NA` | Valeur **manquante** (*Not Available*) | `is.na(x)` |
+| `NULL` | Objet **vide** / absence d'objet | `is.null(x)` |
+| `NaN` | Résultat mathématique indéfini (*Not a Number*) | `is.nan(x)` |
+| `Inf`, `-Inf` | Infini | `is.infinite(x)` |
+
+```{webr-r}
+0 / 0        # NaN
+1 / 0        # Inf
+sqrt(-1)     # NaN (avec avertissement)
+
+x <- c(10, NA, 30)
+is.na(x)
+mean(x)                 # NA : une valeur manquante contamine le résultat
+mean(x, na.rm = TRUE)   # na.rm = TRUE ignore les NA
+```
+
+### Attention à la précision des nombres décimaux
+
+```{webr-r}
+0.1 + 0.2 == 0.3                       # FALSE !
+isTRUE(all.equal(0.1 + 0.2, 0.3))      # TRUE : comparaison avec tolérance
+```
+
+Les ordinateurs stockent les nombres décimaux de façon approchée. Pour comparer des nombres non entiers, utilisez `all.equal()`.
+
+## 2. Les vecteurs {#vecteurs}
+
+Le **vecteur** est la structure fondamentale de R : une suite ordonnée de valeurs **de même type**. Même un nombre seul est un vecteur de longueur 1.
+
+### Créer des vecteurs
+
+```{webr-r}
+notes <- c(12, 15, 9, 20, 18)     # c() = combiner
+length(notes)
+
+1:10                              # suite d'entiers
+seq(0, 1, by = 0.25)              # suite avec un pas
+seq(1, 10, length.out = 4)        # suite avec 4 valeurs
+rep(c("a", "b"), times = 3)       # répéter le vecteur
+rep(1:2, each = 3)                # répéter chaque élément
+```
+
+### Sélectionner des éléments : l'indexation
+
+L'indexation se fait avec des **crochets** `[ ]`. **En R, la numérotation commence à 1** (et non à 0 comme en Python).
+
+```{webr-r}
+notes <- c(12, 15, 9, 20, 18)
+
+notes[2]                 # 2e élément
+notes[c(1, 3)]           # 1er et 3e
+notes[2:4]               # du 2e au 4e
+notes[-1]                # tous SAUF le 1er
+notes[notes >= 15]       # ceux qui vérifient une condition
+notes[notes >= 15 & notes < 20]   # & = ET ; | = OU
+```
+
+Un vecteur peut avoir des **noms** :
+
+```{webr-r}
+resultats <- c(maths = 14, stats = 17, info = 12)
+resultats["stats"]
+names(resultats)
+resultats[c("maths", "info")]
+```
+
+### Opérations vectorisées
+
+R applique les opérations à **tous les éléments à la fois**, sans boucle :
+
+```{webr-r}
+notes <- c(12, 15, 9, 20, 18)
+
+notes + 1
+notes / 20 * 100        # en pourcentage
+sqrt(notes)
+notes > 10              # un vecteur de TRUE/FALSE
+sum(notes > 10)         # combien de notes > 10 ?
+```
+
+::: {.callout-note title="Le recyclage"}
+Quand deux vecteurs n'ont pas la même longueur, R **recycle** le plus court :
+```r
+1:6 + c(10, 20)     # équivaut à 1:6 + c(10, 20, 10, 20, 10, 20)
+```
+Si la longueur du plus long n'est pas un multiple du plus court (`1:5 + c(10, 20)`), R émet un avertissement.
+:::
+
+### Fonctions utiles pour tester les vecteurs
+
+```{webr-r}
+notes <- c(12, 15, 9, 20, 18)
+
+which(notes > 15)          # POSITIONS des éléments qui vérifient la condition
+which.max(notes)           # position du maximum
+any(notes == 20)           # au moins un ?
+all(notes >= 10)           # tous ?
+15 %in% notes              # appartenance
+```
+
+## 3. Facteurs, matrices et listes {#structures}
+
+### Les facteurs : variables qualitatives
+
+Un **facteur** représente une variable catégorielle (sexe, catégorie, niveau...) avec un ensemble fini de **modalités** (*levels*).
+
+```{webr-r}
+sexe <- factor(c("F", "H", "F", "F", "H"))
+sexe
+levels(sexe)          # modalités
+table(sexe)           # effectifs
+as.integer(sexe)      # codes internes
+```
+
+Un facteur peut être **ordonné** (variable ordinale) : les comparaisons deviennent possibles.
+
+```{webr-r}
+taille <- factor(c("petit", "grand", "moyen", "petit"),
+                 levels = c("petit", "moyen", "grand"),
+                 ordered = TRUE)
+taille
+taille < "grand"
+```
+
+### Les matrices
+
+Une **matrice** est un tableau à deux dimensions dont tous les éléments ont le **même type**.
+
+```{webr-r}
+m <- matrix(1:6, nrow = 2, ncol = 3)   # remplie colonne par colonne
+m
+
+dim(m)          # dimensions (lignes, colonnes)
+m[1, 2]         # ligne 1, colonne 2
+m[2, ]          # toute la ligne 2
+m[, 3]          # toute la colonne 3
+t(m)            # transposée
+m * 2           # opération terme à terme
+rowSums(m)      # somme de chaque ligne
+colMeans(m)     # moyenne de chaque colonne
+```
+
+### Les listes
+
+Une **liste** peut contenir des éléments de **types et de tailles différents** (même d'autres listes).
+
+```{webr-r}
+etudiant <- list(
+  nom = "Sara",
+  age = 21,
+  notes = c(14, 16, 12),
+  inscrit = TRUE
+)
+
+etudiant$nom              # accès par nom avec $
+etudiant[["age"]]         # accès par nom avec [[ ]]
+etudiant$notes[2]         # 2e note
+mean(etudiant$notes)
+
+etudiant$ville <- "Tunis" # ajouter un élément
+str(etudiant)             # structure compacte
+```
+
+::: {.callout-note title="[ ] ou [[ ]] ?"}
+- `liste["age"]` renvoie une **sous-liste** (de classe `list`).
+- `liste[["age"]]` ou `liste$age` renvoie **le contenu** (ici un nombre).
+
+Analogie : `[ ]` donne la boîte, `[[ ]]` donne ce qu'il y a dans la boîte.
+:::
+
+## 4. Les data frames {#dataframes}
+
+Le **data frame** est la structure centrale de l'analyse de données : un tableau où chaque **colonne est un vecteur** (types possibles différents d'une colonne à l'autre) et chaque **ligne** une observation.
+
+```{webr-r}
+df <- data.frame(
+  nom   = c("Alice", "Bob", "Charlie", "Diana"),
+  age   = c(25, 30, 35, 28),
+  ville = c("Paris", "Lyon", "Paris", "Lille"),
+  stringsAsFactors = FALSE
+)
+df
+```
+
+### Explorer un data frame
+
+::: {.callout-tip title="Bouton Tableau"}
+Quand une cellule affiche un data frame, cliquez sur **Tableau** dans sa barre d'outils : le résultat s'affiche comme dans un tableur, avec défilement des lignes et des colonnes. `View(df)` fait la même chose (comme dans RStudio).
+:::
+
+```{webr-r}
+df <- data.frame(
+  nom   = c("Alice", "Bob", "Charlie", "Diana"),
+  age   = c(25, 30, 35, 28),
+  ville = c("Paris", "Lyon", "Paris", "Lille")
+)
+
+str(df)         # structure : types de chaque colonne
+summary(df)     # résumé statistique
+nrow(df); ncol(df); names(df)
+```
+
+### Sélectionner lignes et colonnes
+
+La syntaxe est `df[lignes, colonnes]` :
+
+```{webr-r}
+df <- data.frame(
+  nom   = c("Alice", "Bob", "Charlie", "Diana"),
+  age   = c(25, 30, 35, 28),
+  ville = c("Paris", "Lyon", "Paris", "Lille")
+)
+
+df$age                      # une colonne (vecteur)
+df[2, ]                     # la ligne 2
+df[, c("nom", "age")]       # deux colonnes
+df[df$age > 26, ]           # lignes qui vérifient une condition
+subset(df, ville == "Paris", select = c(nom, age))
+
+df$age_mois <- df$age * 12  # créer une nouvelle colonne
+df
+```
+
+### Un vrai jeu de données : `iris`
+
+```{webr-r}
+str(iris)
+summary(iris)
+table(iris$Species)                              # effectifs par espèce
+tapply(iris$Sepal.Length, iris$Species, mean)    # moyenne par espèce
+```
+
+## 5. Les fonctions de base {#fonctions}
+
+Une **fonction** prend des arguments et renvoie un résultat. R en contient des centaines ; voici celles à connaître absolument.
+
+### Fonctions mathématiques
+
+```{webr-r}
+x <- c(4, 9, 16, 25)
+
+sqrt(x)                # racine carrée
+exp(1)                 # exponentielle
+log(100)               # logarithme népérien
+log10(100)             # logarithme décimal
+log(8, base = 2)       # logarithme en base 2
+round(pi, 2); floor(2.7); ceiling(2.1)   # arrondis
+factorial(5); choose(5, 2)
+sum(x); prod(x); cumsum(x); diff(x)
+```
+
+### Fonctions statistiques descriptives
+
+```{webr-r}
+notes <- c(12, 15, 9, 20, 18, 14, 11)
+
+mean(notes)             # moyenne
+median(notes)           # médiane
+sd(notes)               # écart-type
+var(notes)              # variance
+min(notes); max(notes); range(notes)
+quantile(notes, probs = c(0.25, 0.75))
+summary(notes)          # résumé en une fois
+cor(mtcars$wt, mtcars$mpg)   # corrélation entre deux variables
+```
+
+### Trier, compter, dédupliquer
+
+```{webr-r}
+couleurs <- c("rouge", "bleu", "rouge", "vert", "bleu", "rouge")
+notes <- c(12, 15, 9, 20, 18)
+
+length(couleurs)
+unique(couleurs)          # valeurs distinctes
+table(couleurs)           # effectifs
+sort(notes)               # tri croissant
+sort(notes, decreasing = TRUE)
+order(notes)              # positions triées
+rev(notes)                # inverser
+```
+
+### Fonctions de texte
+
+```{webr-r}
+phrase <- "Programmation statistique avec R"
+
+nchar(phrase)                  # nombre de caractères
+toupper(phrase); tolower(phrase)
+substr(phrase, 1, 13)          # extraire une portion
+strsplit(phrase, " ")          # découper en mots
+paste("Bonjour", "Alice")              # séparateur : espace
+paste("a", "b", sep = "-")
+paste0("fichier_", 1:3, ".csv")        # sans séparateur, vectorisé
+sprintf("%.2f", pi)                    # mise en forme de nombres
+sprintf("%s a %d ans", "Alice", 25L)
+```
+
+### Conditions vectorisées
+
+`ifelse(test, si_vrai, si_faux)` applique un test à chaque élément d'un vecteur :
+
+```{webr-r}
+notes <- c(12, 15, 9, 20, 6)
+ifelse(notes >= 10, "admis", "ajourné")
+```
+
+### Générer des données aléatoires
+
+```{webr-r}
+set.seed(123)             # fixe la graine : résultats reproductibles
+sample(1:6, size = 5, replace = TRUE)     # lancers de dés
+rnorm(5, mean = 100, sd = 15)             # loi normale
+runif(3)                                  # loi uniforme [0, 1]
+```
+
+### Votre première fonction (aperçu)
+
+Vous pouvez aussi **créer vos propres fonctions**. Nous verrons cela en détail à la séance 6 ; voici un avant-goût :
+
+```{webr-r}
+carre <- function(x) {
+  x^2
+}
+
+carre(4)
+carre(c(1, 2, 3))
+```
+
+## 6. Exercices {#exercices}
+
+::: {.exercice}
+### Exercice 2.1 · Convertir des types
+
+Des notes ont été saisies sous forme de texte, avec une erreur de saisie :
+
+1. convertissez `notes_txt` en un vecteur numérique `notes_num` (que se passe-t-il pour `"abc"` ?) ;
+2. calculez la moyenne des notes valides dans `moy` (les `NA` doivent être ignorés).
+
+```{webr-r}
+notes_txt <- c("12", "15.5", "9", "abc")
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification (exécutez après votre solution)
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("moy") && isTRUE(all.equal(moy, mean(c(12, 15.5, 9)))),
+  "Correct ! Moyenne des notes valides : 12.17"
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`as.numeric()` convertit ; `mean(..., na.rm = TRUE)` ignore les valeurs manquantes.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-1.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 2.2 · Températures
+
+On relève la température de 7 jours consécutifs.
+
+1. extrayez dans `chauds` les températures **strictement supérieures à 24** ;
+2. trouvez dans `jour_max` le **numéro du jour** le plus chaud ;
+3. calculez dans `moy_temp` la température moyenne **arrondie à 1 décimale**.
+
+```{webr-r}
+temperatures <- c(22, 25, 19, 30, 28, 17, 24)
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("chauds") && exists("jour_max") && exists("moy_temp") &&
+    isTRUE(all.equal(chauds, c(25, 30, 28))) &&
+    jour_max == 4 &&
+    isTRUE(all.equal(moy_temp, 23.6)),
+  "Les trois réponses sont correctes !"
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Condition avec `[ ]` pour la question 1 ; `which.max()` pour la question 2 ; `round(mean(...), 1)` pour la question 3.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-2.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 2.3 · Facteur ordonné
+
+Les niveaux de satisfaction de 6 clients sont donnés ci-dessous.
+
+1. créez un **facteur ordonné** `f` avec les niveaux dans l'ordre `"bas"` < `"moyen"` < `"haut"` ;
+2. affichez les **effectifs** de chaque niveau avec `table()`.
+
+```{webr-r}
+niveaux <- c("bas", "haut", "moyen", "bas", "haut", "haut")
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("f") && is.ordered(f) &&
+    identical(levels(f), c("bas", "moyen", "haut")) &&
+    sum(f == "haut") == 3,
+  "Correct ! Le facteur est bien ordonné."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-3.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 2.4 · Une liste
+
+Créez une liste `livre` décrivant un livre, avec les éléments : `titre` (texte), `auteur` (texte), `annee` (nombre) et `pages` (nombre). Puis affichez uniquement le nombre de pages.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("livre") && is.list(livre) &&
+    all(c("titre", "auteur", "annee", "pages") %in% names(livre)) &&
+    is.numeric(livre$pages),
+  "Correct ! La liste est bien construite."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-4.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 2.5 · Interroger `mtcars`
+
+Dans le jeu de données `mtcars`, on considère qu'une voiture est « économe » si sa consommation `mpg` (miles par gallon) est **supérieure à 25**.
+
+1. calculez dans `n_econome` le **nombre** de voitures économes ;
+2. calculez dans `poids_moyen` le **poids moyen** (colonne `wt`) de ces voitures.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("n_econome") && exists("poids_moyen") &&
+    n_econome == sum(mtcars$mpg > 25) &&
+    isTRUE(all.equal(poids_moyen, mean(mtcars$wt[mtcars$mpg > 25]))),
+  paste0("Correct : ", n_econome, " voitures économes, poids moyen ", round(poids_moyen, 2))
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Deux approches : `sum(mtcars$mpg > 25)` pour compter, et `mtcars$wt[mtcars$mpg > 25]` pour sélectionner les poids.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-5.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 2.6 · Mini-synthèse : résultats d'étudiants
+
+À partir de ce data frame :
+
+1. ajoutez une colonne `moyenne` = moyenne de `maths` et `stats` ;
+2. ajoutez une colonne `admis` (`TRUE` si `moyenne >= 10`) ;
+3. stockez dans `n_admis` le **nombre d'étudiants admis**.
+
+```{webr-r}
+etudiants <- data.frame(
+  nom   = c("Amel", "Bilel", "Chahd", "Dali", "Emna"),
+  maths = c(14, 8, 17, 10, 6),
+  stats = c(12, 9, 18, 11, 7)
+)
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("etudiants") && all(c("moyenne", "admis") %in% names(etudiants)) &&
+    exists("n_admis") && n_admis == 3 &&
+    isTRUE(all.equal(etudiants$moyenne, c(13, 8.5, 17.5, 10.5, 6.5))),
+  "Correct ! 3 étudiants sont admis."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-6.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Défi (bonus) · Moyennes par espèce
+
+Avec `iris`, calculez la **longueur moyenne des pétales** (`Petal.Length`) pour chaque espèce, puis trouvez l'espèce dont la moyenne est la plus grande.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`tapply(valeurs, groupes, fonction)` puis `which.max()` et `names()`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-2-7.qmd >}}
+
+::::
+:::
+
+## 7. Synthèse {#synthese}
+
+::: {.callout-important title="À retenir"}
+- 4 types de base : **numeric, integer, character, logical** ; `class()` pour connaître le type, `as.*()` pour convertir.
+- Un vecteur ne contient **qu'un seul type** (coercition automatique).
+- **`NA`** = valeur manquante : utilisez `na.rm = TRUE` ou `is.na()`.
+- Indexation avec `[ ]` : positions, positions négatives, conditions logiques. **La numérotation commence à 1.**
+- **Facteur** = variable catégorielle ; **matrice** = tableau d'un seul type ; **liste** = conteneur hétérogène (`$` / `[[ ]]`) ; **data frame** = tableau de colonnes (`df[lignes, colonnes]`, `df$col`).
+- Les opérations sont **vectorisées** : évitez les boucles inutiles.
+- Fonctions clés : `mean, median, sd, sum, min, max, sort, table, unique, paste, ifelse, which`.
+:::
+
+## Travail à faire pour la séance 3
+
+1. Reprenez **tous les exercices** de cette séance dans un script `seance2.R` dans RStudio (projet `cours_R`).
+2. Dans RStudio, explorez `?iris` et `?mtcars`, puis décrivez en 3 lignes chaque colonne de `mtcars` (commentaires dans le script).
+3. Vérifiez que RStudio fonctionne et que votre projet `cours_R` est prêt : la séance 3 est un **lab** (projet d'analyse) qui se fait principalement dans RStudio. Facultatif : préparez un petit fichier CSV personnel à importer.
+4. Facultatif : écrivez une fonction `imc(poids, taille)` qui calcule l'indice de masse corporelle ($\text{poids} / \text{taille}^2$).
+
+---
+
+[← Séance 1](r-seance-1.qmd) | [Programme du cours](cours-r.qmd) | [Séance 3 : Lab importation et nettoyage →](r-seance-3.qmd)

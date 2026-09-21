@@ -1,0 +1,69 @@
+---
+title: "Programmation statistique avec R"
+subtitle: "Cours interactif · 10 séances de 2 heures"
+format: html
+filters:
+  - webr
+---
+
+Bienvenue dans ce cours de **programmation statistique avec R**. Tout le code de ce site s'exécute **directement dans votre navigateur** grâce à [WebR](https://docs.r-wasm.org/webr/latest/) : vous n'avez rien à installer pour tester les exemples et faire les exercices. (L'installation de R et RStudio sur votre ordinateur est expliquée en détail à la [séance 1](r-seance-1.qmd#installation).)
+
+::: {.callout-note title="Comment utiliser les cellules de code"}
+- Cliquez sur **Run Code** pour exécuter une cellule. La première exécution prend quelques secondes (chargement de R dans le navigateur).
+- Vous pouvez **modifier** le code avant de l'exécuter. Le bouton **Start Over** restaure le code d'origine ; le bouton **Masquer** cache la sortie (texte et graphique) une fois lue, **Afficher** la fait revenir.
+- Quand une cellule affiche un **data frame**, un bouton **Tableau** apparaît : il le présente en tableau HTML, comme dans Jupyter (défilement des lignes et des colonnes, en-tête et numéros de lignes fixes). **Texte** revient à l'affichage habituel. `View(mon_tableau)` ouvre directement le tableau, comme dans RStudio.
+- Raccourci : `Ctrl + Entrée` (ou `Cmd + Entrée` sur Mac) exécute la cellule active.
+- Les cellules d'une même page **partagent la même session R** : un objet créé dans une cellule reste disponible dans les suivantes. Si un exemple échoue avec « objet introuvable », exécutez les cellules précédentes.
+- Les blocs orange (séances 1-2) et bleu-vert (labs des séances 3-5) sont des **exercices et tâches** : complétez la cellule, puis utilisez la cellule verte de **vérification** et, si besoin, ouvrez l'indice. Les **solutions** sont verrouillées : votre enseignant(e) communique le **code de déverrouillage en fin de séance**.
+:::
+
+Essayez tout de suite :
+
+```{webr-r}
+# Simulez 100 tailles d'étudiants et observez leur distribution
+set.seed(42)
+tailles <- rnorm(100, mean = 170, sd = 8)
+
+summary(tailles)
+hist(tailles, col = "steelblue", border = "white",
+     main = "Distribution des tailles", xlab = "Taille (cm)")
+```
+
+## Programme
+
+| Partie | Contenu |
+|:--|:--|
+| **Introduction à R** | Interface RStudio · types de données · fonctions de base |
+| **Manipulation de données** | Importation · nettoyage et préparation · fonctions de manipulation |
+| **Visualisation de données** | Types de graphiques · packages de visualisation · création de graphiques |
+| **Programmation avec R** | Structures de contrôle (if-else, boucles, fonctions) · expressions régulières · packages |
+| **Modélisation statistique** | Régression linéaire · régression logistique · analyse de variance · séries chronologiques |
+| **Applications pratiques** | Projets pratiques d'analyse de données |
+| **Conclusion** | Synthèse des connaissances · perspectives futures |
+
+## Planning des 10 séances
+
+::: {.seances}
+
+| Séance | Thème | Contenu principal |
+|:--|:--|:--|
+| [**1**](r-seance-1.qmd) | Introduction à R et RStudio | Installation, interface RStudio, premiers pas, aide et packages |
+| [**2**](r-seance-2.qmd) | Types de données et fonctions de base | Vecteurs, facteurs, matrices, listes, data frames, fonctions usuelles |
+| [**3**](r-seance-3.qmd) | **Lab 1** · Importation et nettoyage | CSV « à la française », audit, doublons, textes, dates, valeurs manquantes et aberrantes |
+| [**4**](r-seance-4.qmd) | **Lab 2** · Manipulation de données | `dplyr` : `filter`, `mutate`, `group_by`, `summarise`, jointures, KPI |
+| [**5**](r-seance-5.qmd) | **Lab 3** · Visualisation de données | Graphiques de base, `ggplot2`, facettes, communication, recommandations |
+| **6** | Programmation avec R | `if/else`, boucles, fonctions, famille `apply` |
+| **7** | Expressions régulières et packages | `grepl`, `sub`, `stringr`, écosystème de packages, bonnes pratiques |
+| **8** | Régression linéaire et logistique | `lm`, `glm`, interprétation, diagnostics |
+| **9** | ANOVA et séries chronologiques | `aov`, tests post-hoc, `ts`, décomposition, prévision |
+| **10** | Projet et conclusion | Projet d'analyse de bout en bout, synthèse, perspectives |
+
+:::
+
+::: {.callout-tip title="Rythme d'une séance"}
+Les séances 1 et 2 suivent le schéma **exposé court** → **démonstrations** exécutables → **exercices** guidés → **synthèse**. Les **séances 3 à 5** forment un **projet en trois labs** : vous jouez le rôle d'un(e) analyste de la boutique en ligne fictive *Solea* et menez une analyse de bout en bout (nettoyer, calculer des indicateurs, visualiser), avec une mission, des tâches vérifiables et un livrable à chaque séance.
+:::
+
+---
+
+[← Retour à l'accueil](index.qmd) | [Commencer la séance 1 →](r-seance-1.qmd)

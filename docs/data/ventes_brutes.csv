@@ -1,0 +1,413 @@
+id_commande;date;client_id;produit;categorie;quantite;prix_unitaire;remise;ville;mode_paiement
+CMD0001;02/01/2024;C095;Haltères 5 kg;Sport;;29,9;0,15;NANTES;Carte
+CMD0002;03/01/2024;C005;Crème hydratante;beauté;2;22;0;Paris ;Virement
+CMD0003;03/01/2024;C072;Lampe de bureau;Maison;2;34,9;0,05;LYON;Carte
+CMD0004;05/01/2024;C026;Crème hydratante;Beaute;3;22;0,2;Paris;Carte
+CMD0005;06/01/2024;C053;Lampe de bureau;Maison;1;34,9;0,1;Marseille;Paypal
+CMD0006;07/01/2024;C095;Plaid en laine;Maison;1;45,5;0;Lyon;Carte
+CMD0007;09/01/2024;C120;Coussin décoratif;Maison;2;19,9;0;lille;Carte
+CMD0008;11/01/2024;C017;Set de casseroles;Maison;1;79;0,05;Nantes;Paypal
+CMD0009;12/01/2024;C068;Haltères 5 kg;Sport;1;29,9;0,1;Marseille ;Carte
+CMD0010;12/01/2024;C008;Corde à sauter;sport;4;9,9;0,2;Bordeaux;Paypal
+CMD0011;13/01/2024;C081;Parfum d'ambiance;Beauté;2;27;0;Marseille;Carte
+CMD0012;14/01/2024;C113;Parfum d'ambiance;Beaute;2;27;0;Lille ;Carte
+CMD0013;15/01/2024;C063;Parfum d'ambiance;Beauté;2;27;0;Lille;Virement
+CMD0014;15/01/2024;C022;Corde à sauter;Sport ;1;9,9;0;Marseille;Carte
+CMD0015;15/01/2024;C019;Haltères 5 kg;Sport;4;29,9;0;Paris;Carte
+CMD0016;16/01/2024;C090;Huile d'argan;Beauté;1;15,9;0;Paris ;Carte
+CMD0017;21/01/2024;C059;Savon naturel;BEAUTE;4;6,5;;Lille;Carte
+CMD0018;22/01/2024;C026;Haltères 5 kg;Sport ;2;29,9;0,05;Paris;Paypal
+CMD0019;25/01/2024;C029;Coussin décoratif;Maison;2;19,9;0;Marseille;Carte
+CMD0020;25/01/2024;C069;Coussin décoratif;Maison ;1;19,9;0,1;Lille;Virement
+CMD0021;25/01/2024;C074;Parfum d'ambiance;Beauté;1;27;0,15;Lille;Paypal
+CMD0022;25/01/2024;C066;Haltères 5 kg;Sport;2;29,9;0,2;Lyon;Carte
+CMD0023;27/01/2024;C002;Set de casseroles;Maison;4;;0;Marseille;Paypal
+CMD0024;27/01/2024;C025;Haltères 5 kg;SPORT;1;29,9;0,1;Lyon;Carte
+CMD0025;28/01/2024;C114;Tapis de yoga;Sport;3;24,9;0;Lille;Carte
+CMD0026;28/01/2024;C007;Gourde isotherme;Sport;2;17,5;0,05;Paris;Carte
+CMD0027;28/01/2024;C043;Lampe de bureau;Maison;3;34,9;0;Paris ;
+CMD0028;29/01/2024;C052;Coussin décoratif;Maison;1;19,9;0;Paris;Carte
+CMD0029;29/01/2024;C003;Tapis de yoga;Sport;2;24,9;0;Lille;Carte
+CMD0030;29/01/2024;C010;Set de casseroles;Maison;1;79;0;Paris;Carte
+CMD0031;30/01/2024;C070;Huile d'argan;BEAUTÉ;4;15,9;0;Lyon;Paypal
+CMD0032;30/01/2024;C014;Tapis de yoga;Sport;2;24,9;0;Lille;Carte
+CMD0033;02/02/2024;C021;Set de casseroles;Maison;3;79;0;Paris;Paypal
+CMD0034;02/02/2024;C019;Plaid en laine;Maison;2;45,5;0,2;Marseille;Carte
+CMD0035;05/02/2024;C104;Coussin décoratif;MAISON;1;19,9;0;PARIS;
+CMD0036;05/02/2024;C026;Haltères 5 kg;Sport;1;29,9;0,15;MARSEILLE;Paypal
+CMD0037;07/02/2024;C013;Huile d'argan;Beauté ;3;15,9;0;Nantes;Paypal
+CMD0038;08/02/2024;C084;Corde à sauter;Sport;1;9,9;0;Bordeaux;Virement
+CMD0039;08/02/2024;C080;Gourde isotherme;sport;5;17,5;0,2;Paris;Carte
+CMD0040;10/02/2024;C109;Savon naturel;Beauté;2;6,5;0,2;Paris;
+CMD0041;11/02/2024;C032;Parfum d'ambiance;Beauté ;2;27;0;Lyon;Carte
+CMD0042;11/02/2024;C070;Coussin décoratif;Maison;4;19,9;0,15;Lille;Virement
+CMD0043;12/02/2024;C046;Gourde isotherme;Sport;1;17,5;0;Bordeaux;Paypal
+CMD0044;12/02/2024;C003;Corde à sauter;sport;1;9,9;0;Marseille;Carte
+CMD0045;16/02/2024;C087;Crème hydratante;Beaute;3;;0;Paris;Carte
+CMD0046;16/02/2024;C098;Coussin décoratif;Maison ;2;19,9;0;Paris;Carte
+CMD0047;16/02/2024;C075;Crème hydratante;Beaute;4;22;0;paris;Carte
+CMD0048;17/02/2024;C027;Lampe de bureau;Maison;1;34,9;0;Lyon;Carte
+CMD0049;17/02/2024;C038;Tapis de yoga;Sport;1;24,9;0;Paris;Carte
+CMD0050;;C106;Plaid en laine;Maison;3;45,5;0,2;Nantes;Carte
+CMD0051;19/02/2024;C065;Corde à sauter;Sport;4;9,9;0;Nantes;Paypal
+CMD0052;20/02/2024;C021;Corde à sauter;Sport;2;9,9;0,2;Paris;Carte
+CMD0053;21/02/2024;C031;Tapis de yoga;Sport;2;24,9;0;Marseille ;Carte
+CMD0054;23/02/2024;C006;Tapis de yoga;SPORT;2;24,9;0,15;PARIS;Carte
+CMD0055;24/02/2024;C041;Coussin décoratif;Maison ;2;19,9;0,1;Lyon;Carte
+CMD0056;26/02/2024;C091;Gourde isotherme;Sport;4;17,5;0;Paris ;Virement
+CMD0057;27/02/2024;C074;Plaid en laine;Maison;3;45,5;0,1;Lyon;Virement
+CMD0058;28/02/2024;C008;Parfum d'ambiance;Beauté;4;27;0,1;Nantes;Carte
+CMD0059;28/02/2024;C051;Lampe de bureau;Maison ;1;34,9;0,2;Bordeaux ;Carte
+CMD0060;02/03/2024;C078;Haltères 5 kg;Sport;1;;0,05;LILLE;Paypal
+CMD0061;02/03/2024;C104;Tapis de yoga;Sport;4;24,9;0,15;Paris;Carte
+CMD0062;06/03/2024;C099;Savon naturel;Beauté;3;6,5;0;Lille;Paypal
+CMD0062;06/03/2024;C099;Savon naturel;Beauté;3;6,5;0;Lille;Paypal
+CMD0063;06/03/2024;C028;Tapis de yoga;Sport;3;24,9;0;Nantes;Carte
+CMD0064;08/03/2024;C020;Crème hydratante;Beaute;1;22;0,2;Paris;Carte
+CMD0065;08/03/2024;C102;Haltères 5 kg;Sport;0;29,9;0,05;lyon;Paypal
+CMD0065;08/03/2024;C102;Haltères 5 kg;Sport;0;29,9;0,05;lyon;Paypal
+CMD0066;;C083;Crème hydratante;Beauté;5;22;0,05;marseille;Carte
+CMD0067;09/03/2024;C107;Gourde isotherme;sport;2;17,5;0,1;Nantes;Carte
+CMD0068;15/03/2024;C067;Parfum d'ambiance;Beauté;1;27;0;Lyon;Carte
+CMD0069;15/03/2024;C008;Savon naturel;Beauté;2;6,5;0;Lyon;Carte
+CMD0070;17/03/2024;C059;Huile d'argan;BEAUTÉ;5;15,9;0,1;Lyon;Carte
+CMD0071;18/03/2024;C069;Huile d'argan;BEAUTÉ;1;15,9;0,05;Paris;
+CMD0072;19/03/2024;C097;Plaid en laine;Maison;5;45,5;0;Marseille;
+CMD0073;19/03/2024;C043;Savon naturel;Beauté;1;6,5;0;Lille;Paypal
+CMD0074;24/03/2024;C117;Set de casseroles;Maison;3;79;0,2;Nantes;Carte
+CMD0075;24/03/2024;C057;Tapis de yoga;Sport;2;24,9;0,15;paris;Carte
+CMD0076;25/03/2024;C111;Haltères 5 kg;Sport;1;29,9;0;Lyon ;Carte
+CMD0077;26/03/2024;C069;Corde à sauter;Sport;1;9,9;0;Lille;Carte
+CMD0078;27/03/2024;C020;Haltères 5 kg;Sport;1;29,9;0;Paris;Paypal
+CMD0079;28/03/2024;C013;Coussin décoratif;Maison;3;19,9;0,2;Bordeaux;Paypal
+CMD0079;28/03/2024;C013;Coussin décoratif;Maison;3;19,9;0,2;Bordeaux;Paypal
+CMD0080;28/03/2024;C092;Gourde isotherme;Sport;1;17,5;0;Lille;Paypal
+CMD0081;29/03/2024;C113;Corde à sauter;Sport;1;9,9;0;Paris;Carte
+CMD0082;01/04/2024;C020;Coussin décoratif;Maison;2;19,9;;Lyon;Paypal
+CMD0083;01/04/2024;C085;Set de casseroles;Maison ;4;79;0;Paris ;Paypal
+CMD0084;01/04/2024;C043;Gourde isotherme;Sport;1;17,5;0,05;Lille;Paypal
+CMD0085;02/04/2024;C012;Coussin décoratif;maison;1;19,9;0,2;Paris;Carte
+CMD0086;02/04/2024;C111;Crème hydratante;Beaute;1;22;0;Marseille;Virement
+CMD0087;03/04/2024;C025;Huile d'argan;Beaute;1;15,9;0,15;paris;Carte
+CMD0088;03/04/2024;C053;Set de casseroles;Maison;2;79;0,05;Lyon ;Carte
+CMD0089;04/04/2024;C018;Corde à sauter;Sport;1;9,9;0;Nantes;Paypal
+CMD0090;04/04/2024;C097;Savon naturel;Beauté;4;6,5;0,05;Bordeaux;Virement
+CMD0091;05/04/2024;C095;Huile d'argan;Beauté;2;15,9;0;Paris;Carte
+CMD0092;06/04/2024;C112;Corde à sauter;sport;2;9,9;0;Paris;Carte
+CMD0093;06/04/2024;C117;Haltères 5 kg;Sport;3;29,9;0;Lyon ;
+CMD0094;07/04/2024;C068;Lampe de bureau;maison;2;34,9;;Lille;Paypal
+CMD0095;07/04/2024;C070;Coussin décoratif;Maison;2;19,9;0;PARIS;
+CMD0096;10/04/2024;C109;Huile d'argan;Beauté;1;15,9;0,1;Lille;Carte
+CMD0097;10/04/2024;C102;Savon naturel;Beauté;2;6,5;;Paris;Virement
+CMD0098;12/04/2024;C062;Haltères 5 kg;Sport;3;29,9;0,1;lille;Carte
+CMD0099;12/04/2024;C017;Plaid en laine;maison;3;45,5;0,1;Marseille;Carte
+CMD0100;13/04/2024;C092;Corde à sauter;Sport;3;9,9;0;LILLE;Virement
+CMD0101;14/04/2024;C058;Parfum d'ambiance;Beauté;1;27;0;Bordeaux;Carte
+CMD0102;19/04/2024;C002;Tapis de yoga;Sport;4;24,9;0,15;Paris;Carte
+CMD0103;22/04/2024;C011;Plaid en laine;maison;2;45,5;0,15;lille;Carte
+CMD0104;23/04/2024;C084;Coussin décoratif;Maison;3;19,9;0,1;Nantes;Paypal
+CMD0105;;C115;Set de casseroles;maison;5;79;0;lille;Paypal
+CMD0106;25/04/2024;C015;Tapis de yoga;Sport;2;24,9;;Lille;Carte
+CMD0107;25/04/2024;C095;Corde à sauter;Sport;2;9,9;0,1;Marseille;Virement
+CMD0108;25/04/2024;C076;Plaid en laine;maison;2;45,5;;Paris ;Paypal
+CMD0109;26/04/2024;C095;Parfum d'ambiance;Beauté;3;27;;Bordeaux;Virement
+CMD0110;26/04/2024;C101;Set de casseroles;Maison;2;79;0,1;Paris;Paypal
+CMD0111;28/04/2024;C014;Crème hydratante;Beaute;1;22;0;MARSEILLE;Paypal
+CMD0112;29/04/2024;C116;Plaid en laine;Maison;1;45,5;0;marseille;Carte
+CMD0113;30/04/2024;C065;Corde à sauter;Sport;1;9,9;0;Lille;Carte
+CMD0114;30/04/2024;C113;Lampe de bureau;Maison;3;34,9;0;Paris;Carte
+CMD0115;01/05/2024;C062;Parfum d'ambiance;Beaute;1;27;0,1;Lille;Paypal
+CMD0116;02/05/2024;C012;Plaid en laine;Maison ;1;45,5;0,05;Lille;Paypal
+CMD0117;02/05/2024;C072;Huile d'argan;Beauté;5;15,9;0,1;Lille;Carte
+CMD0118;05/05/2024;C025;Huile d'argan;Beauté;3;15,9;0,1;Lille ;Carte
+CMD0119;06/05/2024;C062;Tapis de yoga;Sport;2;24,9;0,2;Paris;Carte
+CMD0120;06/05/2024;C059;Plaid en laine;Maison;1;45,5;;Marseille;Carte
+CMD0121;06/05/2024;C100;Gourde isotherme;Sport;1;17,5;0,05;Paris;Virement
+CMD0122;07/05/2024;C053;Huile d'argan;Beauté;2;15,9;0,1;Lyon;Virement
+CMD0123;09/05/2024;C111;Corde à sauter;sport;1;9,9;0,1;Lyon;Paypal
+CMD0124;09/05/2024;C043;Tapis de yoga;Sport;2;24,9;0;Paris;Paypal
+CMD0125;;C003;Crème hydratante;Beaute ;2;22;0;bordeaux;
+CMD0126;10/05/2024;C079;Haltères 5 kg;Sport;1;29,9;0;LILLE;Paypal
+CMD0127;11/05/2024;C101;Lampe de bureau;Maison ;5;34,9;;Lyon;Virement
+CMD0128;12/05/2024;C008;Haltères 5 kg;Sport;1;29,9;0,1;Paris;Carte
+CMD0129;14/05/2024;C072;Gourde isotherme;sport;2;17,5;0,2;Paris;Paypal
+CMD0130;14/05/2024;C048;Savon naturel;Beauté;2;;0,1;Lille;Carte
+CMD0131;14/05/2024;C078;Parfum d'ambiance;Beauté;2;27;0;Lyon;Carte
+CMD0132;15/05/2024;C004;Corde à sauter;Sport;;9,9;0,15;paris;Paypal
+CMD0133;16/05/2024;C105;Coussin décoratif;Maison;2;19,9;0;Paris;Carte
+CMD0134;16/05/2024;C081;Plaid en laine;Maison;3;45,5;0,1;LILLE;Carte
+CMD0135;17/05/2024;C028;Plaid en laine;Maison;2;45,5;0;Lyon;Paypal
+CMD0136;19/05/2024;C088;Savon naturel;Beaute ;2;6,5;0;Marseille;Carte
+CMD0137;21/05/2024;C012;Huile d'argan;Beauté;3;15,9;0;Lille;Carte
+CMD0138;21/05/2024;C076;Plaid en laine;Maison;1;45,5;0,15;Lyon;Carte
+CMD0138;21/05/2024;C076;Plaid en laine;Maison;1;45,5;0,15;Lyon;Carte
+CMD0139;21/05/2024;C020;Set de casseroles;Maison;2;79;0,05;Bordeaux;Carte
+CMD0140;21/05/2024;C058;Coussin décoratif;Maison;1;19,9;0,1;Paris ;Carte
+CMD0141;23/05/2024;C003;Lampe de bureau;Maison;2;34,9;;Nantes;Carte
+CMD0142;24/05/2024;C119;Crème hydratante;Beauté ;2;22;0,1;BORDEAUX;Carte
+CMD0143;24/05/2024;C097;Corde à sauter;Sport;;9,9;0;Paris;Carte
+CMD0144;25/05/2024;C013;Plaid en laine;maison;3;45,5;0,1;Nantes;Virement
+CMD0145;25/05/2024;C080;Tapis de yoga;Sport;2;24,9;0,15;Marseille ;Carte
+CMD0146;26/05/2024;C102;Gourde isotherme;Sport;2;17,5;0,1;NANTES;Paypal
+CMD0147;26/05/2024;C099;Haltères 5 kg;Sport;1;29,9;;Lille;Virement
+CMD0148;26/05/2024;C067;Set de casseroles;Maison;250;79;0,1;Marseille;Carte
+CMD0149;27/05/2024;C030;Parfum d'ambiance;BEAUTÉ;1;;0,1;Bordeaux;Carte
+CMD0150;29/05/2024;C096;Haltères 5 kg;Sport;3;29,9;0;Paris;Carte
+CMD0151;29/05/2024;C101;Parfum d'ambiance;Beaute;1;27;0,15;Lyon;Paypal
+CMD0152;30/05/2024;C018;Coussin décoratif;Maison;1;19,9;0;Lyon ;Virement
+CMD0153;05/06/2024;C097;Plaid en laine;Maison;1;45,5;0;Paris;Paypal
+CMD0154;05/06/2024;C062;Gourde isotherme;Sport;3;17,5;0,15;Paris;Carte
+CMD0155;06/06/2024;C049;Corde à sauter;sport;1;9,9;0,1;Nantes;Paypal
+CMD0156;08/06/2024;C011;Gourde isotherme;Sport;2;17,5;0,05;LYON;Carte
+CMD0157;09/06/2024;C005;Gourde isotherme;sport;5;17,5;0,05;Marseille;Carte
+CMD0158;09/06/2024;C035;Lampe de bureau;Maison;1;34,9;0,2;Lille ;Carte
+CMD0159;09/06/2024;C071;Huile d'argan;Beauté;2;15,9;0;Bordeaux;
+CMD0160;11/06/2024;C092;Corde à sauter;Sport;2;9,9;0,15;Paris;Paypal
+CMD0161;13/06/2024;C044;Set de casseroles;Maison;3;79;0;Paris;Virement
+CMD0162;13/06/2024;C066;Savon naturel;BEAUTÉ;2;6,5;0,1;Paris;Paypal
+CMD0163;15/06/2024;C019;Savon naturel;Beauté;;6,5;0;Lille;Paypal
+CMD0164;16/06/2024;C073;Gourde isotherme;SPORT;3;17,5;0;Lille;Carte
+CMD0164;16/06/2024;C073;Gourde isotherme;SPORT;3;17,5;0;Lille;Carte
+CMD0165;16/06/2024;C030;Gourde isotherme;SPORT;1;17,5;0,2;Lyon;Paypal
+CMD0166;16/06/2024;C050;Coussin décoratif;Maison;1;19,9;;Marseille;Carte
+CMD0167;17/06/2024;C079;Plaid en laine;Maison;2;45,5;0;Lille;Paypal
+CMD0168;17/06/2024;C023;Set de casseroles;Maison ;2;79;0,1;Nantes;Carte
+CMD0169;17/06/2024;C007;Plaid en laine;MAISON;1;45,5;0;LYON;Carte
+CMD0170;18/06/2024;C033;Huile d'argan;Beauté;1;15,9;0;Lille;Carte
+CMD0171;20/06/2024;C093;Gourde isotherme;Sport;1;17,5;0,1;Paris;Carte
+CMD0172;20/06/2024;C053;Set de casseroles;MAISON;1;79;0,15;Paris;Carte
+CMD0173;21/06/2024;C015;Set de casseroles;Maison;2;79;0,2;Nantes;
+CMD0174;22/06/2024;C032;Crème hydratante;Beaute;2;22;0,1;Marseille;Carte
+CMD0175;28/06/2024;C102;Haltères 5 kg;Sport;2;29,9;0;Lille ;Virement
+CMD0175;28/06/2024;C102;Haltères 5 kg;Sport;2;29,9;0;Lille ;Virement
+CMD0176;29/06/2024;C079;Plaid en laine;Maison;1;45,5;0;Paris;Paypal
+CMD0177;03/07/2024;C080;Gourde isotherme;Sport;2;17,5;;Paris;Virement
+CMD0178;04/07/2024;C052;Gourde isotherme;Sport;1;17,5;0;Paris;Carte
+CMD0179;06/07/2024;C115;Parfum d'ambiance;beauté;4;27;0;Paris;Virement
+CMD0180;07/07/2024;C019;Corde à sauter;Sport;2;9,9;0,05;paris;Carte
+CMD0181;08/07/2024;C068;Crème hydratante;Beauté;1;22;0,1;Marseille;Carte
+CMD0182;09/07/2024;C093;Haltères 5 kg;Sport;4;29,9;0;Marseille ;Paypal
+CMD0183;10/07/2024;C083;Parfum d'ambiance;Beaute;2;27;0,15;Marseille ;Carte
+CMD0184;10/07/2024;C021;Set de casseroles;Maison;4;79;0;BORDEAUX;Carte
+CMD0185;11/07/2024;C052;Crème hydratante;Beauté;1;22;;Marseille;Virement
+CMD0186;11/07/2024;C056;Haltères 5 kg;Sport;4;29,9;0;Paris;Carte
+CMD0187;12/07/2024;C072;Haltères 5 kg;Sport;2;29,9;0,05;Lille;Carte
+CMD0188;12/07/2024;C069;Corde à sauter;Sport;1;9,9;0,1;paris;Virement
+CMD0189;15/07/2024;C014;Haltères 5 kg;Sport;4;29,9;0,1;Lyon;
+CMD0190;17/07/2024;C109;Corde à sauter;Sport;1;;0,1;Paris;Carte
+CMD0191;18/07/2024;C080;Set de casseroles;Maison;2;79;0,15;Paris;Paypal
+CMD0192;18/07/2024;C028;Tapis de yoga;Sport;2;24,9;0,15;Lyon;
+CMD0193;19/07/2024;C052;Coussin décoratif;Maison;2;19,9;0;Lyon;Paypal
+CMD0194;19/07/2024;C097;Lampe de bureau;Maison;1;34,9;0,05;Lille;Carte
+CMD0195;21/07/2024;C069;Corde à sauter;Sport;1;9,9;0;Paris;Paypal
+CMD0196;23/07/2024;C012;Huile d'argan;Beauté;2;15,9;0,1;Lille;Paypal
+CMD0197;23/07/2024;C105;Huile d'argan;Beauté ;1;15,9;0;Lyon;Carte
+CMD0198;26/07/2024;C081;Coussin décoratif;Maison;4;19,9;0;lyon;Carte
+CMD0199;27/07/2024;C005;Tapis de yoga;Sport;1;24,9;0;Lille;Carte
+CMD0200;27/07/2024;C041;Crème hydratante;BEAUTE;2;22;0;Paris;Carte
+CMD0201;29/07/2024;C014;Savon naturel;Beauté;1;6,5;0,1;Paris;Virement
+CMD0202;29/07/2024;C111;Huile d'argan;beauté;1;15,9;0;Paris;Paypal
+CMD0203;30/07/2024;C010;Savon naturel;Beauté;1;6,5;0,15;Paris;Carte
+CMD0204;30/07/2024;C038;Coussin décoratif;Maison;3;19,9;0,15;Lille;Carte
+CMD0205;07/08/2024;C084;Coussin décoratif;Maison;2;19,9;0,2;Paris;Carte
+CMD0206;08/08/2024;C006;Haltères 5 kg;sport;5;29,9;0,05;Bordeaux;Paypal
+CMD0206;08/08/2024;C006;Haltères 5 kg;sport;5;29,9;0,05;Bordeaux;Paypal
+CMD0207;08/08/2024;C003;Huile d'argan;beauté;4;15,9;0;Lille;Paypal
+CMD0208;08/08/2024;C030;Coussin décoratif;Maison;2;19,9;0;Paris ;Carte
+CMD0209;08/08/2024;C060;Tapis de yoga;sport;1;24,9;0,1;Lille;Carte
+CMD0210;09/08/2024;C068;Savon naturel;Beauté ;4;6,5;0;Lyon;Carte
+CMD0211;13/08/2024;C066;Corde à sauter;Sport;1;9,9;;Nantes;Carte
+CMD0211;13/08/2024;C066;Corde à sauter;Sport;1;9,9;;Nantes;Carte
+CMD0212;14/08/2024;C033;Coussin décoratif;MAISON;1;19,9;0;Lille;Paypal
+CMD0213;15/08/2024;C077;Coussin décoratif;Maison;1;19,9;0,1;PARIS;Paypal
+CMD0214;16/08/2024;C022;Plaid en laine;Maison;1;45,5;0;Marseille;Paypal
+CMD0215;18/08/2024;C062;Coussin décoratif;Maison ;3;19,9;0,2;Lyon ;Paypal
+CMD0216;18/08/2024;C019;Lampe de bureau;Maison;1;34,9;0,2;Paris;Paypal
+CMD0217;19/08/2024;C040;Set de casseroles;Maison;2;79;0;LILLE;Carte
+CMD0218;19/08/2024;C098;Set de casseroles;Maison;3;79;0;Lille;Carte
+CMD0219;21/08/2024;C089;Coussin décoratif;Maison;3;19,9;0;Nantes;Carte
+CMD0220;21/08/2024;C002;Set de casseroles;Maison;3;79;0,1;Lyon ;Carte
+CMD0221;22/08/2024;C104;Corde à sauter;Sport;5;9,9;0;lyon;Carte
+CMD0222;22/08/2024;C011;Corde à sauter;Sport ;1;9,9;0;Lille;Carte
+CMD0223;23/08/2024;C073;Parfum d'ambiance;Beauté;3;27;0;Lille;Paypal
+CMD0224;24/08/2024;C032;Parfum d'ambiance;beauté;1;27;0,2;Bordeaux ;Paypal
+CMD0225;24/08/2024;C081;Crème hydratante;beaute;2;22;0;Marseille;Carte
+CMD0226;27/08/2024;C058;Haltères 5 kg;Sport;1;29,9;0,2;Lille;Carte
+CMD0227;27/08/2024;C109;Haltères 5 kg;Sport;4;29,9;0,2;Paris;Paypal
+CMD0228;28/08/2024;C090;Haltères 5 kg;Sport;2;29,9;0,2;Paris ;Carte
+CMD0229;29/08/2024;C029;Savon naturel;Beauté;1;6,5;0,05;Paris ;Virement
+CMD0230;30/08/2024;C093;Huile d'argan;Beauté;1;15,9;0,15;Marseille;Virement
+CMD0231;01/09/2024;C095;Corde à sauter;Sport ;2;9,9;0;Nantes;Carte
+CMD0232;01/09/2024;C030;Haltères 5 kg;SPORT;3;29,9;0,05;Paris;Carte
+CMD0233;02/09/2024;C039;Corde à sauter;Sport;1;;;MARSEILLE;Carte
+CMD0234;02/09/2024;C053;Huile d'argan;Beauté;1;15,9;0,15;Bordeaux;Virement
+CMD0235;03/09/2024;C060;Savon naturel;BEAUTÉ;1;6,5;0,05;PARIS;Carte
+CMD0236;03/09/2024;C036;Coussin décoratif;Maison;1;19,9;0,1;Marseille;Carte
+CMD0237;03/09/2024;C075;Tapis de yoga;Sport ;1;24,9;0;Lyon;Paypal
+CMD0238;04/09/2024;C058;Tapis de yoga;Sport;4;24,9;0,1;Bordeaux;Paypal
+CMD0239;04/09/2024;C066;Savon naturel;Beauté;1;6,5;0,15;Paris;Paypal
+CMD0240;06/09/2024;C065;Parfum d'ambiance;Beauté;1;27;0;Paris;Carte
+CMD0241;06/09/2024;C069;Set de casseroles;Maison;4;79;0,1;Lille;Carte
+CMD0242;08/09/2024;C110;Set de casseroles;Maison;3;79;;Bordeaux;Carte
+CMD0243;09/09/2024;C098;Corde à sauter;Sport;1;9,9;0;Nantes;Carte
+CMD0244;09/09/2024;C047;Set de casseroles;Maison ;1;79;0,2;Lille;Virement
+CMD0245;09/09/2024;C015;Set de casseroles;Maison;5;79;0;Paris;Carte
+CMD0246;11/09/2024;C090;Corde à sauter;SPORT;2;9,9;0;Paris;Carte
+CMD0247;11/09/2024;C110;Coussin décoratif;Maison ;4;19,9;0,05;Marseille;Paypal
+CMD0248;11/09/2024;C075;Savon naturel;Beauté;2;6,5;0;Nantes;Carte
+CMD0249;12/09/2024;C052;Haltères 5 kg;Sport;100;29,9;0;Lyon;Paypal
+CMD0250;12/09/2024;C021;Set de casseroles;maison;2;79;0;Bordeaux;Carte
+CMD0251;12/09/2024;C076;Lampe de bureau;maison;1;34,9;0;bordeaux;Carte
+CMD0252;14/09/2024;C042;Huile d'argan;Beauté;1;15,9;0;lille;Carte
+CMD0253;14/09/2024;C058;Corde à sauter;Sport;1;9,9;0;Paris;Carte
+CMD0254;17/09/2024;C035;Savon naturel;Beauté;3;6,5;;Paris;Paypal
+CMD0255;19/09/2024;C048;Haltères 5 kg;Sport;3;29,9;0,2;LILLE;Carte
+CMD0256;20/09/2024;C007;Parfum d'ambiance;Beaute;1;27;0;Marseille;Carte
+CMD0257;20/09/2024;C045;Gourde isotherme;Sport ;2;17,5;0,05;Lyon;Carte
+CMD0258;21/09/2024;C069;Haltères 5 kg;SPORT;1;29,9;0,2;Bordeaux;Carte
+CMD0259;22/09/2024;C072;Savon naturel;Beauté;1;6,5;0,15;Paris ;Carte
+CMD0260;23/09/2024;C103;Gourde isotherme;Sport;1;17,5;0;Paris;Paypal
+CMD0261;23/09/2024;C101;Tapis de yoga;Sport;3;24,9;0,1;Marseille;Paypal
+CMD0262;24/09/2024;C094;Plaid en laine;Maison ;3;45,5;0;Paris ;Carte
+CMD0263;25/09/2024;C111;Haltères 5 kg;Sport;1;29,9;0;Marseille;Carte
+CMD0264;25/09/2024;C091;Huile d'argan;Beauté;2;15,9;0;Nantes;Paypal
+CMD0265;26/09/2024;C101;Huile d'argan;Beauté;2;15,9;0;Lyon;
+CMD0266;27/09/2024;C076;Tapis de yoga;Sport;2;24,9;0;Lyon;Virement
+CMD0267;29/09/2024;C081;Huile d'argan;BEAUTÉ;5;15,9;0;Lyon;Carte
+CMD0268;30/09/2024;C063;Gourde isotherme;Sport;2;17,5;0;Paris;Paypal
+CMD0269;02/10/2024;C119;Huile d'argan;BEAUTE;3;15,9;0,1;Paris;Carte
+CMD0270;02/10/2024;C009;Coussin décoratif;Maison;3;19,9;;Paris;Carte
+CMD0270;02/10/2024;C009;Coussin décoratif;Maison;3;19,9;;Paris;Carte
+CMD0271;04/10/2024;C035;Lampe de bureau;Maison;1;34,9;0,1;PARIS;
+CMD0272;05/10/2024;C077;Lampe de bureau;Maison;2;34,9;0;bordeaux;Virement
+CMD0273;06/10/2024;C083;Gourde isotherme;Sport;2;17,5;0,05;Lyon;Paypal
+CMD0274;09/10/2024;C047;Tapis de yoga;Sport;1;24,9;0,05;Lyon;Carte
+CMD0275;11/10/2024;C035;Savon naturel;Beaute;1;6,5;;Lille;Paypal
+CMD0276;;C040;Set de casseroles;Maison;3;79;0;Marseille;Paypal
+CMD0277;12/10/2024;C070;Crème hydratante;Beauté;3;22;0,15;Paris;Paypal
+CMD0278;14/10/2024;C015;Savon naturel;Beaute;2;6,5;0,2;Lille;Carte
+CMD0279;19/10/2024;C066;Coussin décoratif;Maison;3;19,9;0;Paris;Virement
+CMD0280;20/10/2024;C108;Coussin décoratif;Maison;2;19,9;0,1;LILLE;Carte
+CMD0281;20/10/2024;C030;Corde à sauter;Sport;1;9,9;0,05;Paris;Carte
+CMD0282;20/10/2024;C118;Set de casseroles;Maison;1;79;0,15;Paris;Paypal
+CMD0283;20/10/2024;C102;Coussin décoratif;Maison;5;19,9;0;Lyon;Paypal
+CMD0284;21/10/2024;C003;Crème hydratante;Beauté;4;22;0,1;Paris;Carte
+CMD0285;22/10/2024;C113;Coussin décoratif;Maison;2;19,9;0;marseille;Carte
+CMD0286;22/10/2024;C065;Gourde isotherme;Sport;1;17,5;0;Lille;Paypal
+CMD0287;23/10/2024;C005;Plaid en laine;Maison;3;45,5;0,1;Paris;Carte
+CMD0288;24/10/2024;C072;Tapis de yoga;Sport;3;24,9;0;Paris;Carte
+CMD0289;24/10/2024;C103;Corde à sauter;Sport;3;9,9;0,2;Bordeaux;Carte
+CMD0290;24/10/2024;C038;Gourde isotherme;Sport;2;17,5;0;Paris;Carte
+CMD0291;25/10/2024;C048;Huile d'argan;Beauté;5;15,9;0;Paris;Carte
+CMD0292;25/10/2024;C117;Corde à sauter;SPORT;1;9,9;0,2;Nantes;Virement
+CMD0293;25/10/2024;C025;Crème hydratante;Beauté;4;22;0,15;NANTES;Paypal
+CMD0294;27/10/2024;C096;Savon naturel;Beauté;2;6,5;0,1;Lyon;Carte
+CMD0295;27/10/2024;C011;Corde à sauter;Sport;2;9,9;0,15;Bordeaux;Carte
+CMD0296;31/10/2024;C067;Lampe de bureau;Maison;;34,9;0;LYON;Carte
+CMD0297;31/10/2024;C002;Gourde isotherme;Sport;2;17,5;0,05;Paris;Paypal
+CMD0298;31/10/2024;C034;Coussin décoratif;Maison;3;19,9;0,1;paris;Virement
+CMD0299;01/11/2024;C043;Corde à sauter;Sport;2;9,9;0,15;Lille;Carte
+CMD0300;02/11/2024;C031;Tapis de yoga;Sport ;1;24,9;;Lille;Carte
+CMD0301;02/11/2024;C066;Crème hydratante;Beaute;4;22;0;Nantes;Virement
+CMD0302;02/11/2024;C062;Corde à sauter;Sport;4;9,9;0,1;Paris ;Carte
+CMD0303;02/11/2024;C014;Savon naturel;Beaute ;2;6,5;0;Lille;Virement
+CMD0304;05/11/2024;C100;Gourde isotherme;Sport;3;17,5;0;Paris ;Carte
+CMD0305;05/11/2024;C031;Huile d'argan;Beauté;2;15,9;0;Marseille;Carte
+CMD0306;05/11/2024;C040;Savon naturel;Beaute;1;6,5;;Marseille;Carte
+CMD0307;05/11/2024;C054;Lampe de bureau;Maison;2;34,9;0;Lyon;
+CMD0308;06/11/2024;C067;Parfum d'ambiance;Beauté ;3;27;0,15;Paris;Paypal
+CMD0309;06/11/2024;C008;Lampe de bureau;MAISON;1;34,9;0,15;Paris;Carte
+CMD0310;07/11/2024;C081;Haltères 5 kg;Sport ;1;29,9;0,1;Lille;Virement
+CMD0310;07/11/2024;C081;Haltères 5 kg;Sport ;1;29,9;0,1;Lille;Virement
+CMD0311;09/11/2024;C022;Corde à sauter;Sport;3;9,9;0;Paris;Carte
+CMD0312;09/11/2024;C118;Set de casseroles;Maison;2;79;0,2;Lyon;Carte
+CMD0313;10/11/2024;C044;Set de casseroles;Maison;2;79;0,05;Paris;Carte
+CMD0314;12/11/2024;C099;Crème hydratante;beauté;1;22;;lille;Paypal
+CMD0315;12/11/2024;C072;Plaid en laine;Maison;1;;;Nantes;Paypal
+CMD0316;12/11/2024;C040;Lampe de bureau;Maison;2;34,9;0;Marseille;Carte
+CMD0317;13/11/2024;C092;Haltères 5 kg;Sport;2;29,9;0,05;Lille ;Paypal
+CMD0318;14/11/2024;C023;Corde à sauter;Sport;2;9,9;0;PARIS;Carte
+CMD0319;14/11/2024;C091;Coussin décoratif;MAISON;3;19,9;0;lille;Carte
+CMD0320;15/11/2024;C066;Crème hydratante;Beaute;1;22;0,05;Paris;Paypal
+CMD0321;;C056;Coussin décoratif;MAISON;1;19,9;0,15;Marseille;Carte
+CMD0322;;C069;Haltères 5 kg;Sport;4;29,9;0;Paris;Paypal
+CMD0323;17/11/2024;C004;Lampe de bureau;MAISON;2;34,9;0,15;Paris;Carte
+CMD0324;18/11/2024;C097;Coussin décoratif;Maison;1;19,9;0;MARSEILLE;Carte
+CMD0325;18/11/2024;C032;Tapis de yoga;SPORT;1;24,9;0;Marseille;Carte
+CMD0326;18/11/2024;C113;Parfum d'ambiance;Beauté;2;27;0,2;Paris;Carte
+CMD0327;19/11/2024;C048;Plaid en laine;Maison;1;45,5;0,1;Paris;Paypal
+CMD0328;19/11/2024;C028;Parfum d'ambiance;beaute;5;27;;Paris;Virement
+CMD0329;21/11/2024;C097;Crème hydratante;Beauté;3;22;0,15;Bordeaux;Paypal
+CMD0330;21/11/2024;C017;Corde à sauter;Sport ;1;9,9;0,05;LYON;Paypal
+CMD0331;22/11/2024;C117;Corde à sauter;Sport;1;9,9;;Lille ;Carte
+CMD0332;22/11/2024;C092;Coussin décoratif;Maison;2;19,9;0,2;LYON;Carte
+CMD0333;23/11/2024;C033;Savon naturel;Beauté;2;6,5;0,05;Bordeaux;Paypal
+CMD0334;23/11/2024;C110;Tapis de yoga;Sport;1;24,9;0;Lyon;Carte
+CMD0335;23/11/2024;C088;Set de casseroles;Maison;4;79;0;Lyon;Carte
+CMD0336;23/11/2024;C001;Huile d'argan;Beaute;2;15,9;0;Lille;Virement
+CMD0337;24/11/2024;C109;Coussin décoratif;Maison;2;;0,1;Lille;Carte
+CMD0338;24/11/2024;C089;Plaid en laine;Maison;2;45,5;0;Lyon;Carte
+CMD0339;27/11/2024;C065;Set de casseroles;Maison;2;79;0;Lyon;Paypal
+CMD0340;27/11/2024;C055;Parfum d'ambiance;BEAUTE;5;27;0;Bordeaux;Carte
+CMD0341;27/11/2024;C120;Plaid en laine;Maison;1;45,5;0;Lille;Carte
+CMD0342;27/11/2024;C090;Parfum d'ambiance;Beauté;2;27;0,1;Lille;Paypal
+CMD0343;27/11/2024;C066;Parfum d'ambiance;Beauté;2;27;0;Nantes;Carte
+CMD0344;29/11/2024;C033;Gourde isotherme;Sport;2;17,5;0;lyon;Carte
+CMD0345;29/11/2024;C072;Gourde isotherme;Sport;1;17,5;0,15;Marseille;Carte
+CMD0346;29/11/2024;C074;Plaid en laine;Maison;2;45,5;0,15;Lille;Carte
+CMD0347;30/11/2024;C113;Tapis de yoga;sport;2;24,9;0,05;Paris;Carte
+CMD0348;30/11/2024;C022;Savon naturel;Beaute;1;6,5;0,15;Lille;Paypal
+CMD0349;01/12/2024;C022;Coussin décoratif;Maison;2;19,9;0,05;marseille;Carte
+CMD0350;01/12/2024;C048;Lampe de bureau;Maison;-2;34,9;0;Paris;Paypal
+CMD0351;02/12/2024;C065;Crème hydratante;Beauté ;1;22;0;Lyon;Virement
+CMD0352;02/12/2024;C017;Gourde isotherme;Sport;1;17,5;0;Bordeaux;Paypal
+CMD0353;02/12/2024;C109;Corde à sauter;Sport ;1;9,9;0;Lyon;Paypal
+CMD0353;02/12/2024;C109;Corde à sauter;Sport ;1;9,9;0;Lyon;Paypal
+CMD0354;03/12/2024;C006;Parfum d'ambiance;Beauté;1;27;0;Paris;Carte
+CMD0355;03/12/2024;C044;Coussin décoratif;Maison;4;19,9;0;Marseille;Virement
+CMD0356;03/12/2024;C001;Haltères 5 kg;Sport;5;29,9;0;Lyon;Carte
+CMD0357;05/12/2024;C110;Savon naturel;Beauté;4;6,5;0;Paris;Carte
+CMD0358;05/12/2024;C109;Huile d'argan;Beauté;2;15,9;0,05;Lyon;Paypal
+CMD0359;06/12/2024;C082;Lampe de bureau;Maison;5;34,9;0;Marseille ;Carte
+CMD0360;07/12/2024;C108;Huile d'argan;Beauté;3;15,9;0,15;Bordeaux;Carte
+CMD0361;07/12/2024;C079;Crème hydratante;Beauté;1;22;0,1;LILLE;Carte
+CMD0362;08/12/2024;C013;Savon naturel;Beaute ;1;6,5;0;PARIS;Paypal
+CMD0363;08/12/2024;C047;Plaid en laine;Maison;3;45,5;;MARSEILLE;Carte
+CMD0364;08/12/2024;C036;Plaid en laine;Maison;1;45,5;0,2;MARSEILLE;Carte
+CMD0365;08/12/2024;C079;Gourde isotherme;SPORT;3;17,5;0;Marseille;Carte
+CMD0366;10/12/2024;C046;Parfum d'ambiance;Beauté;1;27;;LYON;Paypal
+CMD0367;10/12/2024;C104;Crème hydratante;BEAUTÉ;1;22;0,05;MARSEILLE;Virement
+CMD0368;11/12/2024;C114;Parfum d'ambiance;Beauté;1;27;0;Lille;Paypal
+CMD0369;13/12/2024;C031;Corde à sauter;sport;1;9,9;0;Paris;Paypal
+CMD0370;13/12/2024;C109;Corde à sauter;Sport;1;9,9;;Paris;Carte
+CMD0371;14/12/2024;C025;Crème hydratante;Beaute;2;22;0,2;Lyon;Paypal
+CMD0372;15/12/2024;C078;Corde à sauter;sport;3;9,9;0,15;Lyon ;Virement
+CMD0373;15/12/2024;C105;Set de casseroles;Maison;1;79;0,05;Lille;Carte
+CMD0374;15/12/2024;C014;Haltères 5 kg;Sport ;4;29,9;0;Lille;Virement
+CMD0375;16/12/2024;C119;Plaid en laine;Maison;2;45,5;0,05;Bordeaux;Paypal
+CMD0376;16/12/2024;C090;Savon naturel;Beaute;1;6,5;0,05;Lyon;Carte
+CMD0377;16/12/2024;C013;Corde à sauter;SPORT;1;9,9;0;Marseille;Paypal
+CMD0378;16/12/2024;C092;Plaid en laine;Maison ;1;45,5;0,05;Paris;Carte
+CMD0379;19/12/2024;C109;Gourde isotherme;Sport;5;17,5;0;Lyon ;Carte
+CMD0380;19/12/2024;C068;Set de casseroles;Maison;1;79;0,05;Paris;Paypal
+CMD0381;20/12/2024;C002;Coussin décoratif;Maison;1;19,9;0;Paris;Paypal
+CMD0382;21/12/2024;C026;Savon naturel;Beaute;1;6,5;0,05;Paris;Carte
+CMD0383;21/12/2024;C072;Haltères 5 kg;Sport;3;29,9;0;Lyon;Carte
+CMD0384;22/12/2024;C008;Crème hydratante;Beaute ;3;22;0;Marseille;Virement
+CMD0385;22/12/2024;C114;Haltères 5 kg;Sport;2;29,9;0;Lyon;Paypal
+CMD0386;24/12/2024;C075;Crème hydratante;Beaute;3;22;0;Nantes;Carte
+CMD0387;24/12/2024;C073;Savon naturel;Beauté;4;6,5;0;Lille;Carte
+CMD0388;24/12/2024;C088;Haltères 5 kg;Sport;4;29,9;0,2;BORDEAUX;Carte
+CMD0389;24/12/2024;C078;Haltères 5 kg;Sport;5;29,9;0;Paris;Carte
+CMD0390;24/12/2024;C034;Savon naturel;Beauté;4;6,5;0,15;Bordeaux;Paypal
+CMD0391;24/12/2024;C036;Coussin décoratif;Maison;4;19,9;;Lyon;Carte
+CMD0392;25/12/2024;C110;Set de casseroles;Maison;1;79;0;LYON;Carte
+CMD0393;26/12/2024;C003;Huile d'argan;Beaute;1;15,9;0,05;Lyon;Paypal
+CMD0394;26/12/2024;C114;Lampe de bureau;Maison;2;34,9;0;Lyon;Carte
+CMD0395;;C052;Plaid en laine;Maison;2;;0;Marseille;Carte
+CMD0396;28/12/2024;C087;Haltères 5 kg;SPORT;4;29,9;0,05;BORDEAUX;Paypal
+CMD0397;29/12/2024;C109;Lampe de bureau;Maison;1;34,9;0;Marseille;Carte
+CMD0398;30/12/2024;C073;Corde à sauter;Sport;2;9,9;0;Lille ;Virement
+CMD0399;30/12/2024;C110;Parfum d'ambiance;Beauté;1;27;0,1;Lyon;Paypal
+CMD0400;31/12/2024;C107;Set de casseroles;MAISON;5;79;0;Paris;Carte
+CMD0400;31/12/2024;C107;Set de casseroles;MAISON;5;79;0;Paris;Carte

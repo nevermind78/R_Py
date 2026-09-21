@@ -1,0 +1,3911 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr" xml:lang="fr"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.8.25">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Séance 2 · Types de données et fonctions de base – Mes Cours de Programmation</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="site_libs/quarto-nav/headroom.min.js"></script>
+<script src="site_libs/clipboard/clipboard.min.js"></script>
+<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="site_libs/quarto-search/fuse.min.js"></script>
+<script src="site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="./">
+<script src="site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
+<script src="site_libs/quarto-html/popper.min.js"></script>
+<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="site_libs/quarto-html/anchor.min.js"></script>
+<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-7b89279ff1a6dce999919e0e67d4d9ec.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="site_libs/bootstrap/bootstrap-e31584831b205ffbb2d98406f31c2a5b.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Pas de résultats",
+    "search-matching-documents-text": "documents trouvés",
+    "search-copy-link-title": "Copier le lien vers la recherche",
+    "search-hide-matches-text": "Cacher les correspondances additionnelles",
+    "search-more-match-text": "correspondance de plus dans ce document",
+    "search-more-matches-text": "correspondances de plus dans ce document",
+    "search-clear-button-title": "Effacer",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Annuler",
+    "search-submit-button-title": "Envoyer",
+    "search-label": "Recherche"
+  }
+}</script>
+<script>
+// Copie des fichiers de données du site dans le dossier de travail virtuel de WebR,
+// pour que les étudiants puissent écrire read.csv("fichier.csv") comme dans RStudio.
+// Usage dans une page : qwebrChargerDonnees(["data/ventes_brutes.csv"]);
+globalThis.qwebrChargerDonnees = function (fichiers) {
+  const copier = () => qwebrInstance.then(async () => {
+    for (const chemin of fichiers) {
+      const reponse = await fetch(chemin);
+      if (!reponse.ok) {
+        console.error("Fichier de données introuvable : " + chemin);
+        continue;
+      }
+      const octets = new Uint8Array(await reponse.arrayBuffer());
+      await mainWebR.FS.writeFile("/home/web_user/" + chemin.split("/").pop(), octets);
+    }
+  });
+  // qwebrInstance est défini par un script « module », exécuté après l'analyse de la page
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", copier);
+  } else {
+    copier();
+  }
+};
+</script>
+<style>
+/* Solutions verrouillées : carte de saisie du code, puis solution déchiffrée */
+.solution-verrou { margin: 1rem 0; }
+
+.solution-carte {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  border: 1px dashed #8a97a3;
+  border-left: 5px solid #8a97a3;
+  border-radius: 0 6px 6px 0;
+  background: #f6f8fa;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+}
+.solution-carte .solution-titre { font-weight: 600; }
+.solution-carte form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0; }
+.solution-carte input[type="text"] {
+  border: 1px solid #b8c1ca;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  min-width: 16rem;
+  font-family: monospace;
+}
+.solution-carte button {
+  border: 0;
+  border-radius: 4px;
+  background: #1b5e6b;
+  color: #fff;
+  padding: 0.3rem 0.9rem;
+  cursor: pointer;
+}
+.solution-carte button:disabled { opacity: 0.6; cursor: wait; }
+.solution-message { flex-basis: 100%; font-size: 0.85rem; min-height: 1.1em; margin: 0; }
+.solution-message.erreur { color: #b02a37; }
+.solution-indispo { color: #5b6b70; }
+
+.solution-revelee {
+  border-left: 5px solid #276dc3;
+  background: #eef4fb;
+  border-radius: 0 6px 6px 0;
+  padding: 0.4rem 1rem;
+}
+.solution-revelee > summary { cursor: pointer; font-weight: 600; color: #1d4f91; }
+.solution-revelee .solution-corps { margin-top: 0.6rem; }
+.solution-revelee .solution-corps > :last-child { margin-bottom: 0.4rem; }
+
+body.quarto-dark .solution-carte { background: #1e2227; border-color: #56626e; }
+body.quarto-dark .solution-revelee { background: #1d2a3a; }
+body.quarto-dark .solution-revelee > summary { color: #8ab4f8; }
+</style>
+<script>
+// Déchiffrement des solutions dans le navigateur.
+// Chaque solution est chiffrée (AES-GCM) avec une clé dérivée du code de la séance (PBKDF2) :
+// sans le code, le texte de la solution n'est nulle part dans la page.
+document.addEventListener("DOMContentLoaded", () => {
+  const blocs = Array.from(document.querySelectorAll(".solution-verrou"));
+  if (!blocs.length) return;
+
+  const CLE_SESSION = "solutions-code:" + location.pathname;
+  const octets = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  // Même normalisation que le script de chiffrement : casse et espaces autour sans importance
+  const normaliser = (code) => code.normalize("NFC").trim().toLowerCase();
+  const disponible = !!(window.crypto && crypto.subtle);
+
+  async function deriverCle(code, bloc) {
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(normaliser(code)), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: octets(bloc.dataset.salt), iterations: parseInt(bloc.dataset.iter, 10), hash: "SHA-256" },
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  }
+
+  async function dechiffrer(bloc, cle) {
+    const clair = await crypto.subtle.decrypt({ name: "AES-GCM", iv: octets(bloc.dataset.iv) }, cle, octets(bloc.dataset.ct));
+    return new TextDecoder().decode(clair);
+  }
+
+  function montrer(bloc, html, ouvrir) {
+    const details = document.createElement("details");
+    details.className = "solution-revelee";
+    details.open = ouvrir;
+    const titre = document.createElement("summary");
+    titre.textContent = bloc.dataset.titre || "Solution";
+    const corps = document.createElement("div");
+    corps.className = "solution-corps";
+    corps.innerHTML = html;
+    details.append(titre, corps);
+    bloc.replaceChildren(details);
+    bloc.dataset.deverrouille = "1";
+  }
+
+  // Un seul code débloque toutes les solutions de la page
+  async function deverrouiller(code, blocClique) {
+    const restants = blocs.filter((b) => b.dataset.ct && !b.dataset.deverrouille);
+    if (!restants.length) return true;
+    const cle = await deriverCle(code, restants[0]);
+    const textes = new Map();
+    for (const b of restants) textes.set(b, await dechiffrer(b, cle)); // lève une erreur si le code est faux
+    for (const [b, html] of textes) montrer(b, html, b === blocClique);
+    return true;
+  }
+
+  function construireCarte(bloc) {
+    const titre = bloc.dataset.titre || "Solution";
+    const carte = document.createElement("div");
+    carte.className = "solution-carte";
+    const label = document.createElement("span");
+    label.className = "solution-titre";
+    label.textContent = "🔒 " + titre;
+    carte.appendChild(label);
+
+    if (!bloc.dataset.ct || !disponible) {
+      const texte = document.createElement("span");
+      texte.className = "solution-indispo";
+      texte.textContent = disponible
+        ? "Non disponible pour le moment : elle sera communiquée après la séance."
+        : "Le déverrouillage nécessite un navigateur récent et une connexion sécurisée (https).";
+      carte.appendChild(texte);
+      bloc.replaceChildren(carte);
+      return;
+    }
+
+    const form = document.createElement("form");
+    const champ = document.createElement("input");
+    champ.type = "text";
+    champ.placeholder = "Code de fin de séance";
+    champ.autocomplete = "off";
+    champ.spellcheck = false;
+    champ.setAttribute("aria-label", "Code de déverrouillage des solutions");
+    const bouton = document.createElement("button");
+    bouton.type = "submit";
+    bouton.textContent = "Déverrouiller";
+    form.append(champ, bouton);
+    const message = document.createElement("p");
+    message.className = "solution-message";
+    message.setAttribute("aria-live", "polite");
+    carte.append(form, message);
+    bloc.replaceChildren(carte);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!champ.value.trim()) return;
+      bouton.disabled = true;
+      message.className = "solution-message";
+      message.textContent = "Vérification…";
+      try {
+        await deverrouiller(champ.value, bloc);
+        try { sessionStorage.setItem(CLE_SESSION, champ.value); } catch (_) { /* sans effet */ }
+      } catch (_) {
+        message.className = "solution-message erreur";
+        message.textContent = "Code incorrect. Vérifiez la saisie (majuscules et espaces sans importance).";
+        bouton.disabled = false;
+      }
+    });
+  }
+
+  blocs.forEach(construireCarte);
+
+  // Code déjà saisi dans cet onglet : on déverrouille directement
+  if (disponible) {
+    let memorise = null;
+    try { memorise = sessionStorage.getItem(CLE_SESSION); } catch (_) { /* sans effet */ }
+    if (memorise) deverrouiller(memorise, null).catch(() => {});
+  }
+});
+</script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/editor/editor.main.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  
+<style type="text/css">
+.monaco-editor pre {
+  background-color: unset !important;
+}
+
+.qwebr-editor-toolbar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.qwebr-editor-toolbar-left-buttons, .qwebr-editor-toolbar-right-buttons {
+  display: flex;
+}
+
+.qwebr-non-interactive-loading-container.qwebr-cell-needs-evaluation, .qwebr-non-interactive-loading-container.qwebr-cell-evaluated {
+  justify-content: center;
+  display: flex;
+  background-color: rgba(250, 250, 250, 0.65);
+  border: 1px solid rgba(233, 236, 239, 0.65);
+  border-radius: 0.5rem;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.qwebr-r-project-logo {
+  color: #2767B0; /* R Project's blue color */
+}
+
+.qwebr-icon-status-spinner {
+  color: #7894c4;
+}
+
+.qwebr-icon-run-code {
+  color: #0d9c29
+}
+
+body.quarto-light .qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.quarto-dark .qwebr-output-code-stdout {
+  color: #EEE;
+}
+
+.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+body.quarto-light .qwebr-editor {
+  border: 1px solid #EEEEEE;
+}
+
+body.quarto-light .qwebr-editor-toolbar {
+  background-color: #EEEEEE;
+  padding: 0.2rem 0.5rem;
+}
+
+body.quarto-dark .qwebr-editor {
+  border: 1px solid #111;
+}
+
+body.quarto-dark .qwebr-editor-toolbar {
+  background-color: #111;
+  padding: 0.2rem 0.5rem;
+}
+
+.qwebr-button {
+  display: inline-block;
+  font-weight: 400;
+  line-height: 1;
+  text-decoration: none;
+  text-align: center;
+  padding: 0.375rem 0.75rem;
+  font-size: .9rem;
+  border-radius: 0.25rem;
+  transition: color .15s ease-in-out,background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+}
+
+body.quarto-light .qwebr-button {
+  background-color: #EEEEEE;
+  color: #000;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-dark .qwebr-button {
+  background-color: #111;
+  color: #EEE;
+  border-color: #dee2e6;
+  border: 1px solid rgba(0,0,0,0);
+}
+
+body.quarto-light .qwebr-button:hover {
+  color: #000;
+  background-color: #d9dce0;
+  border-color: #c8ccd0;
+}
+
+body.quarto-dark .qwebr-button:hover {
+  color: #d9dce0;
+  background-color: #323232;
+  border-color: #d9dce0;
+}
+
+.qwebr-button:disabled,.qwebr-button.disabled,fieldset:disabled .qwebr-button {
+  pointer-events: none;
+  opacity: .65
+}
+
+.qwebr-button-reset {
+  color: #696969; /*#4682b4;*/
+}
+
+.qwebr-button-copy {
+  color: #696969;
+}
+
+/* Style the code highlight lines */
+body.quarto-light .qwebr-editor-highlight-line {
+  background-color: lightblue;
+}
+
+body.quarto-dark .qwebr-editor-highlight-line {
+  background-color: darkblue;
+}
+
+/* Style the modal pop-up */
+
+/* The Modal (background) */
+.qwebr-modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  padding-top: 60px;
+}
+
+/* Modal Content */
+.qwebr-modal-content {
+  background-color: #fefefe;
+  margin: 5% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.qwebr-modal-content-code {
+  max-height: 50vh;
+  min-height: 5vh;
+  overflow: scroll;
+  border: 1px solid #888;
+}
+
+/* The Close Button */
+.qwebr-modal-close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.qwebr-modal-close:hover,
+.qwebr-modal-close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.qwebr-download-btn {
+  margin-top: 10px;
+  text-decoration: none !important;
+}
+
+/* Styling to download image that is created */
+
+.qwebr-canvas-image {
+  position: relative;
+  display: inline-block;
+  margin: 10px;
+}
+
+.qwebr-canvas-image-download-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  background-color: #007BFF;
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+figure:hover .qwebr-canvas-image-download-btn {
+  display: block;
+}
+
+/* Custom styling for RevealJS Presentations*/
+
+/* Reset the style of the interactive area */
+.reveal div.qwebr-interactive-area {
+  display: block;
+  box-shadow: none;
+  max-width: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+/* Provide space to entries */
+.reveal div.qwebr-output-code-area pre div {
+  margin: 1px 2px 1px 10px;
+}
+
+/* Collapse the inside code tags to avoid extra space between line outputs */
+.reveal pre div code.qwebr-output-code-stdout, .reveal pre div code.qwebr-output-code-stderr {
+  padding: 0;
+  display: contents;
+}
+
+body.reveal.quarto-light pre div code.qwebr-output-code-stdout {
+  color: #111;
+}
+
+body.reveal.quarto-dark pre div code.qwebr-output-code-stdout {
+  color: #EEEEEE;
+}
+
+.reveal pre div code.qwebr-output-code-stderr {
+  color: #db4133;
+}
+
+
+/* Create a border around console and output (does not effect graphs) */
+body.reveal.quarto-light div.qwebr-console-area {
+  border: 1px solid #EEEEEE;
+  box-shadow: 2px 2px 10px #EEEEEE;
+}
+
+body.reveal.quarto-dark div.qwebr-console-area {
+  border: 1px solid #111;
+  box-shadow: 2px 2px 10px #111;
+}
+
+
+/* Cap output height and allow text to scroll */
+/* TODO: Is there a better way to fit contents/max it parallel to the monaco editor size? */
+.reveal div.qwebr-output-code-area pre {
+  max-height: 400px;
+  overflow: scroll;
+}
+
+iframe.qwebr-output-code-browse {
+  width: 100%;
+
+  /*
+    TODO: How to make the height automatic according to the widget size,
+    or respect the quarto code block options?
+  */
+  min-height: 500px;
+}
+
+/* Hide/show the output of an interactive cell */
+.qwebr-button-toggle-output {
+  color: #696969;
+}
+
+.qwebr-interactive-area.qwebr-output-hidden .qwebr-output-code-area,
+.qwebr-interactive-area.qwebr-output-hidden .qwebr-output-graph-area {
+  display: none;
+}
+
+/* ---------- Data frames affichés comme des tableaux HTML (style Jupyter) ---------- */
+.qwebr-hidden {
+  display: none !important;
+}
+
+.qwebr-df-area {
+  display: none;
+}
+
+.qwebr-df-mode .qwebr-df-area {
+  display: block;
+}
+
+.qwebr-df-mode .qwebr-output-text {
+  display: none;
+}
+
+.qwebr-df-block {
+  margin: 0.5rem 0 0.9rem 0;
+}
+
+.qwebr-df-meta {
+  font-size: 0.8rem;
+  color: #6b7780;
+  margin-bottom: 0.3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.qwebr-df-kind {
+  background: #e6edf3;
+  color: #33475b;
+  border-radius: 999px;
+  padding: 0 0.55rem;
+  font-weight: 600;
+  font-family: monospace;
+}
+
+.qwebr-df-note {
+  margin-left: auto;
+  font-style: italic;
+}
+
+.qwebr-df-scroll {
+  max-height: 420px;
+  overflow: auto;
+  border: 1px solid #d9dee3;
+  border-radius: 6px;
+  background: #ffffff;
+}
+
+.qwebr-df-scroll:focus-visible {
+  outline: 2px solid #4682b4;
+  outline-offset: 1px;
+}
+
+table.qwebr-df {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: max-content;
+  min-width: 100%;
+  margin: 0;
+  font-size: 0.85rem;
+  line-height: 1.35;
+  font-variant-numeric: tabular-nums;
+  color: #212529;
+}
+
+table.qwebr-df th,
+table.qwebr-df td {
+  padding: 0.3rem 0.75rem;
+  border: 0;
+  border-bottom: 1px solid #edf0f3;
+  text-align: left;
+  white-space: nowrap;
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: #ffffff;
+}
+
+table.qwebr-df thead th {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: #f3f5f7;
+  border-bottom: 2px solid #c5ccd3;
+  vertical-align: bottom;
+}
+
+table.qwebr-df .qwebr-df-name {
+  font-weight: 700;
+}
+
+table.qwebr-df .qwebr-df-type {
+  font-weight: 400;
+  font-size: 0.72rem;
+  color: #7a8791;
+}
+
+table.qwebr-df .qwebr-df-num {
+  text-align: right;
+}
+
+/* Colonne d'index (noms ou numéros de lignes) : fixe à gauche */
+table.qwebr-df .qwebr-df-idx {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  background: #f3f5f7;
+  color: #6b7780;
+  font-weight: 600;
+  text-align: right;
+  border-right: 1px solid #d9dee3;
+}
+
+table.qwebr-df thead th.qwebr-df-idx {
+  z-index: 3;
+}
+
+table.qwebr-df tbody tr:nth-child(even) td {
+  background: #fafbfc;
+}
+
+table.qwebr-df tbody tr:hover td,
+table.qwebr-df tbody tr:hover th {
+  background: #e8f1fb;
+}
+
+table.qwebr-df td.qwebr-df-na {
+  color: #9aa3ab;
+  font-style: italic;
+}
+
+body.quarto-dark .qwebr-df-meta { color: #9aa5b1; }
+body.quarto-dark .qwebr-df-kind { background: #2b3540; color: #c7d3df; }
+body.quarto-dark .qwebr-df-scroll { border-color: #3a434c; background: #1b1f23; }
+body.quarto-dark table.qwebr-df { color: #e1e6eb; }
+body.quarto-dark table.qwebr-df th,
+body.quarto-dark table.qwebr-df td { background: #1b1f23; border-bottom-color: #2a3038; }
+body.quarto-dark table.qwebr-df thead th { background: #242a31; border-bottom-color: #4a545e; }
+body.quarto-dark table.qwebr-df .qwebr-df-type { color: #8994a0; }
+body.quarto-dark table.qwebr-df .qwebr-df-idx { background: #242a31; color: #9aa5b1; border-right-color: #3a434c; }
+body.quarto-dark table.qwebr-df tbody tr:nth-child(even) td { background: #20252a; }
+body.quarto-dark table.qwebr-df tbody tr:hover td,
+body.quarto-dark table.qwebr-df tbody tr:hover th { background: #2a3947; }
+body.quarto-dark table.qwebr-df td.qwebr-df-na { color: #79838d; }
+
+.qwebr-button-table {
+  color: #696969;
+}
+
+</style>
+<script type="module">
+// Document level settings ----
+
+// Determine if we need to install R packages
+globalThis.qwebrInstallRPackagesList = [''];
+
+// Specify possible locations to search for the repository
+globalThis.qwebrPackageRepoURLS = ['https://repo.r-wasm.org/'];
+
+// Check to see if we have an empty array, if we do set to skip the installation.
+globalThis.qwebrSetupRPackages = !(qwebrInstallRPackagesList.indexOf("") !== -1);
+globalThis.qwebrAutoloadRPackages = true;
+
+// Display a startup message?
+globalThis.qwebrShowStartupMessage = true;
+globalThis.qwebrShowHeaderMessage = false;
+
+// Describe the webR settings that should be used
+globalThis.qwebrCustomizedWebROptions = {
+  "baseURL": "https://webr.r-wasm.org/v0.5.7/",
+  "serviceWorkerUrl": "",
+  "homedir": "/home/web_user", 
+  "channelType": "ChannelType.Automatic"
+};
+
+// Store cell data
+globalThis.qwebrCellDetails = [{"code":"# Fonction utilisée par les cellules de vérification des exercices\nverifier <- function(condition, succes = \"Bravo !\") {\n  if (isTRUE(condition)) {\n    cat(\"✅\", succes, \"\\n\")\n  } else {\n    cat(\"❌ Pas encore : vérifiez les noms des objets demandés, exécutez votre code, puis relancez cette cellule.\\n\")\n  }\n}","id":1,"options":{"autorun":"true","classes":"","comment":"","context":"setup","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-1","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"nombre  <- 42.5\nentier  <- 42L\ntexte   <- \"bonjour\"\nvrai    <- TRUE\n\nclass(nombre)\nclass(entier)\nclass(texte)\nclass(vrai)\n\ntypeof(nombre)   # type de stockage interne : \"double\"","id":2,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-2","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"is.numeric(42)\nis.character(42)\n\nas.numeric(\"12.5\")     # texte -> nombre\nas.character(100)      # nombre -> texte\nas.integer(3.9)        # tronque : 3, et n'arrondit pas !\nas.logical(\"TRUE\")\nas.numeric(\"abc\")      # impossible : NA (et un avertissement)","id":3,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-3","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"c(1, 2, 3)            # numérique\nc(1, \"a\", TRUE)       # tout devient texte\nc(1, TRUE, FALSE)     # les logiques deviennent 1 et 0\n\nTRUE + TRUE           # 2\nsum(c(TRUE, FALSE, TRUE, TRUE))   # compter les TRUE : 3","id":4,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-4","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"0 / 0        # NaN\n1 / 0        # Inf\nsqrt(-1)     # NaN (avec avertissement)\n\nx <- c(10, NA, 30)\nis.na(x)\nmean(x)                 # NA : une valeur manquante contamine le résultat\nmean(x, na.rm = TRUE)   # na.rm = TRUE ignore les NA","id":5,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-5","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"0.1 + 0.2 == 0.3                       # FALSE !\nisTRUE(all.equal(0.1 + 0.2, 0.3))      # TRUE : comparaison avec tolérance","id":6,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-6","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes <- c(12, 15, 9, 20, 18)     # c() = combiner\nlength(notes)\n\n1:10                              # suite d'entiers\nseq(0, 1, by = 0.25)              # suite avec un pas\nseq(1, 10, length.out = 4)        # suite avec 4 valeurs\nrep(c(\"a\", \"b\"), times = 3)       # répéter le vecteur\nrep(1:2, each = 3)                # répéter chaque élément","id":7,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-7","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes <- c(12, 15, 9, 20, 18)\n\nnotes[2]                 # 2e élément\nnotes[c(1, 3)]           # 1er et 3e\nnotes[2:4]               # du 2e au 4e\nnotes[-1]                # tous SAUF le 1er\nnotes[notes >= 15]       # ceux qui vérifient une condition\nnotes[notes >= 15 & notes < 20]   # & = ET ; | = OU","id":8,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-8","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"resultats <- c(maths = 14, stats = 17, info = 12)\nresultats[\"stats\"]\nnames(resultats)\nresultats[c(\"maths\", \"info\")]","id":9,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-9","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes <- c(12, 15, 9, 20, 18)\n\nnotes + 1\nnotes / 20 * 100        # en pourcentage\nsqrt(notes)\nnotes > 10              # un vecteur de TRUE/FALSE\nsum(notes > 10)         # combien de notes > 10 ?","id":10,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-10","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes <- c(12, 15, 9, 20, 18)\n\nwhich(notes > 15)          # POSITIONS des éléments qui vérifient la condition\nwhich.max(notes)           # position du maximum\nany(notes == 20)           # au moins un ?\nall(notes >= 10)           # tous ?\n15 %in% notes              # appartenance","id":11,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-11","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"sexe <- factor(c(\"F\", \"H\", \"F\", \"F\", \"H\"))\nsexe\nlevels(sexe)          # modalités\ntable(sexe)           # effectifs\nas.integer(sexe)      # codes internes","id":12,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-12","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"taille <- factor(c(\"petit\", \"grand\", \"moyen\", \"petit\"),\n                 levels = c(\"petit\", \"moyen\", \"grand\"),\n                 ordered = TRUE)\ntaille\ntaille < \"grand\"","id":13,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-13","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"m <- matrix(1:6, nrow = 2, ncol = 3)   # remplie colonne par colonne\nm\n\ndim(m)          # dimensions (lignes, colonnes)\nm[1, 2]         # ligne 1, colonne 2\nm[2, ]          # toute la ligne 2\nm[, 3]          # toute la colonne 3\nt(m)            # transposée\nm * 2           # opération terme à terme\nrowSums(m)      # somme de chaque ligne\ncolMeans(m)     # moyenne de chaque colonne","id":14,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-14","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"etudiant <- list(\n  nom = \"Sara\",\n  age = 21,\n  notes = c(14, 16, 12),\n  inscrit = TRUE\n)\n\netudiant$nom              # accès par nom avec $\netudiant[[\"age\"]]         # accès par nom avec [[ ]]\netudiant$notes[2]         # 2e note\nmean(etudiant$notes)\n\netudiant$ville <- \"Tunis\" # ajouter un élément\nstr(etudiant)             # structure compacte","id":15,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-15","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"df <- data.frame(\n  nom   = c(\"Alice\", \"Bob\", \"Charlie\", \"Diana\"),\n  age   = c(25, 30, 35, 28),\n  ville = c(\"Paris\", \"Lyon\", \"Paris\", \"Lille\"),\n  stringsAsFactors = FALSE\n)\ndf","id":16,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-16","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"df <- data.frame(\n  nom   = c(\"Alice\", \"Bob\", \"Charlie\", \"Diana\"),\n  age   = c(25, 30, 35, 28),\n  ville = c(\"Paris\", \"Lyon\", \"Paris\", \"Lille\")\n)\n\nstr(df)         # structure : types de chaque colonne\nsummary(df)     # résumé statistique\nnrow(df); ncol(df); names(df)","id":17,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-17","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"df <- data.frame(\n  nom   = c(\"Alice\", \"Bob\", \"Charlie\", \"Diana\"),\n  age   = c(25, 30, 35, 28),\n  ville = c(\"Paris\", \"Lyon\", \"Paris\", \"Lille\")\n)\n\ndf$age                      # une colonne (vecteur)\ndf[2, ]                     # la ligne 2\ndf[, c(\"nom\", \"age\")]       # deux colonnes\ndf[df$age > 26, ]           # lignes qui vérifient une condition\nsubset(df, ville == \"Paris\", select = c(nom, age))\n\ndf$age_mois <- df$age * 12  # créer une nouvelle colonne\ndf","id":18,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-18","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"str(iris)\nsummary(iris)\ntable(iris$Species)                              # effectifs par espèce\ntapply(iris$Sepal.Length, iris$Species, mean)    # moyenne par espèce","id":19,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-19","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"x <- c(4, 9, 16, 25)\n\nsqrt(x)                # racine carrée\nexp(1)                 # exponentielle\nlog(100)               # logarithme népérien\nlog10(100)             # logarithme décimal\nlog(8, base = 2)       # logarithme en base 2\nround(pi, 2); floor(2.7); ceiling(2.1)   # arrondis\nfactorial(5); choose(5, 2)\nsum(x); prod(x); cumsum(x); diff(x)","id":20,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-20","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes <- c(12, 15, 9, 20, 18, 14, 11)\n\nmean(notes)             # moyenne\nmedian(notes)           # médiane\nsd(notes)               # écart-type\nvar(notes)              # variance\nmin(notes); max(notes); range(notes)\nquantile(notes, probs = c(0.25, 0.75))\nsummary(notes)          # résumé en une fois\ncor(mtcars$wt, mtcars$mpg)   # corrélation entre deux variables","id":21,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-21","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"couleurs <- c(\"rouge\", \"bleu\", \"rouge\", \"vert\", \"bleu\", \"rouge\")\nnotes <- c(12, 15, 9, 20, 18)\n\nlength(couleurs)\nunique(couleurs)          # valeurs distinctes\ntable(couleurs)           # effectifs\nsort(notes)               # tri croissant\nsort(notes, decreasing = TRUE)\norder(notes)              # positions triées\nrev(notes)                # inverser","id":22,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-22","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"phrase <- \"Programmation statistique avec R\"\n\nnchar(phrase)                  # nombre de caractères\ntoupper(phrase); tolower(phrase)\nsubstr(phrase, 1, 13)          # extraire une portion\nstrsplit(phrase, \" \")          # découper en mots\npaste(\"Bonjour\", \"Alice\")              # séparateur : espace\npaste(\"a\", \"b\", sep = \"-\")\npaste0(\"fichier_\", 1:3, \".csv\")        # sans séparateur, vectorisé\nsprintf(\"%.2f\", pi)                    # mise en forme de nombres\nsprintf(\"%s a %d ans\", \"Alice\", 25L)","id":23,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-23","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes <- c(12, 15, 9, 20, 6)\nifelse(notes >= 10, \"admis\", \"ajourné\")","id":24,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-24","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"set.seed(123)             # fixe la graine : résultats reproductibles\nsample(1:6, size = 5, replace = TRUE)     # lancers de dés\nrnorm(5, mean = 100, sd = 15)             # loi normale\nrunif(3)                                  # loi uniforme [0, 1]","id":25,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-25","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"carre <- function(x) {\n  x^2\n}\n\ncarre(4)\ncarre(c(1, 2, 3))","id":26,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-26","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"notes_txt <- c(\"12\", \"15.5\", \"9\", \"abc\")\n# Votre code ici","id":27,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-27","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"verifier(\n  exists(\"moy\") && isTRUE(all.equal(moy, mean(c(12, 15.5, 9)))),\n  \"Correct ! Moyenne des notes valides : 12.17\"\n)","id":28,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-28","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"temperatures <- c(22, 25, 19, 30, 28, 17, 24)\n# Votre code ici","id":29,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-29","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"verifier(\n  exists(\"chauds\") && exists(\"jour_max\") && exists(\"moy_temp\") &&\n    isTRUE(all.equal(chauds, c(25, 30, 28))) &&\n    jour_max == 4 &&\n    isTRUE(all.equal(moy_temp, 23.6)),\n  \"Les trois réponses sont correctes !\"\n)","id":30,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-30","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"niveaux <- c(\"bas\", \"haut\", \"moyen\", \"bas\", \"haut\", \"haut\")\n# Votre code ici","id":31,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-31","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"verifier(\n  exists(\"f\") && is.ordered(f) &&\n    identical(levels(f), c(\"bas\", \"moyen\", \"haut\")) &&\n    sum(f == \"haut\") == 3,\n  \"Correct ! Le facteur est bien ordonné.\"\n)","id":32,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-32","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"# Votre code ici","id":33,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-33","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"verifier(\n  exists(\"livre\") && is.list(livre) &&\n    all(c(\"titre\", \"auteur\", \"annee\", \"pages\") %in% names(livre)) &&\n    is.numeric(livre$pages),\n  \"Correct ! La liste est bien construite.\"\n)","id":34,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-34","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"# Votre code ici","id":35,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-35","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"verifier(\n  exists(\"n_econome\") && exists(\"poids_moyen\") &&\n    n_econome == sum(mtcars$mpg > 25) &&\n    isTRUE(all.equal(poids_moyen, mean(mtcars$wt[mtcars$mpg > 25]))),\n  paste0(\"Correct : \", n_econome, \" voitures économes, poids moyen \", round(poids_moyen, 2))\n)","id":36,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-36","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"etudiants <- data.frame(\n  nom   = c(\"Amel\", \"Bilel\", \"Chahd\", \"Dali\", \"Emna\"),\n  maths = c(14, 8, 17, 10, 6),\n  stats = c(12, 9, 18, 11, 7)\n)\n# Votre code ici","id":37,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-37","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}},{"code":"verifier(\n  exists(\"etudiants\") && all(c(\"moyenne\", \"admis\") %in% names(etudiants)) &&\n    exists(\"n_admis\") && n_admis == 3 &&\n    isTRUE(all.equal(etudiants$moyenne, c(13, 8.5, 17.5, 10.5, 6.5))),\n  \"Correct ! 3 étudiants sont admis.\"\n)","id":38,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-38","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"true","results":"markup","warning":"true"}},{"code":"# Votre code ici","id":39,"options":{"autorun":"false","classes":"","comment":"","context":"interactive","df-html":"false","dpi":72,"editor-font-scale":"1","editor-max-height":"","editor-quick-suggestions":"false","editor-word-wrap":"true","fig-cap":"","fig-height":5,"fig-width":7,"hide-output":"false","label":"unnamed-chunk-39","message":"true","out-height":"","out-width":"700px","output":"true","read-only":"false","results":"markup","warning":"true"}}];
+
+</script>
+<script type="module">
+// Declare startupMessageQWebR globally
+globalThis.qwebrStartupMessage = document.createElement("p");
+
+// Verify if OffScreenCanvas is supported
+globalThis.qwebrOffScreenCanvasSupport = function() {
+  return typeof OffscreenCanvas !== 'undefined'
+}
+
+// Function to set the button text
+globalThis.qwebrSetInteractiveButtonState = function(buttonText, enableCodeButton = true) {
+  document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+    btn.innerHTML = buttonText;
+    btn.disabled = !enableCodeButton;
+  });
+}
+
+// Function to update the status message in non-interactive cells
+globalThis.qwebrUpdateStatusMessage = function(message) {
+  document.querySelectorAll(".qwebr-status-text.qwebr-cell-needs-evaluation").forEach((elem) => {
+    elem.innerText = message;
+  });
+}
+
+// Function to update the status message
+globalThis.qwebrUpdateStatusHeader = function(message) {
+  qwebrStartupMessage.innerHTML = `
+    <i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i>
+    <span>${message}</span>`;
+}
+
+// Function to return true if element is found, false if not
+globalThis.qwebrCheckHTMLElementExists = function(selector) {
+  const element = document.querySelector(selector);
+  return !!element;
+}
+
+// Function that detects whether reveal.js slides are present
+globalThis.qwebrIsRevealJS = function() {
+  // If the '.reveal .slides' selector exists, RevealJS is likely present
+  return qwebrCheckHTMLElementExists('.reveal .slides');
+}
+
+// Initialize the Quarto sidebar element
+function qwebrSetupQuartoSidebar() {
+  var newSideBarDiv = document.createElement('div');
+  newSideBarDiv.id = 'quarto-margin-sidebar';
+  newSideBarDiv.className = 'sidebar margin-sidebar';
+  newSideBarDiv.style.top = '0px';
+  newSideBarDiv.style.maxHeight = 'calc(0px + 100vh)';
+
+  return newSideBarDiv;
+}
+
+// Position the sidebar in the document
+function qwebrPlaceQuartoSidebar() {
+  // Get the reference to the element with id 'quarto-document-content'
+  var referenceNode = document.getElementById('quarto-document-content');
+
+  // Create the new div element
+  var newSideBarDiv = qwebrSetupQuartoSidebar();
+
+  // Insert the new div before the 'quarto-document-content' element
+  referenceNode.parentNode.insertBefore(newSideBarDiv, referenceNode);
+}
+
+function qwebrPlaceMessageContents(content, html_location = "title-block-header", revealjs_location = "title-slide") {
+
+  // Get references to header elements
+  const headerHTML = document.getElementById(html_location);
+  const headerRevealJS = document.getElementById(revealjs_location);
+
+  // Determine where to insert the quartoTitleMeta element
+  if (headerHTML || headerRevealJS) {
+    // Append to the existing "title-block-header" element or "title-slide" div
+    (headerHTML || headerRevealJS).appendChild(content);
+  } else {
+    // If neither headerHTML nor headerRevealJS is found, insert after "webr-monaco-editor-init" script
+    const monacoScript = document.getElementById("qwebr-monaco-editor-init");
+    const header = document.createElement("header");
+    header.setAttribute("id", "title-block-header");
+    header.appendChild(content);
+    monacoScript.after(header);
+  }
+}
+
+
+
+function qwebrOffScreenCanvasSupportWarningMessage() {
+  
+  // Verify canvas is supported.
+  if(qwebrOffScreenCanvasSupport()) return;
+
+  // Create the main container div
+  var calloutContainer = document.createElement('div');
+  calloutContainer.classList.add('callout', 'callout-style-default', 'callout-warning', 'callout-titled');
+
+  // Create the header div
+  var headerDiv = document.createElement('div');
+  headerDiv.classList.add('callout-header', 'd-flex', 'align-content-center');
+
+  // Create the icon container div
+  var iconContainer = document.createElement('div');
+  iconContainer.classList.add('callout-icon-container');
+
+  // Create the icon element
+  var iconElement = document.createElement('i');
+  iconElement.classList.add('callout-icon');
+
+  // Append the icon element to the icon container
+  iconContainer.appendChild(iconElement);
+
+  // Create the title container div
+  var titleContainer = document.createElement('div');
+  titleContainer.classList.add('callout-title-container', 'flex-fill');
+  titleContainer.innerText = 'Warning: Web Browser Does Not Support Graphing!';
+
+  // Append the icon container and title container to the header div
+  headerDiv.appendChild(iconContainer);
+  headerDiv.appendChild(titleContainer);
+
+  // Create the body container div
+  var bodyContainer = document.createElement('div');
+  bodyContainer.classList.add('callout-body-container', 'callout-body');
+
+  // Create the paragraph element for the body content
+  var paragraphElement = document.createElement('p');
+  paragraphElement.innerHTML = 'This web browser does not have support for displaying graphs through the <code>quarto-webr</code> extension since it lacks an <code>OffScreenCanvas</code>. Please upgrade your web browser to one that supports <code>OffScreenCanvas</code>.';
+
+  // Append the paragraph element to the body container
+  bodyContainer.appendChild(paragraphElement);
+
+  // Append the header div and body container to the main container div
+  calloutContainer.appendChild(headerDiv);
+  calloutContainer.appendChild(bodyContainer);
+
+  // Append the main container div to the document depending on format
+  qwebrPlaceMessageContents(calloutContainer, "title-block-header"); 
+
+}
+
+
+// Function that attaches the document status message and diagnostics
+function displayStartupMessage(showStartupMessage, showHeaderMessage) {
+  if (!showStartupMessage) {
+    return;
+  }
+
+  // Create the outermost div element for metadata
+  const quartoTitleMeta = document.createElement("div");
+  quartoTitleMeta.classList.add("quarto-title-meta");
+
+  // Create the first inner div element
+  const firstInnerDiv = document.createElement("div");
+  firstInnerDiv.setAttribute("id", "qwebr-status-message-area");
+
+  // Create the second inner div element for "WebR Status" heading and contents
+  const secondInnerDiv = document.createElement("div");
+  secondInnerDiv.setAttribute("id", "qwebr-status-message-title");
+  secondInnerDiv.classList.add("quarto-title-meta-heading");
+  secondInnerDiv.innerText = "WebR Status";
+
+  // Create another inner div for contents
+  const secondInnerDivContents = document.createElement("div");
+  secondInnerDivContents.setAttribute("id", "qwebr-status-message-body");
+  secondInnerDivContents.classList.add("quarto-title-meta-contents");
+
+  // Describe the WebR state
+  qwebrStartupMessage.innerText = "🟡 Loading...";
+  qwebrStartupMessage.setAttribute("id", "qwebr-status-message-text");
+  // Add `aria-live` to auto-announce the startup status to screen readers
+  qwebrStartupMessage.setAttribute("aria-live", "assertive");
+
+  // Append the startup message to the contents
+  secondInnerDivContents.appendChild(qwebrStartupMessage);
+
+  // Add a status indicator for COOP and COEP Headers if needed
+  if (showHeaderMessage) {
+    const crossOriginMessage = document.createElement("p");
+    crossOriginMessage.innerText = `${crossOriginIsolated ? '🟢' : '🟡'} COOP & COEP Headers`;
+    crossOriginMessage.setAttribute("id", "qwebr-coop-coep-header");
+    secondInnerDivContents.appendChild(crossOriginMessage);
+  }
+
+  // Combine the inner divs and contents
+  firstInnerDiv.appendChild(secondInnerDiv);
+  firstInnerDiv.appendChild(secondInnerDivContents);
+  quartoTitleMeta.appendChild(firstInnerDiv);
+
+  // Place message on webpage
+  qwebrPlaceMessageContents(quartoTitleMeta); 
+}
+
+function qwebrAddCommandHistoryModal() {
+  // Create the modal div
+  var modalDiv = document.createElement('div');
+  modalDiv.id = 'qwebr-history-modal';
+  modalDiv.className = 'qwebr-modal';
+
+  // Create the modal content div
+  var modalContentDiv = document.createElement('div');
+  modalContentDiv.className = 'qwebr-modal-content';
+
+  // Create the span for closing the modal
+  var closeSpan = document.createElement('span');
+  closeSpan.id = 'qwebr-command-history-close-btn';
+  closeSpan.className = 'qwebr-modal-close';
+  closeSpan.innerHTML = '&times;';
+
+  // Create the h1 element for the modal
+  var modalH1 = document.createElement('h1');
+  modalH1.textContent = 'R History Command Contents';
+
+  // Create an anchor element for downloading the Rhistory file 
+  var downloadLink = document.createElement('a');
+  downloadLink.href = '#';
+  downloadLink.id = 'qwebr-download-history-btn';
+  downloadLink.className = 'qwebr-download-btn';
+
+  // Create an 'i' element for the icon
+  var icon = document.createElement('i');
+  icon.className = 'bi bi-file-code';
+
+  // Append the icon to the anchor element
+  downloadLink.appendChild(icon);
+
+  // Add the text 'Download R History' to the anchor element
+  downloadLink.appendChild(document.createTextNode(' Download R History File'));
+
+  // Create the pre for command history contents
+  var commandContentsPre = document.createElement('pre');
+  commandContentsPre.id = 'qwebr-command-history-contents';
+  commandContentsPre.className = 'qwebr-modal-content-code';
+
+  // Append the close span, h1, and history contents pre to the modal content div
+  modalContentDiv.appendChild(closeSpan);
+  modalContentDiv.appendChild(modalH1);
+  modalContentDiv.appendChild(downloadLink);
+  modalContentDiv.appendChild(commandContentsPre);
+
+  // Append the modal content div to the modal div
+  modalDiv.appendChild(modalContentDiv);
+
+  // Append the modal div to the body
+  document.body.appendChild(modalDiv);
+}
+
+function qwebrRegisterRevealJSCommandHistoryModal() {
+  // Select the <ul> element inside the <div> with data-panel="Custom0"
+  let ulElement = document.querySelector('div[data-panel="Custom0"] > ul.slide-menu-items');
+
+  // Find the last <li> element with class slide-tool-item
+  let lastItem = ulElement.querySelector('li.slide-tool-item:last-child');
+
+  // Calculate the next data-item value
+  let nextItemValue = 0;
+  if (lastItem) {
+      nextItemValue = parseInt(lastItem.dataset.item) + 1;
+  }
+
+  // Create a new <li> element
+  let newListItem = document.createElement('li');
+  newListItem.className = 'slide-tool-item';
+  newListItem.dataset.item = nextItemValue.toString(); // Set the next available data-item value
+
+  // Create the <a> element inside the <li>
+  let newLink = document.createElement('a');
+  newLink.href = '#';
+  newLink.id = 'qwebrRHistoryButton'; // Set the ID for the new link
+  
+  // Create the <kbd> element inside the <a>
+  let newKbd = document.createElement('kbd');
+  newKbd.textContent = ' '; // Set to empty as we are not registering a keyboard shortcut
+
+  // Create text node for the link text
+  let newText = document.createTextNode(' View R History');
+
+  // Append <kbd> and text node to <a>
+  newLink.appendChild(newKbd);
+  newLink.appendChild(newText);
+
+  // Append <a> to <li>
+  newListItem.appendChild(newLink);
+
+  // Append <li> to <ul>
+  ulElement.appendChild(newListItem);
+}
+
+// Handle setting up the R history modal
+function qwebrCodeLinks() {
+
+  if (qwebrIsRevealJS()) {
+    qwebrRegisterRevealJSCommandHistoryModal();
+    return;
+  }
+
+  // Create the container div
+  var containerDiv = document.createElement('div');
+  containerDiv.className = 'quarto-code-links';
+
+  // Create the h2 element
+  var h2 = document.createElement('h2');
+  h2.textContent = 'webR Code Links';
+
+  // Create the ul element
+  var ul = document.createElement('ul');
+
+  // Create the li element
+  var li = document.createElement('li');
+
+  // Create the a_history_btn element
+  var a_history_btn = document.createElement('a');
+  a_history_btn.href = 'javascript:void(0)';
+  a_history_btn.setAttribute('id', 'qwebrRHistoryButton');
+
+  // Create the i_history_btn element
+  var i_history_btn = document.createElement('i');
+  i_history_btn.className = 'bi bi-file-code';
+
+  // Create the text node for the link text
+  var text_history_btn = document.createTextNode('View R History');
+
+  // Append the icon element and link text to the a element
+  a_history_btn.appendChild(i_history_btn);
+  a_history_btn.appendChild(text_history_btn);
+
+  // Append the a element to the li element
+  li.appendChild(a_history_btn);
+
+  // Append the li element to the ul element
+  ul.appendChild(li);
+
+  // Append the h2 and ul elements to the container div
+  containerDiv.appendChild(h2);
+  containerDiv.appendChild(ul);
+
+  // Append the container div to the element with the ID 'quarto-margin-sidebar'
+  var sidebar = document.getElementById('quarto-margin-sidebar');
+    
+  // If the sidebar element is not found, create it
+  if(!sidebar) {
+    qwebrPlaceQuartoSidebar();
+  }
+  
+  // Re-select the sidebar element (if it was just created)
+  sidebar = document.getElementById('quarto-margin-sidebar');   
+
+
+  // If the sidebar element exists, append the container div to it
+  if(sidebar) {
+    // Append the container div to the sidebar
+    sidebar.appendChild(containerDiv);
+    // Force the sidebar to be clickable by removing the 'zindex-bottom' class
+    // added in pre-release: https://github.com/quarto-dev/quarto-cli/commit/f0c53a1ffcaa1de4eccbf07803b096898248adcc
+    sidebar.className = 'sidebar margin-sidebar';
+  } else {
+    // Get a debugger ...
+    console.warn('Element with ID "quarto-margin-sidebar" not found.');
+  }
+}
+
+// Call the function to append the code links for qwebR into the right sidebar
+qwebrCodeLinks();
+
+// Add the command history modal
+qwebrAddCommandHistoryModal();
+
+displayStartupMessage(qwebrShowStartupMessage, qwebrShowHeaderMessage);
+qwebrOffScreenCanvasSupportWarningMessage();
+</script>
+<script type="module">
+// Define a global storage and retrieval solution ----
+
+// Store commands executed in R
+globalThis.qwebrRCommandHistory = [];
+
+// Function to retrieve the command history
+globalThis.qwebrFormatRHistory = function() {
+   return qwebrRCommandHistory.join("\n\n");
+}
+
+// Retrieve HTML Elements ----
+
+// Get the command modal
+const command_history_modal = document.getElementById("qwebr-history-modal");
+
+// Get the button that opens the command modal
+const command_history_btn = document.getElementById("qwebrRHistoryButton");
+
+// Get the <span> element that closes the command modal
+const command_history_close_span = document.getElementById("qwebr-command-history-close-btn");
+
+// Get the download button for r history information
+const command_history_download_btn = document.getElementById("qwebr-download-history-btn");
+
+// Plug in command history into modal/download button ----
+
+// Function to populate the modal with command history
+function populateCommandHistoryModal() {
+    document.getElementById("qwebr-command-history-contents").innerHTML = qwebrFormatRHistory() || "No commands have been executed yet.";
+}
+
+// Function to format the current date and time to
+// a string with the format YYYY-MM-DD-HH-MM-SS
+function formatDateTime() {
+    const now = new Date();
+
+    const year = now.getFullYear();
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+
+    return `${year}-${month}-${day}-${hours}-${minutes}-${seconds}`;
+}
+
+
+// Function to convert document title with datetime to a safe filename
+function safeFileName() {
+    // Get the current page title
+    let pageTitle = document.title;
+
+    // Combine the current page title with the current date and time
+    let pageNameWithDateTime = `Rhistory-${pageTitle}-${formatDateTime()}`;
+
+    // Replace unsafe characters with safe alternatives
+    let safeFilename = pageNameWithDateTime.replace(/[\\/:\*\?! "<>\|]/g, '-');
+
+    return safeFilename;
+}
+
+
+// Function to download list contents as text file
+function downloadRHistory() {
+    // Get the current page title + datetime and use it as the filename
+    const filename = `${safeFileName()}.R`;
+
+    // Get the text contents of the R History list
+    const text = qwebrFormatRHistory();
+
+    // Create a new Blob object with the text contents
+    const blob = new Blob([text], { type: 'text/plain' });
+  
+    // Create a new anchor element for the download
+    const a = document.createElement('a');
+    a.style.display = 'none';
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+
+    // Append the anchor to the body, click it, and remove it
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
+
+// Register event handlers ----
+
+// When the user clicks the View R History button, open the command modal
+command_history_btn.onclick = function() {
+    populateCommandHistoryModal();
+    command_history_modal.style.display = "block";
+}
+
+// When the user clicks on <span> (x), close the command modal
+command_history_close_span.onclick = function() {
+    command_history_modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the command modal, close it
+window.onclick = function(event) {
+    if (event.target == command_history_modal) {
+        command_history_modal.style.display = "none";
+    }
+}
+
+// Add an onclick event listener to the download button so that
+// the user can download the R history as a text file
+command_history_download_btn.onclick = function() {
+    downloadRHistory();
+};
+</script>
+<script type="module">
+// Supported Evaluation Types for Context
+globalThis.EvalTypes = Object.freeze({
+  Interactive: 'interactive',
+  Setup: 'setup',
+  Output: 'output',
+});
+
+// Function that obtains the font size for a given element 
+globalThis.qwebrCurrentFontSizeOnElement = function(element, cssProperty = 'font-size') {
+
+  const currentFontSize = parseFloat(
+    window
+    .getComputedStyle(element)
+    .getPropertyValue(cssProperty)
+  );
+  
+  return currentFontSize;
+}
+
+// Function to determine font scaling
+globalThis.qwebrScaledFontSize = function(div, qwebrOptions) {
+  // Determine if we should compute font-size using RevealJS's `--r-main-font-size` 
+  // or if we can directly use the document's `font-size`.
+  const cssProperty = document.body.classList.contains('reveal') ? 
+    "--r-main-font-size" : "font-size";
+  
+  // Get the current font size on the div element
+  const elementFontSize = qwebrCurrentFontSizeOnElement(div, cssProperty);
+
+  // Determine the scaled font size value
+  const scaledFontSize = ((qwebrOptions['editor-font-scale'] ?? 1) * elementFontSize) ?? 17.5;
+
+  return scaledFontSize;
+}
+
+
+// Function that dispatches the creation request
+globalThis.qwebrCreateHTMLElement = function (
+  cellData
+) {
+
+  // Extract key components
+  const evalType = cellData.options.context;
+  const qwebrCounter = cellData.id;
+
+  // We make an assumption that insertion points are defined by the Lua filter as:
+  // qwebr-insertion-location-{qwebrCounter} 
+  const elementLocator = document.getElementById(`qwebr-insertion-location-${qwebrCounter}`);
+
+  // Figure out the routine to use to insert the element.
+  let qwebrElement;
+  switch ( evalType ) {
+    case EvalTypes.Interactive:
+      qwebrElement = qwebrCreateInteractiveElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Output: 
+      qwebrElement = qwebrCreateNonInteractiveOutputElement(qwebrCounter, cellData.options);
+      break;
+    case EvalTypes.Setup: 
+      qwebrElement = qwebrCreateNonInteractiveSetupElement(qwebrCounter, cellData.options);
+      break;
+    default: 
+      qwebrElement = document.createElement('div');
+      qwebrElement.textContent = 'Error creating `quarto-webr` element';
+  }
+
+  // Insert the dynamically generated object at the document location.
+  elementLocator.appendChild(qwebrElement);
+};
+
+// Function that setups the interactive element creation
+globalThis.qwebrCreateInteractiveElement = function (qwebrCounter, qwebrOptions) {
+
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-interactive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-interactive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create toolbar div
+  var toolbarDiv = document.createElement('div');
+  toolbarDiv.className = 'qwebr-editor-toolbar';
+  toolbarDiv.id = 'qwebr-editor-toolbar-' + qwebrCounter;
+
+  // Create a div to hold the left buttons
+  var leftButtonsDiv = document.createElement('div');
+  leftButtonsDiv.className = 'qwebr-editor-toolbar-left-buttons';
+
+  // Create a div to hold the right buttons
+  var rightButtonsDiv = document.createElement('div');
+  rightButtonsDiv.className = 'qwebr-editor-toolbar-right-buttons';
+
+  // Create Run Code button
+  var runCodeButton = document.createElement('button');
+  runCodeButton.className = 'btn btn-default qwebr-button qwebr-button-run';
+  runCodeButton.disabled = true;
+  runCodeButton.type = 'button';
+  runCodeButton.id = 'qwebr-button-run-' + qwebrCounter;
+  runCodeButton.textContent = '🟡 Loading webR...';
+  runCodeButton.title = `Run code (Shift + Enter)`;
+
+  // Append buttons to the leftButtonsDiv
+  leftButtonsDiv.appendChild(runCodeButton);
+
+  // Create Reset button
+  var resetButton = document.createElement('button');
+  resetButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-reset';
+  resetButton.type = 'button';
+  resetButton.id = 'qwebr-button-reset-' + qwebrCounter;
+  resetButton.title = 'Start over';
+  resetButton.innerHTML = '<i class="fa-solid fa-arrows-rotate"></i>';
+
+  // Create Copy button
+  var copyButton = document.createElement('button');
+  copyButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-copy';
+  copyButton.type = 'button';
+  copyButton.id = 'qwebr-button-copy-' + qwebrCounter;
+  copyButton.title = 'Copy code';
+  copyButton.innerHTML = '<i class="fa-regular fa-copy"></i>';
+
+  // Create Hide/Show output button (enabled once the cell has produced output)
+  var toggleOutputButton = document.createElement('button');
+  toggleOutputButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-toggle-output';
+  toggleOutputButton.type = 'button';
+  toggleOutputButton.disabled = true;
+  toggleOutputButton.id = 'qwebr-button-toggle-output-' + qwebrCounter;
+  toggleOutputButton.title = 'Masquer la sortie';
+  toggleOutputButton.innerHTML = '<i class="fa-solid fa-eye-slash"></i> <span>Masquer</span>';
+
+  // Create HTML table button (shown once the cell has displayed a data frame)
+  var tableButton = document.createElement('button');
+  tableButton.className = 'btn btn-light btn-xs qwebr-button qwebr-button-table qwebr-hidden';
+  tableButton.type = 'button';
+  tableButton.id = 'qwebr-button-table-' + qwebrCounter;
+  tableButton.title = 'Afficher les data frames sous forme de tableau';
+  tableButton.innerHTML = '<i class="fa-solid fa-table"></i> <span>Tableau</span>';
+
+  // Append buttons to the rightButtonsDiv
+  rightButtonsDiv.appendChild(tableButton);
+  rightButtonsDiv.appendChild(toggleOutputButton);
+  rightButtonsDiv.appendChild(resetButton);
+  rightButtonsDiv.appendChild(copyButton);
+
+  // Create console area div
+  var consoleAreaDiv = document.createElement('div');
+  consoleAreaDiv.id = 'qwebr-console-area-' + qwebrCounter;
+  consoleAreaDiv.className = 'qwebr-console-area';
+
+  // Create editor div
+  var editorDiv = document.createElement('div');
+  editorDiv.id = 'qwebr-editor-' + qwebrCounter;
+  editorDiv.className = 'qwebr-editor';
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append buttons to the toolbar
+  toolbarDiv.appendChild(leftButtonsDiv);
+  toolbarDiv.appendChild(rightButtonsDiv);
+
+  // Append all elements to the main div
+  mainDiv.appendChild(toolbarDiv);
+  consoleAreaDiv.appendChild(editorDiv);
+  consoleAreaDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(consoleAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+}
+
+// Function that adds output structure for non-interactive output
+globalThis.qwebrCreateNonInteractiveOutputElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = 'qwebr-noninteractive-area-' + qwebrCounter;
+  mainDiv.className = `qwebr-noninteractive-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+  
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+  
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Create output code area div
+  var outputCodeAreaDiv = document.createElement('div');
+  outputCodeAreaDiv.id = 'qwebr-output-code-area-' + qwebrCounter;
+  outputCodeAreaDiv.className = 'qwebr-output-code-area';
+  outputCodeAreaDiv.setAttribute('aria-live', 'assertive');
+
+  // Create pre element inside output code area
+  var preElement = document.createElement('pre');
+  preElement.style.visibility = 'hidden';
+  outputCodeAreaDiv.appendChild(preElement);
+
+  // Create output graph area div
+  var outputGraphAreaDiv = document.createElement('div');
+  outputGraphAreaDiv.id = 'qwebr-output-graph-area-' + qwebrCounter;
+  outputGraphAreaDiv.className = 'qwebr-output-graph-area';
+
+  // Append all elements to the main div
+  mainDiv.appendChild(statusContainer);
+  mainDiv.appendChild(outputCodeAreaDiv);
+  mainDiv.appendChild(outputGraphAreaDiv);
+
+  return mainDiv;
+};
+
+// Function that adds a stub in the page to indicate a setup cell was used.
+globalThis.qwebrCreateNonInteractiveSetupElement = function(qwebrCounter, qwebrOptions) {
+  // Create main div element
+  var mainDiv = document.createElement('div');
+  mainDiv.id = `qwebr-noninteractive-setup-area-${qwebrCounter}`;
+  mainDiv.className = `qwebr-noninteractive-setup-area`;
+  if (qwebrOptions.classes) {
+    mainDiv.className += " " + qwebrOptions.classes
+  }
+
+
+  // Add a unique cell identifier that users can customize
+  if (qwebrOptions.label) {
+    mainDiv.setAttribute('data-id', qwebrOptions.label);
+  }
+
+  // Create a status container div
+  var statusContainer = createLoadingContainer(qwebrCounter);
+
+  // Append status onto the main div
+  mainDiv.appendChild(statusContainer);
+
+  return mainDiv;
+}
+
+
+// Function to create loading container with specified ID
+globalThis.createLoadingContainer = function(qwebrCounter) {
+
+  // Create a status container
+  const container = document.createElement('div');
+  container.id = `qwebr-non-interactive-loading-container-${qwebrCounter}`;
+  container.className = 'qwebr-non-interactive-loading-container qwebr-cell-needs-evaluation';
+
+  // Create an R project logo to indicate its a code space
+  const rProjectIcon = document.createElement('i');
+  rProjectIcon.className = 'fa-brands fa-r-project fa-3x qwebr-r-project-logo';
+
+  // Setup a loading icon from font awesome
+  const spinnerIcon = document.createElement('i');
+  spinnerIcon.className = 'fa-solid fa-spinner fa-spin fa-1x qwebr-icon-status-spinner';
+
+  // Add a section for status text
+  const statusText = document.createElement('p');
+  statusText.id = `qwebr-status-text-${qwebrCounter}`;
+  statusText.className = `qwebr-status-text qwebr-cell-needs-evaluation`;
+  statusText.innerText = 'Loading webR...';
+
+  // Incorporate an inner container
+  const innerContainer = document.createElement('div');
+
+  // Append elements to the inner container
+  innerContainer.appendChild(spinnerIcon);
+  innerContainer.appendChild(statusText);
+
+  // Append elements to the main container
+  container.appendChild(rProjectIcon);
+  container.appendChild(innerContainer);
+
+  return container;
+}
+</script>
+<script type="module">
+// Affichage des data frames sous forme de tableaux HTML (à la Jupyter Notebook).
+//
+// Principe :
+//  1. Au démarrage de webR, du code R intercepte l'affichage des data frames / tibbles
+//     (et de View()) et mémorise les objets affichés pendant l'exécution d'une cellule.
+//  2. Après chaque exécution, ils sont convertis en JSON par R (qwebr_tables_json()) puis
+//     rendus en tableaux HTML défilables (lignes et colonnes, en-tête et index fixes).
+//  3. Le bouton « Tableau » de la cellule bascule entre la sortie texte et ces tableaux.
+//     Option de cellule : `#| df-html: true` affiche directement les tableaux.
+
+// Code R exécuté une fois au démarrage de webR
+globalThis.qwebrDataframeViewR = String.raw`# Affichage des data frames sous forme de tableaux HTML (à la Jupyter).
+#
+# Ce code R est exécuté une fois au démarrage de webR (voir qwebr-dataframe-view.js).
+#  - Il intercepte l'affichage des data frames / tibbles (print) et de View(), et
+#    mémorise les objets affichés pendant l'exécution d'une cellule.
+#    L'affichage texte habituel n'est pas modifié.
+#  - qwebr_tables_json() les convertit en JSON pour que le navigateur les rende en HTML.
+# View() et qwebr_tables_json() vivent dans un environnement attaché (« qwebr:tables ») :
+# elles n'apparaissent pas dans ls() et ne polluent pas l'environnement global.
+local({
+  env <- new.env()
+
+  stash <- function(x) {
+    options(qwebr.tables = c(getOption("qwebr.tables"), list(x)))
+    invisible(x)
+  }
+
+  # Depuis R 4.x, la recherche des méthodes S3 ignore les environnements attachés :
+  # on instrumente donc les méthodes d'affichage existantes avec trace().
+  # Chaque data frame affiché est mémorisé, puis affiché normalement.
+  hook <- function(x) invisible(stash(x))
+  tryCatch({
+    try(suppressMessages(untrace("print.data.frame", where = baseenv())), silent = TRUE)
+    suppressMessages(trace("print.data.frame", tracer = bquote(.(hook)(x)),
+                           print = FALSE, where = baseenv()))
+    # Les tibbles (dplyr, readr...) : méthode enregistrée qui se rabat sur pillar via NextMethod()
+    registerS3method("print", "tbl_df", function(x, ...) {
+      hook(x)
+      NextMethod()
+    }, envir = baseenv())
+  }, error = function(e) NULL)
+
+  # Équivalent de View() de RStudio : affiche le tableau sans sortie texte
+  env$View <- function(x, title) {
+    stash(if (is.data.frame(x)) x else as.data.frame(x))
+    invisible(x)
+  }
+
+  env$qwebr_tables_json <- function(max_rows = 1000L, max_cols = 100L) {
+    tables <- getOption("qwebr.tables")
+    options(qwebr.tables = list())
+    if (!length(tables)) return("[]")
+
+    esc <- function(s) {
+      s <- gsub("[[:cntrl:]]", " ", s)
+      s <- gsub("\\", "\\\\", s, fixed = TRUE)
+      gsub("\"", "\\\"", s, fixed = TRUE)
+    }
+    quote_json <- function(s) ifelse(is.na(s), "null", paste0("\"", esc(s), "\""))
+    array_json <- function(s) paste0("[", paste(quote_json(s), collapse = ","), "]")
+
+    # Mise en forme d'une colonne : NA conservé, nombres formatés comme print()
+    fmt <- function(v) {
+      out <- tryCatch({
+        if (is.factor(v)) as.character(v)
+        else if (is.character(v)) v
+        else if (is.numeric(v)) format(v, digits = 7, trim = TRUE)
+        else if (inherits(v, c("Date", "POSIXct"))) format(v)
+        else if (is.list(v)) vapply(v, function(e) paste(format(e), collapse = ", "), "")
+        else as.character(v)
+      }, error = function(e) rep("?", length(v)))
+      out <- as.character(out)
+      out[is.na(v)] <- NA_character_
+      out
+    }
+    type_of <- function(v) {
+      if (is.factor(v)) "fct"
+      else if (is.integer(v)) "int"
+      else if (is.numeric(v)) "dbl"
+      else if (is.character(v)) "chr"
+      else if (is.logical(v)) "lgl"
+      else if (inherits(v, "Date")) "date"
+      else if (inherits(v, "POSIXct")) "dttm"
+      else if (is.list(v)) "list"
+      else class(v)[1]
+    }
+
+    one <- function(x) {
+      nr <- nrow(x)
+      nc <- ncol(x)
+      shown <- as.data.frame(x[seq_len(min(nr, max_rows)), seq_len(min(nc, max_cols)), drop = FALSE])
+      cols <- vapply(shown, function(v) array_json(fmt(v)), "")
+      paste0(
+        "{\"kind\":", quote_json(class(x)[1]),
+        ",\"nrow\":", nr, ",\"ncol\":", nc,
+        ",\"shown_rows\":", nrow(shown), ",\"shown_cols\":", ncol(shown),
+        ",\"names\":", array_json(names(shown)),
+        ",\"types\":", array_json(vapply(shown, type_of, "")),
+        ",\"rownames\":", array_json(rownames(shown)),
+        ",\"cols\":[", paste(cols, collapse = ","), "]}"
+      )
+    }
+
+    paste0("[", paste(vapply(tables, one, ""), collapse = ","), "]")
+  }
+
+  if ("qwebr:tables" %in% search()) detach("qwebr:tables", character.only = TRUE)
+  attach(env, name = "qwebr:tables", warn.conflicts = FALSE)
+})
+`;
+
+// Installe les fonctions R (appelé par l'initialisation de webR)
+globalThis.qwebrInstallDataframeView = async function () {
+  try {
+    await mainWebR.evalRVoid(qwebrDataframeViewR);
+  } catch (e) {
+    console.warn("qwebr : affichage des data frames indisponible", e);
+  }
+};
+
+// Remet à zéro la liste des data frames mémorisés (avant d'exécuter une cellule)
+globalThis.qwebrResetDataframes = async function () {
+  try {
+    await mainWebR.evalRVoid("options(qwebr.tables = list())");
+  } catch (e) { /* sans effet sur la sortie texte */ }
+};
+
+// Récupère (au format JSON, puis objets JS) les data frames affichés par la cellule
+globalThis.qwebrCollectDataframes = async function () {
+  try {
+    return JSON.parse(await mainWebR.evalRString("qwebr_tables_json()"));
+  } catch (e) {
+    return [];
+  }
+};
+
+// Construit le bloc HTML d'un data frame
+globalThis.qwebrBuildDataframeBlock = function (t) {
+  const fr = (n) => n.toLocaleString("fr-FR");
+  const block = document.createElement("div");
+  block.className = "qwebr-df-block";
+
+  // Ligne d'information : type, dimensions, éventuelle troncature
+  const meta = document.createElement("div");
+  meta.className = "qwebr-df-meta";
+  const kind = document.createElement("span");
+  kind.className = "qwebr-df-kind";
+  kind.textContent = t.kind === "data.frame" ? "data.frame" : (t.kind === "tbl_df" ? "tibble" : t.kind);
+  meta.appendChild(kind);
+  meta.appendChild(document.createTextNode(` ${fr(t.nrow)} ligne${t.nrow > 1 ? "s" : ""} × ${fr(t.ncol)} colonne${t.ncol > 1 ? "s" : ""}`));
+  if (t.shown_rows < t.nrow || t.shown_cols < t.ncol) {
+    const note = document.createElement("span");
+    note.className = "qwebr-df-note";
+    const parts = [];
+    if (t.shown_rows < t.nrow) parts.push(`${fr(t.shown_rows)} premières lignes`);
+    if (t.shown_cols < t.ncol) parts.push(`${fr(t.shown_cols)} premières colonnes`);
+    note.textContent = `Aperçu : ${parts.join(" et ")}`;
+    meta.appendChild(note);
+  }
+  block.appendChild(meta);
+
+  // Zone défilante (lignes et colonnes)
+  const scroll = document.createElement("div");
+  scroll.className = "qwebr-df-scroll";
+  scroll.tabIndex = 0;
+  const table = document.createElement("table");
+  table.className = "qwebr-df";
+
+  const numeric = t.types.map((ty) => ty === "int" || ty === "dbl");
+
+  // En-tête : nom + type de chaque colonne
+  const thead = document.createElement("thead");
+  const headRow = document.createElement("tr");
+  const corner = document.createElement("th");
+  corner.className = "qwebr-df-idx";
+  headRow.appendChild(corner);
+  t.names.forEach((name, j) => {
+    const th = document.createElement("th");
+    if (numeric[j]) th.className = "qwebr-df-num";
+    const label = document.createElement("div");
+    label.className = "qwebr-df-name";
+    label.textContent = name;
+    const type = document.createElement("div");
+    type.className = "qwebr-df-type";
+    type.textContent = `<${t.types[j]}>`;
+    th.append(label, type);
+    headRow.appendChild(th);
+  });
+  thead.appendChild(headRow);
+  table.appendChild(thead);
+
+  // Corps du tableau
+  const tbody = document.createElement("tbody");
+  for (let i = 0; i < t.shown_rows; i++) {
+    const tr = document.createElement("tr");
+    const idx = document.createElement("th");
+    idx.className = "qwebr-df-idx";
+    idx.scope = "row";
+    idx.textContent = t.rownames[i];
+    tr.appendChild(idx);
+    for (let j = 0; j < t.shown_cols; j++) {
+      const td = document.createElement("td");
+      const value = t.cols[j][i];
+      if (numeric[j]) td.className = "qwebr-df-num";
+      if (value === null) {
+        td.classList.add("qwebr-df-na");
+        td.textContent = "NA";
+      } else {
+        td.textContent = value;
+        if (value.length > 30) td.title = value;
+      }
+      tr.appendChild(td);
+    }
+    tbody.appendChild(tr);
+  }
+  table.appendChild(tbody);
+
+  scroll.appendChild(table);
+  block.appendChild(scroll);
+  return block;
+};
+
+// Bouton « Tableau » / « Texte » d'une cellule
+globalThis.qwebrIsDataframeMode = function (id) {
+  const area = document.getElementById(`qwebr-interactive-area-${id}`);
+  return !!area && area.classList.contains("qwebr-df-mode");
+};
+
+globalThis.qwebrSetDataframeMode = function (id, on) {
+  const area = document.getElementById(`qwebr-interactive-area-${id}`);
+  const button = document.getElementById(`qwebr-button-table-${id}`);
+  if (!area || !button) return;
+  area.classList.toggle("qwebr-df-mode", on);
+  button.title = on ? "Revenir à la sortie texte" : "Afficher les data frames sous forme de tableau";
+  button.innerHTML = on
+    ? '<i class="fa-solid fa-align-left"></i> <span>Texte</span>'
+    : '<i class="fa-solid fa-table"></i> <span>Tableau</span>';
+};
+
+// Ajoute les tableaux à la sortie d'une cellule et met à jour le bouton
+globalThis.qwebrShowDataframes = function (elements, options, tables, textIsEmpty) {
+  const id = elements.id;
+  const area = elements.outputCodeDiv.closest(".qwebr-interactive-area, .qwebr-noninteractive-area");
+  const button = document.getElementById(`qwebr-button-table-${id}`);
+
+  if (!tables.length) {
+    if (area) area.classList.remove("qwebr-df-mode");
+    if (button) {
+      button.classList.add("qwebr-hidden");
+      qwebrSetDataframeMode(id, false);
+    }
+    return;
+  }
+
+  const container = document.createElement("div");
+  container.className = "qwebr-df-area";
+  tables.forEach((t) => container.appendChild(qwebrBuildDataframeBlock(t)));
+  elements.outputCodeDiv.appendChild(container);
+
+  // Tableaux affichés d'emblée : option df-html, cellule sans sortie texte (View()),
+  // ou l'utilisateur était déjà en mode tableau lors de l'exécution précédente
+  const requested = options["df-html"] === "true" || options["df-html"] === true;
+  const wasOn = qwebrIsDataframeMode(id);
+  if (button) {
+    button.classList.remove("qwebr-hidden");
+    qwebrSetDataframeMode(id, requested || textIsEmpty || wasOn);
+  } else if (area) {
+    area.classList.toggle("qwebr-df-mode", requested || textIsEmpty);
+  }
+};
+
+</script>
+<script type="module">
+// Function to install a single package
+async function qwebrInstallRPackage(packageName) {
+  await mainWebR.evalRVoid(`webr::install('${packageName}');`);
+}
+
+// Function to load a single package
+async function qwebrLoadRPackage(packageName) {
+  await mainWebR.evalRVoid(`require('${packageName}', quietly = TRUE)`);
+}
+
+// Generic function to process R packages
+async function qwebrProcessRPackagesWithStatus(packages, processType, displayStatusMessageUpdate = true) {
+  // Switch between contexts
+  const messagePrefix = processType === 'install' ? 'Installing' : 'Loading';
+
+  // Modify button state
+  qwebrSetInteractiveButtonState(`🟡 ${messagePrefix} package ...`, false);
+
+  // Iterate over packages
+  for (let i = 0; i < packages.length; i++) {
+    const activePackage = packages[i];
+    const formattedMessage = `${messagePrefix} package ${i + 1} out of ${packages.length}: ${activePackage}`;
+
+    // Display the update in header
+    if (displayStatusMessageUpdate) {
+      qwebrUpdateStatusHeader(formattedMessage);
+    }
+
+    // Display the update in non-active areas
+    qwebrUpdateStatusMessage(formattedMessage);
+
+    // Run package installation
+    if (processType === 'install') {
+      await qwebrInstallRPackage(activePackage);
+    } else {
+      await qwebrLoadRPackage(activePackage);
+    }
+  }
+
+  // Clean slate
+  if (processType === 'load') {
+    await mainWebR.flush();
+  }
+}
+
+// Start a timer
+const initializeWebRTimerStart = performance.now();
+
+// Encase with a dynamic import statement
+globalThis.qwebrInstance = import(qwebrCustomizedWebROptions.baseURL + "webr.mjs").then(
+  async ({ WebR, ChannelType }) => {
+    // Populate WebR options with defaults or new values based on `webr` meta
+    globalThis.mainWebR = new WebR(qwebrCustomizedWebROptions);
+
+    // Initialization WebR
+    await mainWebR.init();
+
+    // Setup a shelter
+    globalThis.mainWebRCodeShelter = await new mainWebR.Shelter();
+
+    // Setup a pager to allow processing help documentation
+    await mainWebR.evalRVoid('webr::pager_install()');
+
+    // Setup a viewer to allow processing htmlwidgets.
+    // This might not be available in old webr version
+    await mainWebR.evalRVoid('try({ webr::viewer_install() })');
+
+    // Override the existing install.packages() to use webr::install()
+    await mainWebR.evalRVoid('webr::shim_install()');
+
+    // Show data frames as HTML tables on demand (see qwebr-dataframe-view.js)
+    await qwebrInstallDataframeView();
+
+    // Specify the repositories to pull from
+    // Note: webR does not use the `repos` option, but instead uses `webr_pkg_repos`
+    // inside of `install()`. However, other R functions still pull from `repos`.
+    await mainWebR.evalRVoid(`
+      options(
+        webr_pkg_repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')}),
+        repos = c(${qwebrPackageRepoURLS.map(repoURL => `'${repoURL}'`).join(',')})
+      )
+    `);
+
+    // Check to see if any packages need to be installed
+    if (qwebrSetupRPackages) {
+      // Obtain only a unique list of packages
+      const uniqueRPackageList = Array.from(new Set(qwebrInstallRPackagesList));
+
+      // Install R packages one at a time (either silently or with a status update)
+      await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'install', qwebrShowStartupMessage);
+
+      if (qwebrAutoloadRPackages) {
+        // Load R packages one at a time (either silently or with a status update)
+        await qwebrProcessRPackagesWithStatus(uniqueRPackageList, 'load', qwebrShowStartupMessage);
+      }
+    }
+  }
+);
+
+// Stop timer
+const initializeWebRTimerEnd = performance.now();
+
+</script>
+<script type="module">
+// Function to verify a given JavaScript Object is empty
+globalThis.qwebrIsObjectEmpty = function (arr) {
+    return Object.keys(arr).length === 0;
+}
+
+// Global version of the Escape HTML function that converts HTML
+// characters to their HTML entities.
+globalThis.qwebrEscapeHTMLCharacters = function(unsafe) {
+    return unsafe
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+};
+
+// Passthrough results
+globalThis.qwebrIdentity = function(x) {
+    return x;
+};
+
+// Append a comment
+globalThis.qwebrPrefixComment = function(x, comment) {
+    return `${comment}${x}`;
+};
+
+// Function to store the code in the history
+globalThis.qwebrLogCodeToHistory = function(codeToRun, options) {
+    qwebrRCommandHistory.push(
+        `# Ran code in ${options.label} at ${new Date().toLocaleString()} ----\n${codeToRun}`
+    );
+};
+
+// Function to attach a download button onto the canvas
+// allowing the user to download the image.
+function qwebrImageCanvasDownloadButton(canvas, canvasContainer) {
+
+    // Create the download button
+    const downloadButton = document.createElement('button');
+    downloadButton.className = 'qwebr-canvas-image-download-btn';
+    downloadButton.textContent = 'Download Image';
+    canvasContainer.appendChild(downloadButton);
+
+    // Trigger a download of the image when the button is clicked
+    downloadButton.addEventListener('click', function() {
+        const image = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        link.href = image;
+        link.download = 'qwebr-canvas-image.png';
+        link.click();
+    });
+}
+
+
+// Function to parse the pager results
+globalThis.qwebrParseTypePager = async function (msg) {
+
+    // Split out the event data
+    const { path, title, deleteFile } = msg.data;
+
+    // Process the pager data by reading the information from disk
+    const paged_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        // Remove excessive backspace characters until none remain
+        while(content.match(/.[\b]/)){
+            content = content.replace(/.[\b]/g, '');
+        }
+
+        // Returned cleaned data
+        return content;
+    });
+
+    // Unlink file if needed
+    if (deleteFile) {
+        await mainWebR.FS.unlink(path);
+    }
+
+    // Return extracted data with spaces
+    return paged_data;
+};
+
+
+// Function to parse the browse results
+globalThis.qwebrParseTypeBrowse = async function (msg) {
+
+    // msg.type === "browse"
+    const path = msg.data.url;
+
+    // Process the browse data by reading the information from disk
+    const browse_data = await mainWebR.FS.readFile(path).then((data) => {
+        // Obtain the file content
+        let content = new TextDecoder().decode(data);
+
+        return content;
+    });
+
+    // Return extracted data as-is
+    return browse_data;
+};
+
+// Function to run the code using webR and parse the output
+globalThis.qwebrComputeEngine = async function(
+    codeToRun,
+    elements,
+    options) {
+
+    // Call into the R compute engine that persists within the document scope.
+    // To be prepared for all scenarios, the following happens:
+    // 1. We setup a canvas device to write to by making a namespace call into the {webr} package
+    // 2. We use values inside of the options array to set the figure size.
+    // 3. We capture the output stream information (STDOUT and STERR)
+    // 4. We disable the current device's image creation.
+    // 5. Piece-wise parse the results into the different output areas
+
+    // Create a pager variable for help/file contents
+    let pager = [];
+
+    // Handle how output is processed
+    let showMarkup = options.results === "markup" && options.output !== "asis";
+    let processOutput;
+
+    if (showMarkup) {
+        processOutput = qwebrEscapeHTMLCharacters;
+    } else {
+        processOutput = qwebrIdentity;
+    }
+
+    // ----
+    // Convert from Inches to Pixels by using DPI (dots per inch)
+    // for bitmap devices (dpi * inches = pixels)
+    let fig_width = options["fig-width"] * options["dpi"];
+    let fig_height = options["fig-height"] * options["dpi"];
+
+    // Initialize webR
+    await mainWebR.init();
+
+    // Configure capture output
+    let captureOutputOptions = {
+        withAutoprint: true,
+        captureStreams: true,
+        captureConditions: false,
+        // env: webR.objs.emptyEnv, // maintain a global environment for webR v0.2.0
+    };
+
+    // Determine if the browser supports OffScreen
+    if (qwebrOffScreenCanvasSupport()) {
+        // Mirror default options of webr::canvas()
+        // with changes to figure height and width.
+        captureOutputOptions.captureGraphics = {
+            width: fig_width,
+            height: fig_height,
+            bg: "white", // default: transparent
+            pointsize: 12,
+            capture: true
+        };
+    }  else {
+        // Disable generating graphics
+        captureOutputOptions.captureGraphics = false;
+    }
+
+    // Store the code to run in history
+    qwebrLogCodeToHistory(codeToRun, options);
+
+    // Forget the data frames displayed by the previous run
+    await qwebrResetDataframes();
+
+    // Setup a webR canvas by making a namespace call into the {webr} package
+    // Evaluate the R code
+    // Remove the active canvas silently
+    const result = await mainWebRCodeShelter.captureR(
+        `${codeToRun}`,
+        captureOutputOptions
+    );
+
+    // Data frames displayed while running the code (rendered as HTML tables on demand)
+    const dataframes = await qwebrCollectDataframes();
+
+    // -----
+
+    // Start attempting to parse the result data
+    processResultOutput:try {
+
+        // Avoid running through output processing
+        if (options.results === "hide" || options.output === "false") {
+            break processResultOutput;
+        }
+
+        // Merge output streams of STDOUT and STDErr (messages and errors are combined.)
+        // Require both `warning` and `message` to be true to display `STDErr`.
+        const out = result.output
+        .filter(
+            evt => evt.type === "stdout" ||
+            ( evt.type === "stderr" && (options.warning === "true" && options.message === "true"))
+        )
+        .map((evt, index) => {
+            const className = `qwebr-output-code-${evt.type}`;
+            const outputResult = qwebrPrefixComment(processOutput(evt.data), options.comment);
+            return `<code id="${className}-editor-${elements.id}-result-${index + 1}" class="${className}">${outputResult}</code>`;
+        })
+        .join("\n");
+
+
+        // Clean the state
+        // We're now able to process pager events.
+        // As a result, we cannot maintain a true 1-to-1 output order
+        // without individually feeding each line
+        const msgs = await mainWebR.flush();
+
+        // Use `map` to process the filtered "pager" events asynchronously
+        const pager = [];
+        const browse = [];
+
+        await Promise.all(
+            msgs.map(
+                async (msg) => {
+
+                    const msgType = msg.type || "unknown";
+
+                    switch(msgType) {
+                        case 'pager':
+                            const pager_data = await qwebrParseTypePager(msg);
+                            pager.push(pager_data);
+                            break;
+                        case 'browse':
+                            const browse_data = await qwebrParseTypeBrowse(msg);
+                            browse.push(browse_data);
+                            break;
+                    }
+                    return;
+                }
+            )
+        );
+
+        // Nullify the output area of content
+        elements.outputCodeDiv.innerHTML = "";
+        elements.outputGraphDiv.innerHTML = "";
+
+        // Design an output object for messages
+        const pre = document.createElement("pre");
+        if (/\S/.test(out)) {
+            // Display results as HTML elements to retain output styling
+            const div = document.createElement("div");
+            div.innerHTML = out;
+
+            // Calculate a scaled font-size value
+            const scaledFontSize = qwebrScaledFontSize(
+                elements.outputCodeDiv, options);
+
+            // Override output code cell size
+            pre.style.fontSize = `${scaledFontSize}px`;
+            pre.appendChild(div);
+        } else {
+            // If nothing is present, hide the element.
+            pre.style.visibility = "hidden";
+        }
+
+        pre.classList.add("qwebr-output-text");
+        elements.outputCodeDiv.appendChild(pre);
+
+        // Offer the data frames as HTML tables (button "Tableau")
+        qwebrShowDataframes(elements, options, dataframes, !/\S/.test(out));
+
+        // Determine if we have graphs to display
+        if (result.images.length > 0) {
+
+            // Create figure element
+            const figureElement = document.createElement("figure");
+            figureElement.className = "qwebr-canvas-image";
+
+            // Place each rendered graphic onto a canvas element
+            result.images.forEach((img) => {
+
+                // Construct canvas for object
+                const canvas = document.createElement("canvas");
+
+                // Add an image download button
+                qwebrImageCanvasDownloadButton(canvas, figureElement);
+
+                // Set canvas size to image
+                canvas.width = img.width;
+                canvas.height = img.height;
+
+                // Apply output truncations
+                canvas.style.width = options["out-width"] ? options["out-width"] : `${fig_width}px`;
+                if (options["out-height"]) {
+                    canvas.style.height = options["out-height"];
+                }
+
+                // Apply styling
+                canvas.style.display = "block";
+                canvas.style.margin = "auto";
+
+                // Draw image onto Canvas
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                // Append canvas to figure output area
+                figureElement.appendChild(canvas);
+
+            });
+
+            if (options['fig-cap']) {
+                // Create figcaption element
+                const figcaptionElement = document.createElement('figcaption');
+                figcaptionElement.innerText = options['fig-cap'];
+                // Append figcaption to figure
+                figureElement.appendChild(figcaptionElement);
+            }
+
+            elements.outputGraphDiv.appendChild(figureElement);
+
+        }
+
+        // Display the pager data
+        if (pager.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            pager.forEach((paged_data, index) => {
+                const pre_pager = document.createElement("pre");
+                pre_pager.innerText = paged_data;
+                pre_pager.classList.add("qwebr-output-code-pager");
+                pre_pager.setAttribute("id", `qwebr-output-code-pager-editor-${elements.id}-result-${index + 1}`);
+                elements.outputCodeDiv.appendChild(pre_pager);
+            });
+        }
+
+        // Display the browse data
+        if (browse.length > 0) {
+            // Use the `pre` element to preserve whitespace.
+            browse.forEach((browse_data, index) => {
+                const iframe_browse = document.createElement('iframe');
+                iframe_browse.classList.add("qwebr-output-code-browse");
+                iframe_browse.setAttribute("id", `qwebr-output-code-browse-editor-${elements.id}-result-${index + 1}`);
+                iframe_browse.style.width = "100%";
+                iframe_browse.style.minHeight = "500px";
+                elements.outputCodeDiv.appendChild(iframe_browse);
+
+                iframe_browse.contentWindow.document.open();
+                iframe_browse.contentWindow.document.write(browse_data);
+                iframe_browse.contentWindow.document.close();
+            });
+        }
+    } finally {
+        // Clean up the remaining code
+        mainWebRCodeShelter.purge();
+    }
+};
+
+// Is the output of an interactive cell currently hidden?
+globalThis.qwebrIsOutputHidden = function (id) {
+    const area = document.getElementById(`qwebr-interactive-area-${id}`);
+    return !!area && area.classList.contains('qwebr-output-hidden');
+}
+
+// Hide or show the output (text and graphics) of an interactive cell
+globalThis.qwebrSetOutputHidden = function (id, hidden) {
+    const area = document.getElementById(`qwebr-interactive-area-${id}`);
+    const button = document.getElementById(`qwebr-button-toggle-output-${id}`);
+    if (!area || !button) return;
+
+    area.classList.toggle('qwebr-output-hidden', hidden);
+    button.title = hidden ? 'Afficher la sortie' : 'Masquer la sortie';
+    button.innerHTML = hidden
+        ? '<i class="fa-solid fa-eye"></i> <span>Afficher</span>'
+        : '<i class="fa-solid fa-eye-slash"></i> <span>Masquer</span>';
+}
+
+// Function to execute the code (accepts code as an argument)
+globalThis.qwebrExecuteCode = async function (
+    codeToRun,
+    id,
+    options = {}) {
+
+    // If options are not passed, we fall back on the bare minimum to handle the computation
+    if (qwebrIsObjectEmpty(options)) {
+        options = {
+            "context": "interactive",
+            "fig-width": 7, "fig-height": 5,
+            "out-width": "700px", "out-height": "",
+            "dpi": 72,
+            "results": "markup",
+            "warning": "true", "message": "true",
+        };
+    }
+
+    // Next, we access the compute areas values
+    const elements = {
+        runButton: document.getElementById(`qwebr-button-run-${id}`),
+        outputCodeDiv: document.getElementById(`qwebr-output-code-area-${id}`),
+        outputGraphDiv: document.getElementById(`qwebr-output-graph-area-${id}`),
+        id: id,
+    }
+
+    // Disallowing execution of other code cells
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = true;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Emphasize the active code cell
+        elements.runButton.innerHTML = '<i class="fa-solid fa-spinner fa-spin qwebr-icon-status-spinner"></i> <span>Run Code</span>';
+    }
+
+    // Evaluate the code and parse the output into the document
+    await qwebrComputeEngine(codeToRun, elements, options);
+
+    // Switch to allowing execution of code
+    document.querySelectorAll(".qwebr-button-run").forEach((btn) => {
+        btn.disabled = false;
+    });
+
+    if (options.context == EvalTypes.Interactive) {
+        // Revert to the initial code cell state
+        elements.runButton.innerHTML = '<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>';
+
+        // The cell now has output: allow hiding it. A new run always shows fresh output,
+        // unless the cell asks for it to be hidden (`#| hide-output: true`).
+        const toggleButton = document.getElementById(`qwebr-button-toggle-output-${id}`);
+        if (toggleButton) {
+            toggleButton.disabled = false;
+            qwebrSetOutputHidden(id, options["hide-output"] === "true" || options["hide-output"] === true);
+        }
+    }
+}
+
+</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body class="nav-fixed quarto-light">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a href="./index.html" class="navbar-brand navbar-brand-logo">
+    </a>
+    <a class="navbar-brand" href="./index.html">
+    <span class="navbar-title">Mes Cours de Programmation</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Recherche"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Basculer la navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="./index.html"> 
+<span class="menu-text">Accueil</span></a>
+  </li>  
+  <li class="nav-item dropdown ">
+    <a class="nav-link dropdown-toggle" href="#" id="nav-menu-cours-r" role="link" data-bs-toggle="dropdown" aria-expanded="false">
+ <span class="menu-text">Cours R</span>
+    </a>
+    <ul class="dropdown-menu" aria-labelledby="nav-menu-cours-r">    
+        <li>
+    <a class="dropdown-item" href="./cours-r.html">
+ <span class="dropdown-text">Programme du cours</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-seance-1.html">
+ <span class="dropdown-text">Séance 1 · Introduction à R et RStudio</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-seance-2.html">
+ <span class="dropdown-text">Séance 2 · Types de données et fonctions de base</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-seance-3.html">
+ <span class="dropdown-text">Séance 3 · Lab : importer et nettoyer</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-seance-4.html">
+ <span class="dropdown-text">Séance 4 · Lab : indicateurs avec dplyr</span></a>
+  </li>  
+        <li>
+    <a class="dropdown-item" href="./r-seance-5.html">
+ <span class="dropdown-text">Séance 5 · Lab : tableau de bord visuel</span></a>
+  </li>  
+    </ul>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" href="./cours-python.html"> 
+<span class="menu-text">Cours Python</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/nevermind78/R_Py"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Sur cette page</h2>
+   
+  <ul class="collapse">
+  <li><a href="#rappel" id="toc-rappel" class="nav-link active" data-scroll-target="#rappel">Rappel de la séance 1</a></li>
+  <li><a href="#types" id="toc-types" class="nav-link" data-scroll-target="#types">1. Les types de données de base</a></li>
+  <li><a href="#vecteurs" id="toc-vecteurs" class="nav-link" data-scroll-target="#vecteurs">2. Les vecteurs</a></li>
+  <li><a href="#structures" id="toc-structures" class="nav-link" data-scroll-target="#structures">3. Facteurs, matrices et listes</a></li>
+  <li><a href="#dataframes" id="toc-dataframes" class="nav-link" data-scroll-target="#dataframes">4. Les data frames</a></li>
+  <li><a href="#fonctions" id="toc-fonctions" class="nav-link" data-scroll-target="#fonctions">5. Les fonctions de base</a></li>
+  <li><a href="#exercices" id="toc-exercices" class="nav-link" data-scroll-target="#exercices">6. Exercices</a></li>
+  <li><a href="#synthese" id="toc-synthese" class="nav-link" data-scroll-target="#synthese">7. Synthèse</a></li>
+  <li><a href="#travail-à-faire-pour-la-séance-3" id="toc-travail-à-faire-pour-la-séance-3" class="nav-link" data-scroll-target="#travail-à-faire-pour-la-séance-3">Travail à faire pour la séance 3</a></li>
+  </ul>
+</nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+<script src="https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs/loader.js"></script>
+<script type="module" id="qwebr-monaco-editor-init">
+
+  // Configure the Monaco Editor's loader
+  require.config({
+    paths: {
+      'vs': 'https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs'
+    }
+  });
+</script>
+<script type="module">
+// Function to update Monaco Editors when body class changes
+function updateMonacoEditorsOnBodyClassChange() {
+    // Select the body element
+    const body = document.querySelector('body');
+
+    // Options for the observer (which mutations to observe)
+    const observerOptions = {
+        attributes: true,  // Observe changes to attributes
+        attributeFilter: ['class'] // Only observe changes to the 'class' attribute
+    };
+
+    // Callback function to execute when mutations are observed
+    const bodyClassChangeCallback = function(mutationsList, observer) {
+        for(let mutation of mutationsList) {
+            if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                // Class attribute has changed
+                // Update all Monaco Editors on the page
+                updateMonacoEditorTheme();
+            }
+        }
+    };
+
+    // Create an observer instance linked to the callback function
+    const observer = new MutationObserver(bodyClassChangeCallback);
+
+    // Start observing the target node for configured mutations
+    observer.observe(body, observerOptions);
+}
+
+// Function to update all instances of Monaco Editors on the page
+function updateMonacoEditorTheme() {
+    // Determine what VS Theme to use
+    const vsThemeToUse = document.body.classList.contains("quarto-dark") ? 'vs-dark' : 'vs' ;
+
+    // Iterate through all initialized Monaco Editors
+    qwebrEditorInstances.forEach( function(editorInstance) { 
+        editorInstance.updateOptions({ theme: vsThemeToUse }); 
+    });
+}
+
+// Call the function to start observing changes to body class
+updateMonacoEditorsOnBodyClassChange();
+</script>
+<script type="module">
+// Global array to store Monaco Editor instances
+globalThis.qwebrEditorInstances = [];
+
+function isValidCodeLineNumbers(stringCodeLineNumbers) {
+  // Regular expression to match valid input strings
+  const regex = /^(\d+(-\d+)?)(,\d+(-\d+)?)*$/;
+  return regex.test(stringCodeLineNumbers);
+}
+
+// Function that builds and registers a Monaco Editor instance    
+globalThis.qwebrCreateMonacoEditorInstance = function (cellData) {
+
+  const initialCode = cellData.code;
+  const qwebrCounter = cellData.id;
+  const qwebrOptions = cellData.options;
+
+  // Retrieve the previously created document elements
+  let runButton = document.getElementById(`qwebr-button-run-${qwebrCounter}`);
+  let resetButton = document.getElementById(`qwebr-button-reset-${qwebrCounter}`);
+  let copyButton = document.getElementById(`qwebr-button-copy-${qwebrCounter}`);
+  let editorDiv = document.getElementById(`qwebr-editor-${qwebrCounter}`);
+
+  // Load the Monaco Editor and create an instance
+  let editor;
+  require(['vs/editor/editor.main'], function () {
+    editor = monaco.editor.create(editorDiv, {
+      value: initialCode,
+      language: 'r',
+      theme: 'vs-light',
+      automaticLayout: true,           // Works wonderfully with RevealJS
+      scrollBeyondLastLine: false,
+      minimap: {
+        enabled: false
+      },
+      fontSize: qwebrScaledFontSize(editorDiv, qwebrOptions),         
+      renderLineHighlight: "none",      // Disable current line highlighting
+      hideCursorInOverviewRuler: true,  // Remove cursor indictor in right hand side scroll bar
+      readOnly: qwebrOptions['read-only'] ?? false,
+      quickSuggestions: qwebrOptions['editor-quick-suggestions'] ?? false,
+      wordWrap: (qwebrOptions['editor-word-wrap'] == 'true' ? "on" : "off")
+    });
+
+    // Store the official counter ID to be used in keyboard shortcuts
+    editor.__qwebrCounter = qwebrCounter;
+
+    // Store the official div container ID
+    editor.__qwebrEditorId = `qwebr-editor-${qwebrCounter}`;
+
+    // Store the initial code value and options
+    editor.__qwebrinitialCode = initialCode;
+    editor.__qwebrOptions = qwebrOptions;
+
+    // Set at the model level the preferred end of line (EOL) character to LF.
+    // This prevent `\r\n` from being given to the webR engine if the user is on Windows.
+    // See details in: https://github.com/coatless/quarto-webr/issues/94
+    // Associated error text: 
+    // Error: <text>:1:7 unexpected input
+
+    // Retrieve the underlying model
+    const model = editor.getModel();
+    // Set EOL for the model
+    model.setEOL(monaco.editor.EndOfLineSequence.LF);
+    
+    // Dynamically modify the height of the editor window if new lines are added.
+    let ignoreEvent = false;
+    const updateHeight = () => {
+      // Increment editor height by 2 to prevent vertical scroll bar from appearing
+      const contentHeight = editor.getContentHeight() + 2;
+
+      // Retrieve editor-max-height option
+      const maxEditorHeight = qwebrOptions['editor-max-height'];
+
+      // If editor-max-height is missing, allow infinite growth. Otherwise, threshold.
+      const editorHeight = !maxEditorHeight ?  contentHeight : Math.min(contentHeight, maxEditorHeight);
+
+      // We're avoiding a width change
+      //editorDiv.style.width = `${width}px`;
+      editorDiv.style.height = `${editorHeight}px`;
+      try {
+        ignoreEvent = true;
+
+        // The key to resizing is this call
+        editor.layout();
+      } finally {
+        ignoreEvent = false;
+      }
+    };
+
+    // Function to generate decorations to highlight lines
+    // in the editor based on input string.
+    function decoratorHighlightLines(codeLineNumbers) {
+      // Store the lines to be lighlight
+      let linesToHighlight = [];
+      
+      // Parse the codeLineNumbers string to get the line numbers to highlight
+      // First, split the string by commas
+      codeLineNumbers.split(',').forEach(part => {
+        // Check if we have a range of lines
+        if (part.includes('-')) {
+            // Handle range of lines (e.g., "6-8")
+            const [start, end] = part.split('-').map(Number);
+            for (let i = start; i <= end; i++) {
+                linesToHighlight.push(i);
+            }
+        } else {
+            // Handle single line (e.g., "7")
+            linesToHighlight.push(Number(part));
+        }
+      });
+  
+      // Create monaco decorations for the lines to highlight
+      const decorations = linesToHighlight.map(lineNumber => ({
+          range: new monaco.Range(lineNumber, 1, lineNumber, 1),
+          options: {
+              isWholeLine: true,
+              className: 'qwebr-editor-highlight-line'
+          }
+      }));
+  
+      // Return decorations to be applied to the editor
+      return decorations;
+    }
+
+    // Ensure that the editor-code-line-numbers option is set and valid
+    // then apply styling
+    if (qwebrOptions['editor-code-line-numbers']) {
+      // Remove all whitespace from the string
+      const codeLineNumbers = qwebrOptions['editor-code-line-numbers'].replace(/\s/g,'');
+      // Check if the string is valid for line numbers, e.g., "1,3-5,7"
+      if (isValidCodeLineNumbers(codeLineNumbers)) {
+        // Apply the decorations to the editor
+        editor.createDecorationsCollection(decoratorHighlightLines(codeLineNumbers));
+      } else {
+        // Warn the user that the input is invalid
+        console.warn(`Invalid "editor-code-line-numbers" value in code cell ${qwebrOptions['label']}: ${codeLineNumbers}`);
+      }
+    }
+
+    // Helper function to check if selected text is empty
+    function isEmptyCodeText(selectedCodeText) {
+      return (selectedCodeText === null || selectedCodeText === undefined || selectedCodeText === "");
+    }
+
+    // Registry of keyboard shortcuts that should be re-added to each editor window
+    // when focus changes.
+    const addWebRKeyboardShortCutCommands = () => {
+      // Add a keydown event listener for Shift+Enter to run all code in cell
+      editor.addCommand(monaco.KeyMod.Shift | monaco.KeyCode.Enter, () => {
+
+        // Retrieve all text inside the editor
+        qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+      });
+
+      // Add a keydown event listener for CMD/Ctrl+Enter to run selected code
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, () => {
+
+        // Get the selected text from the editor
+        const selectedText = editor.getModel().getValueInRange(editor.getSelection());
+        // Check if no code is selected
+        if (isEmptyCodeText(selectedText)) {
+          // Obtain the current cursor position
+          let currentPosition = editor.getPosition();
+          // Retrieve the current line content
+          let currentLine = editor.getModel().getLineContent(currentPosition.lineNumber);
+
+          // Propose a new position to move the cursor to
+          let newPosition = new monaco.Position(currentPosition.lineNumber + 1, 1);
+
+          // Check if the new position is beyond the last line of the editor
+          if (newPosition.lineNumber > editor.getModel().getLineCount()) {
+            // Add a new line at the end of the editor
+            editor.executeEdits("addNewLine", [{
+            range: new monaco.Range(newPosition.lineNumber, 1, newPosition.lineNumber, 1),
+            text: "\n", 
+            forceMoveMarkers: true,
+            }]);
+          }
+          
+          // Run the entire line of code.
+          qwebrExecuteCode(currentLine, editor.__qwebrCounter, editor.__qwebrOptions);
+
+          // Move cursor to new position
+          editor.setPosition(newPosition);
+        } else {
+          // Code to run when Ctrl+Enter is pressed with selected code
+          qwebrExecuteCode(selectedText, editor.__qwebrCounter, editor.__qwebrOptions);
+        }
+      });
+    }
+
+    // Register an on focus event handler for when a code cell is selected to update
+    // what keyboard shortcut commands should work.
+    // This is a workaround to fix a regression that happened with multiple
+    // editor windows since Monaco 0.32.0 
+    // https://github.com/microsoft/monaco-editor/issues/2947
+    editor.onDidFocusEditorText(addWebRKeyboardShortCutCommands);
+
+    // Register an on change event for when new code is added to the editor window
+    editor.onDidContentSizeChange(updateHeight);
+
+    // Manually re-update height to account for the content we inserted into the call
+    updateHeight();
+
+    // Store the editor instance in the global dictionary
+    qwebrEditorInstances[editor.__qwebrCounter] = editor;
+
+  });
+
+  // Add a click event listener to the run button
+  runButton.onclick = function () {
+    qwebrExecuteCode(editor.getValue(), editor.__qwebrCounter, editor.__qwebrOptions);
+  };
+
+  // Add a click event listener to the hide/show output button
+  let toggleOutputButton = document.getElementById(`qwebr-button-toggle-output-${qwebrCounter}`);
+  toggleOutputButton.onclick = function () {
+    qwebrSetOutputHidden(qwebrCounter, !qwebrIsOutputHidden(qwebrCounter));
+  };
+
+  // Add a click event listener to the data frame table/text button
+  let tableButton = document.getElementById(`qwebr-button-table-${qwebrCounter}`);
+  tableButton.onclick = function () {
+    qwebrSetDataframeMode(qwebrCounter, !qwebrIsDataframeMode(qwebrCounter));
+  };
+
+  // Add a click event listener to the reset button
+  copyButton.onclick = function () {
+    // Retrieve current code data
+    const data = editor.getValue();
+    
+    // Write code data onto the clipboard.
+    navigator.clipboard.writeText(data || "");
+  };
+  
+  // Add a click event listener to the copy button
+  resetButton.onclick = function () {
+    editor.setValue(editor.__qwebrinitialCode);
+  };
+  
+}
+</script>
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Séance 2 · Types de données et fonctions de base</h1>
+<p class="subtitle lead">Programmation statistique avec R · 2 heures</p>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div id="qwebr-insertion-location-1"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="objectifs">
+<p><strong>Objectifs de la séance.</strong> À la fin, vous saurez :</p>
+<ul>
+<li>distinguer les <strong>types de données</strong> de base (numérique, entier, texte, logique) et les convertir ;</li>
+<li>gérer les valeurs spéciales <code>NA</code>, <code>NULL</code>, <code>NaN</code>, <code>Inf</code> ;</li>
+<li>manipuler les <strong>structures de données</strong> : vecteurs, facteurs, matrices, listes, data frames ;</li>
+<li><strong>sélectionner</strong> des éléments (indexation) ;</li>
+<li>utiliser les <strong>fonctions de base</strong> mathématiques, statistiques, textuelles et logiques.</li>
+</ul>
+</div>
+<p><strong>Déroulement (2 h)</strong></p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Durée</th>
+<th style="text-align: left;">Étape</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">5 min</td>
+<td style="text-align: left;">Rappel de la séance 1</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">15 min</td>
+<td style="text-align: left;">Types de données de base</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">20 min</td>
+<td style="text-align: left;">Vecteurs</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">20 min</td>
+<td style="text-align: left;">Facteurs, matrices, listes</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">15 min</td>
+<td style="text-align: left;">Data frames</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">15 min</td>
+<td style="text-align: left;">Fonctions de base</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">25 min</td>
+<td style="text-align: left;">Exercices</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">5 min</td>
+<td style="text-align: left;">Synthèse et travail à faire</td>
+</tr>
+</tbody>
+</table>
+<section id="rappel" class="level2">
+<h2 class="anchored" data-anchor-id="rappel">Rappel de la séance 1</h2>
+<p>Testez vos connaissances, puis ouvrez la réponse.</p>
+<div class="callout callout-style-default callout-note callout-titled" title="Question 1 : quelle est la différence entre R et RStudio ?">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Question 1 : quelle est la différence entre R et RStudio ?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>R est le langage et le moteur de calcul ; RStudio est l’interface (IDE) qui facilite son utilisation. On installe R d’abord, puis RStudio.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Question 2 : pourquoi le code suivant échoue-t-il ?">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Question 2 : pourquoi le code suivant échoue-t-il ?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>prix <span class="ot">&lt;-</span> <span class="dv">10</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>Prix <span class="sc">*</span> <span class="dv">2</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>R est sensible à la casse : <code>Prix</code> (avec un P majuscule) n’existe pas, seul <code>prix</code> a été créé.</p>
+</div>
+</div>
+</div>
+<div class="callout callout-style-default callout-note callout-titled" title="Question 3 : quelle est la différence entre install.packages() et library() ?">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Question 3 : quelle est la différence entre install.packages() et library() ?
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>install.packages("pkg")</code> télécharge et installe le package <strong>une seule fois</strong> ; <code>library(pkg)</code> le <strong>charge</strong> dans la session courante, à faire à chaque nouvelle session.</p>
+</div>
+</div>
+</div>
+</section>
+<section id="types" class="level2">
+<h2 class="anchored" data-anchor-id="types">1. Les types de données de base</h2>
+<p>Chaque valeur en R a un <strong>type</strong> (ou <em>classe</em>). Les quatre types de base sont :</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 25%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Type</th>
+<th style="text-align: left;">Exemple</th>
+<th style="text-align: left;"><code>class()</code></th>
+<th style="text-align: left;">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Numérique</td>
+<td style="text-align: left;"><code>42.5</code></td>
+<td style="text-align: left;"><code>"numeric"</code></td>
+<td style="text-align: left;">Nombres réels (type par défaut des nombres)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Entier</td>
+<td style="text-align: left;"><code>42L</code></td>
+<td style="text-align: left;"><code>"integer"</code></td>
+<td style="text-align: left;">Nombres entiers (suffixe <code>L</code>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Texte</td>
+<td style="text-align: left;"><code>"bonjour"</code></td>
+<td style="text-align: left;"><code>"character"</code></td>
+<td style="text-align: left;">Chaînes de caractères, entre <code>"</code> ou <code>'</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Logique</td>
+<td style="text-align: left;"><code>TRUE</code>, <code>FALSE</code></td>
+<td style="text-align: left;"><code>"logical"</code></td>
+<td style="text-align: left;">Booléens (<code>T</code> et <code>F</code> existent mais évitez-les)</td>
+</tr>
+</tbody>
+</table>
+<div id="qwebr-insertion-location-2"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<section id="tester-et-convertir" class="level3">
+<h3 class="anchored" data-anchor-id="tester-et-convertir">Tester et convertir</h3>
+<p>Les fonctions <code>is.*()</code> <strong>testent</strong> le type ; les fonctions <code>as.*()</code> <strong>convertissent</strong>.</p>
+<div id="qwebr-insertion-location-3"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="la-coercition-implicite" class="level3">
+<h3 class="anchored" data-anchor-id="la-coercition-implicite">La coercition implicite</h3>
+<p>Un vecteur ne contient <strong>qu’un seul type</strong>. Si vous mélangez, R convertit vers le type le plus général, dans l’ordre : logique → numérique → texte.</p>
+<div id="qwebr-insertion-location-4"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled" title="Astuce">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Astuce
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><code>sum()</code> et <code>mean()</code> sur un vecteur logique comptent et calculent la proportion de <code>TRUE</code>. Très pratique : <code>mean(notes &gt;= 10)</code> donne le taux de réussite.</p>
+</div>
+</div>
+</section>
+<section id="valeurs-spéciales" class="level3">
+<h3 class="anchored" data-anchor-id="valeurs-spéciales">Valeurs spéciales</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Valeur</th>
+<th style="text-align: left;">Signification</th>
+<th style="text-align: left;">Test</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>NA</code></td>
+<td style="text-align: left;">Valeur <strong>manquante</strong> (<em>Not Available</em>)</td>
+<td style="text-align: left;"><code>is.na(x)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>NULL</code></td>
+<td style="text-align: left;">Objet <strong>vide</strong> / absence d’objet</td>
+<td style="text-align: left;"><code>is.null(x)</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>NaN</code></td>
+<td style="text-align: left;">Résultat mathématique indéfini (<em>Not a Number</em>)</td>
+<td style="text-align: left;"><code>is.nan(x)</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>Inf</code>, <code>-Inf</code></td>
+<td style="text-align: left;">Infini</td>
+<td style="text-align: left;"><code>is.infinite(x)</code></td>
+</tr>
+</tbody>
+</table>
+<div id="qwebr-insertion-location-5"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="attention-à-la-précision-des-nombres-décimaux" class="level3">
+<h3 class="anchored" data-anchor-id="attention-à-la-précision-des-nombres-décimaux">Attention à la précision des nombres décimaux</h3>
+<div id="qwebr-insertion-location-6"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Les ordinateurs stockent les nombres décimaux de façon approchée. Pour comparer des nombres non entiers, utilisez <code>all.equal()</code>.</p>
+</section>
+</section>
+<section id="vecteurs" class="level2">
+<h2 class="anchored" data-anchor-id="vecteurs">2. Les vecteurs</h2>
+<p>Le <strong>vecteur</strong> est la structure fondamentale de R : une suite ordonnée de valeurs <strong>de même type</strong>. Même un nombre seul est un vecteur de longueur 1.</p>
+<section id="créer-des-vecteurs" class="level3">
+<h3 class="anchored" data-anchor-id="créer-des-vecteurs">Créer des vecteurs</h3>
+<div id="qwebr-insertion-location-7"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="sélectionner-des-éléments-lindexation" class="level3">
+<h3 class="anchored" data-anchor-id="sélectionner-des-éléments-lindexation">Sélectionner des éléments : l’indexation</h3>
+<p>L’indexation se fait avec des <strong>crochets</strong> <code>[ ]</code>. <strong>En R, la numérotation commence à 1</strong> (et non à 0 comme en Python).</p>
+<div id="qwebr-insertion-location-8"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Un vecteur peut avoir des <strong>noms</strong> :</p>
+<div id="qwebr-insertion-location-9"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="opérations-vectorisées" class="level3">
+<h3 class="anchored" data-anchor-id="opérations-vectorisées">Opérations vectorisées</h3>
+<p>R applique les opérations à <strong>tous les éléments à la fois</strong>, sans boucle :</p>
+<div id="qwebr-insertion-location-10"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-note callout-titled" title="Le recyclage">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>Le recyclage
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Quand deux vecteurs n’ont pas la même longueur, R <strong>recycle</strong> le plus court :</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dv">1</span><span class="sc">:</span><span class="dv">6</span> <span class="sc">+</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">20</span>)     <span class="co"># équivaut à 1:6 + c(10, 20, 10, 20, 10, 20)</span></span></code></pre></div><button title="Copier vers le presse-papier" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Si la longueur du plus long n’est pas un multiple du plus court (<code>1:5 + c(10, 20)</code>), R émet un avertissement.</p>
+</div>
+</div>
+</section>
+<section id="fonctions-utiles-pour-tester-les-vecteurs" class="level3">
+<h3 class="anchored" data-anchor-id="fonctions-utiles-pour-tester-les-vecteurs">Fonctions utiles pour tester les vecteurs</h3>
+<div id="qwebr-insertion-location-11"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+</section>
+<section id="structures" class="level2">
+<h2 class="anchored" data-anchor-id="structures">3. Facteurs, matrices et listes</h2>
+<section id="les-facteurs-variables-qualitatives" class="level3">
+<h3 class="anchored" data-anchor-id="les-facteurs-variables-qualitatives">Les facteurs : variables qualitatives</h3>
+<p>Un <strong>facteur</strong> représente une variable catégorielle (sexe, catégorie, niveau…) avec un ensemble fini de <strong>modalités</strong> (<em>levels</em>).</p>
+<div id="qwebr-insertion-location-12"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<p>Un facteur peut être <strong>ordonné</strong> (variable ordinale) : les comparaisons deviennent possibles.</p>
+<div id="qwebr-insertion-location-13"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="les-matrices" class="level3">
+<h3 class="anchored" data-anchor-id="les-matrices">Les matrices</h3>
+<p>Une <strong>matrice</strong> est un tableau à deux dimensions dont tous les éléments ont le <strong>même type</strong>.</p>
+<div id="qwebr-insertion-location-14"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="les-listes" class="level3">
+<h3 class="anchored" data-anchor-id="les-listes">Les listes</h3>
+<p>Une <strong>liste</strong> peut contenir des éléments de <strong>types et de tailles différents</strong> (même d’autres listes).</p>
+<div id="qwebr-insertion-location-15"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-note callout-titled" title="[ ] ou [[ ]] ?">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Note</span>[ ] ou [[ ]] ?
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li><code>liste["age"]</code> renvoie une <strong>sous-liste</strong> (de classe <code>list</code>).</li>
+<li><code>liste[["age"]]</code> ou <code>liste$age</code> renvoie <strong>le contenu</strong> (ici un nombre).</li>
+</ul>
+<p>Analogie : <code>[ ]</code> donne la boîte, <code>[[ ]]</code> donne ce qu’il y a dans la boîte.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="dataframes" class="level2">
+<h2 class="anchored" data-anchor-id="dataframes">4. Les data frames</h2>
+<p>Le <strong>data frame</strong> est la structure centrale de l’analyse de données : un tableau où chaque <strong>colonne est un vecteur</strong> (types possibles différents d’une colonne à l’autre) et chaque <strong>ligne</strong> une observation.</p>
+<div id="qwebr-insertion-location-16"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<section id="explorer-un-data-frame" class="level3">
+<h3 class="anchored" data-anchor-id="explorer-un-data-frame">Explorer un data frame</h3>
+<div class="callout callout-style-default callout-tip callout-titled" title="Bouton Tableau">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Bouton Tableau
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Quand une cellule affiche un data frame, cliquez sur <strong>Tableau</strong> dans sa barre d’outils : le résultat s’affiche comme dans un tableur, avec défilement des lignes et des colonnes. <code>View(df)</code> fait la même chose (comme dans RStudio).</p>
+</div>
+</div>
+<div id="qwebr-insertion-location-17"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="sélectionner-lignes-et-colonnes" class="level3">
+<h3 class="anchored" data-anchor-id="sélectionner-lignes-et-colonnes">Sélectionner lignes et colonnes</h3>
+<p>La syntaxe est <code>df[lignes, colonnes]</code> :</p>
+<div id="qwebr-insertion-location-18"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="un-vrai-jeu-de-données-iris" class="level3">
+<h3 class="anchored" data-anchor-id="un-vrai-jeu-de-données-iris">Un vrai jeu de données : <code>iris</code></h3>
+<div id="qwebr-insertion-location-19"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+</section>
+<section id="fonctions" class="level2">
+<h2 class="anchored" data-anchor-id="fonctions">5. Les fonctions de base</h2>
+<p>Une <strong>fonction</strong> prend des arguments et renvoie un résultat. R en contient des centaines ; voici celles à connaître absolument.</p>
+<section id="fonctions-mathématiques" class="level3">
+<h3 class="anchored" data-anchor-id="fonctions-mathématiques">Fonctions mathématiques</h3>
+<div id="qwebr-insertion-location-20"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="fonctions-statistiques-descriptives" class="level3">
+<h3 class="anchored" data-anchor-id="fonctions-statistiques-descriptives">Fonctions statistiques descriptives</h3>
+<div id="qwebr-insertion-location-21"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="trier-compter-dédupliquer" class="level3">
+<h3 class="anchored" data-anchor-id="trier-compter-dédupliquer">Trier, compter, dédupliquer</h3>
+<div id="qwebr-insertion-location-22"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="fonctions-de-texte" class="level3">
+<h3 class="anchored" data-anchor-id="fonctions-de-texte">Fonctions de texte</h3>
+<div id="qwebr-insertion-location-23"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="conditions-vectorisées" class="level3">
+<h3 class="anchored" data-anchor-id="conditions-vectorisées">Conditions vectorisées</h3>
+<p><code>ifelse(test, si_vrai, si_faux)</code> applique un test à chaque élément d’un vecteur :</p>
+<div id="qwebr-insertion-location-24"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="générer-des-données-aléatoires" class="level3">
+<h3 class="anchored" data-anchor-id="générer-des-données-aléatoires">Générer des données aléatoires</h3>
+<div id="qwebr-insertion-location-25"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+<section id="votre-première-fonction-aperçu" class="level3">
+<h3 class="anchored" data-anchor-id="votre-première-fonction-aperçu">Votre première fonction (aperçu)</h3>
+<p>Vous pouvez aussi <strong>créer vos propres fonctions</strong>. Nous verrons cela en détail à la séance 6 ; voici un avant-goût :</p>
+<div id="qwebr-insertion-location-26"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+</section>
+</section>
+<section id="exercices" class="level2">
+<h2 class="anchored" data-anchor-id="exercices">6. Exercices</h2>
+<section id="exercice-2.1-convertir-des-types" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="exercice-2.1-convertir-des-types">Exercice 2.1 · Convertir des types</h3>
+<p>Des notes ont été saisies sous forme de texte, avec une erreur de saisie :</p>
+<ol type="1">
+<li>convertissez <code>notes_txt</code> en un vecteur numérique <code>notes_num</code> (que se passe-t-il pour <code>"abc"</code> ?) ;</li>
+<li>calculez la moyenne des notes valides dans <code>moy</code> (les <code>NA</code> doivent être ignorés).</li>
+</ol>
+<div id="qwebr-insertion-location-27"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="verif-label">
+<p>✔ Vérification (exécutez après votre solution)</p>
+</div>
+<div id="qwebr-insertion-location-28"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled" title="Indice">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Indice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>as.numeric()</code> convertit ; <code>mean(..., na.rm = TRUE)</code> ignore les valeurs manquantes.</p>
+</div>
+</div>
+</div>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-1" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="McTNkcrSes4CBNvC" data-ct="wXZslK5acfu195egrsdIA2HEJdESit9pmrM3WKGWQfT8BCgPY/O3YsQ+vfSdjLWNUn5BqzhMo7sj4Jw8unrh96APGl3Hyo5HGzm7r7VSXheue8ZEL20gjZSyhG2kynUHp0cYNWVBwjAe8iaBIW8iYq8Az29rUovKaQm0HNBoqrng2TcuODlmjI0XPWVwq/jZZ8HjI+B5YyYafixjAflJ5zf9xb4rj86Yp9m0WHWCj8k4IeaiyGsiEsy2yZBzVeJMMiOvY1VTJyBaRc7qAlHsSlidYcmGqX0u4RPOZ0NLVoo+AV6qOWqaiaycEkzpxfyQni970+l+xCeI2DQqBMHvpSA5Os2bubs10aJ0AO8SgiMUNyB3nKLSKnVDaYsGQcyqXy01lwsKegZcsVr3e92+yMAE/EZqu9RdDFwXVz0uPH09PTYtHuVuggYbWvTo/2Je5ky3Y/T4L093TGIRsDMjUx+sQfeb3Pc3U6Z9R4Km1FRE2OGocvwjOaPfUoO9SUilMrOBeryEfHC7Z6u5bEzurS56B9uz4p1BvPVaW2YQYnTAXfOogeIf9VHlslsMC3hjqNuvyu6CHXdSYvYvQ4InKeFfOpaz6SfVeYA8aAV5TJNqnjN7Dxx5Jw1jJaOWpIw8mH+L5OF7DqU6ckPmXb7DbL4uUMstoCfSNvXs3twdokvV7G7/a3a1djv/Gz+l77lXMjCc+78Y8swDKl2Aa+iVB3GLR6CZad/V0XpJ6B8gq21wgcL5oDe+f0/ywjAFpXb+04iAaNU+GTGgNWDceKBZOhytahp3RyreHjukMEgkU4Ln1cZkEBk8jnrD0RkcA67hTiK1s2amgCmMBhom4QgNydSRCNMq2ByfIl7U7by9yOeJebEGypGf6mlg1lTvR79YmE5Sw3hNdJRrVD63GmjDnGQugyoJZpjeN6NzZQBeIlF5RgwKlY0/PDYIUPtOtTdVAH7c6xQPmniNjMPiIyUtAUqEMhUwH32susbgFo9q2J6r0p+Ik314y0wVsfVf1n8UWX8pzQCdgYDYiSeMxDDqCiMjhiEvqZMmQwFgui1Giz2uJ3h41LMHLyfZtZOxzYfvvedNbw9VHGjUbAjDNxS49+gn1qwtPRlI0e/h7k1prOdpOwYIcHI24RGcXq7eVQwCqiw0h/kgVwhMbt1eif49akJ2NcEp1TmAiOsdbcj584Nmki58Z+CJlArqYMijnJtKErlEskytugITnrGtwPonxgDlceoKjszCLhKtjNJZSDPw1LRY5WgiaP+chwrrwl0/YOJ7m3WtRGGWqhBl21HzOgROGKaBBIwDC/Zz7mZFTfSmxudQsRp/yE6mB1wpXngpKX5+gC/6fxQW7Le5lvADSEMA0ugqnLmaPB7IJ6S1jaTfSZJEje8wxK9sejb0yUCPClno/UKzIc/SXqFjsFdV9PBrrhflXuktSjmnUmL3evLXx87gUf5U79xUKMoLswUZPP1MlKRarvMyOX647SsPrCIEAw=="></div>
+</section>
+<section id="exercice-2.2-températures" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="exercice-2.2-températures">Exercice 2.2 · Températures</h3>
+<p>On relève la température de 7 jours consécutifs.</p>
+<ol type="1">
+<li>extrayez dans <code>chauds</code> les températures <strong>strictement supérieures à 24</strong> ;</li>
+<li>trouvez dans <code>jour_max</code> le <strong>numéro du jour</strong> le plus chaud ;</li>
+<li>calculez dans <code>moy_temp</code> la température moyenne <strong>arrondie à 1 décimale</strong>.</li>
+</ol>
+<div id="qwebr-insertion-location-29"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="verif-label">
+<p>✔ Vérification</p>
+</div>
+<div id="qwebr-insertion-location-30"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled" title="Indice">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-9-contents" aria-controls="callout-9" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Indice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-9" class="callout-9-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Condition avec <code>[ ]</code> pour la question 1 ; <code>which.max()</code> pour la question 2 ; <code>round(mean(...), 1)</code> pour la question 3.</p>
+</div>
+</div>
+</div>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-2" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="+A8T5y0/Ewaaxf/2" data-ct="gsdPox8TfE50K4svLAeEsQhr6R51CnE9HL84NHgqoq7Sj+VVJMs7255HekFfBEyeccdxPvNGxF+h+bDvAtjVttWTdFMmTICxtN14nYyytxFeE5VnunyVPeIJapCK5EvTAf4Htk+CrcT0evZrcfOXTriLqn2ZtpLTp3Qmf33/5tPaLW91uuyjeagkeLg46kzKkdacWOSj/iBZ4y7WcNimfpTfL7NVvlHNtYvBvwrVaK+ufcxXyCgFxWpSHshYUX2E2XQwC9aKBUolBnD3LBHbdr9muwAEnB2F3QmTFxWcqFUfOI59UL42pLEiOmtzYFPslK9Php3NnmWYIw/cdPE30s6RglcvYjcy2gfXMCj1FxfnwDc+6aS9+3c8rG5pdJr7vr+l9DrIbLlF7gkcZkAPzXyPuIQsXLIdSEgmEOZZlPLsD+Xfelq/NVAaV6G5XMEyFjpOyVialmKQhm5Mt4Dhx9cdD0Wp7TEnxdZJ33jzrGU5pJh2hUcAqvNHQB1HaxLWdkt6sMeQxEr6UiyZFX14qJSTGrpx5XGzuHQRC7I+wc2eHSruflliIlhI5VhTsdgZ2az12pLtO2/7L35CSeX1mEaqjL2uAIoOTDM4Zyu8zApT5IFeItvUYxLRHnjqsLwLfNg8Sa18m67LIBWPc3QB1HJnhsCt4jwdxlnCWDaQ1ipJeHMbcYrI0E6wOYM+wIoMcqpljRTzWSSFKIgkO79t1FYL49FxN0YD3CqJuDj+j8eq6cZc4/0v4+ZlJneYwf5QCT3kJRI6O1M4uocMEbtmd/0tjRGMDy6PcRZ/QFvaaUk2GUBQOMC1Qydg8BctjjcZCEfAgfEHpm9NW3yKxld2uJ5glFnYx6Q6tKyhZXhdi4xqD7T9HaEJAiiZOAOBcJmQtFBnkFOH5bpFiz0s1Kla8Ks/1yLFRopTqE/WpNG25ue4bMFWFfZXDl0MvcEhKbU7apuuKjSIdKUqoIM9dcIL45N8w8idKzTdrTAF6hp9YHRLoxWoVEI6VbHMXU+yOjtUpqBM0SwLf2PBeThQnF1Lr8RMVJ9rANMc5CtrUSe12D748yMenzw3mtqClxhwe8kaksVzdIp8AbgL79d0pUn106qafP0UfmQIeTVDkzUUw+RGdj8KZlZ9Jy0QQdZUl0H8dANlzaZxigr9X0nYzqp/O3wcszqSbcnkH7xRWd2hp+CX9RjveNizCIdV03x98UY32pwGbWKzqD5VIwXxaMigmBVOks+JbAKeMCAvT3u52X97iMB/khakVTAAJyt+ZoUvHmMZ7vlzACe1+IWA+lDs0wFU7m0md3PSwqAuvnn54b2TqsvJp73r8qSuj2zzysX9mZk/GZd/5b0IQEWALtY2j5Cj9a81shJNKr7I5CRhLXxKoGSnzvPQFFsjty5HQzWGm6uwSqiq7kiWV/kcFYv2qyX34m2b8p1T5TPpkbtpJjbt2lgyscQI8KrgpmaYV6xS2/mi2mjlJshh89Qk7C9vfGsVyU2FgFeeskkPHFdrtcjJNZnbFUFQnBdaMIGqlKziBQ1aWlRoDHFdFQazuiK8ShDJnYLbJ1gI8f5yYDYKjSpSpoXQXxQSWda9bgDbtBi6+0fnkYgcDHLq/B2YOg0ufYtMNz33wiKRraMgcAc6RXn42YLFjrPF+PRKi3GNycOvmFYBqPTaLJCS4Hu+v3Mi6RF3BrOtImGPtX4myaLT"></div>
+</section>
+<section id="exercice-2.3-facteur-ordonné" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="exercice-2.3-facteur-ordonné">Exercice 2.3 · Facteur ordonné</h3>
+<p>Les niveaux de satisfaction de 6 clients sont donnés ci-dessous.</p>
+<ol type="1">
+<li>créez un <strong>facteur ordonné</strong> <code>f</code> avec les niveaux dans l’ordre <code>"bas"</code> &lt; <code>"moyen"</code> &lt; <code>"haut"</code> ;</li>
+<li>affichez les <strong>effectifs</strong> de chaque niveau avec <code>table()</code>.</li>
+</ol>
+<div id="qwebr-insertion-location-31"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="verif-label">
+<p>✔ Vérification</p>
+</div>
+<div id="qwebr-insertion-location-32"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-3" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="u9ZwHMeNn/GhOLLf" data-ct="pRdtSrFu7lHZpap2TBc59EdkN+A8GJj9RRvL9N/Wk2ZY+Ir4K9qvB8mfQoawcSV4RlnAOapnYE+IcY10RMNHf0wGKc6D6YHDHBZDIo0Ca0WODEtpo99PUhHYmbhAYDLpwEhi/T4j1NDKojr2tiOZ/XMsByEW9Vzf912SwAjaEX3WeN2hlBgwSuY8Q21FiFKyawCF9S2u8TDU+FnB0oVIMIki295faMQvGoMebIQFA9VxvNe/yHswJsbiQphbomzlujPCfW0ZMxIADF+cn0RxpzvuP33wEctJcCCq22/gyYO3kgN8JUnSJaDl8H9xbSPIwHl9XgZdNVaGjPogZUu8l14yG5x9Ug9pBSM9vCfVWSMgffKo2loT0Vn8SEowAjcRnisd5ps8O2wlF9XG6EaU/kOWKUdn38GX0O0gbdUtiw2U43pyg3JRPOV4F4iO2tC+nGnNo3esOBZzgtM3KISbacKtl8zymqI0B3DjZQf7kpGSl7BqnVOuJL+8NR56PEhkB/2rWLgxZnbXbx/CJhHmDFX14kQYSlCnSs9XM1lzyrm33L/4numgR/OnOtaHXQKt04fF07aN8rQvyTrE/OG7cxwibDjs+kVonwbfkSstSshWNMiyEkqObzsDhBrV8fyCVBmfu9r9PUGMyy56NV7/QhS4+UkBEYobvinu4x6TArG/1Ui4PWlQuFGY6eyWhXPCxsSrQDs+g+zzkczcsgj6nyO1XAR6D8evOq3Sd7OeAcCuK4jUW9ORprt7Dqmrf1kCf9rwP0u0Wz/fpf1Spm5KEMGQEZRUdbw1kqwq0JDjGYgkrbXxozxRLof8LBwQDsW3sanFRmzJ+bbmQpLzQsfjQjk77S6GNUwDem6PQtHgIwegrrq1UGwpT0sWKxgkjPoBtX5mNVf2ayb0gGdfV9ZfzU3ebz2IGcvu2ii2zwyecAqI8ibfl/NKncbY7QpvTLY9je43HirURSyS9vf8c49Qhec24Eu2U3vyUuG4Fh8wC4lHSxTQNwxXw9Ra3E1U4Qm3jPQFkJrjBax/tSMv1jpBAK6trM1siH+UZBtLO7DwK5xJ4mebbPYytVvnI6FxjjIXEr4R2P+vXBWXMf9RNkOyaLlwUL43G2kKgM3ogzNL8zpFvJkdt7u9NQKgsD69BJWRHnvhQMumNEgD0ujX8dO9Yz7bEbnUMkBz1870Ju5n6BDyr9XI86ej1z/6CouNUkuHD5hd/Izz4M2YWaYnLVy3xOws3WrsoZD+73A8GcPxKQWEGwtb1IelY5R+j+d2GLY8kchm4aZDn5YG2HQw7ZPQQEo5F4ktVrnyaiW//VgzbEgwM2IiCnmyI6kiu6MfdTO2Qqf6vZj2jM/scspnJxIcq0wOS1X1tV/URL5GPBZuXXwTr9Q1EOMLapAyLi7zqK3tCauWv5gaVjYQhllG4bZ4KflmwHYQxMY+9azHFJUqHFTmvlDGt6h8CfmP9KIt06srSOS7nVBk7k6pcQVLFQrQupmDAr5aUSDiPIk0s/kffUsx3ezZey2P6ZYw/I3HkTMgusgVHROzlOWzM0Os6N4g4sugXxv+XVynxUovp9LI3J+LxEuQTMbFEYjaTFxIA2i5ewBUOcis1XZi2KHGC+cY5SLGOtDvcoAFnxJD09IfSCnKDKwNnKGzvQt90Q36vlyc/jR2jr88TgKnvVVn7OB5WkmEMu147SzkLuKe7bJHQeYZ/rEvyix7tCSbFyJ4jwv3BWxJiMDR2XGQzfJygL0QTQMdstk36DQ5JCHAYSLPb4+ApcJQTvKhZ4EMQDW2W4T6HfRRDt+rKMnGWl0MexEIEPFUBiTiNDDB3oGdU++dgJXedesJ5cXq0x0qq4fnU2pW9jokRsuTc43q01ocE2vfgxyE"></div>
+</section>
+<section id="exercice-2.4-une-liste" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="exercice-2.4-une-liste">Exercice 2.4 · Une liste</h3>
+<p>Créez une liste <code>livre</code> décrivant un livre, avec les éléments : <code>titre</code> (texte), <code>auteur</code> (texte), <code>annee</code> (nombre) et <code>pages</code> (nombre). Puis affichez uniquement le nombre de pages.</p>
+<div id="qwebr-insertion-location-33"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="verif-label">
+<p>✔ Vérification</p>
+</div>
+<div id="qwebr-insertion-location-34"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-4" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="RyNSQmfhwyOKpVVC" data-ct="ifp8GYD55WcFKE94g38qdacEkGybmv5yC/9lfsY34nyslIb2Aqp+I3+C8s1Y38v08eMv8he1HewVGk5eyGzcJXd1YZo86L3TaxXrUBFCrvLy+vowl3fD5mToO/t2AB0gXdonyzRwdxJrb5uj0Zggu6oZ3vgL/uF75cMhOUUbkhkobIR+UrQRscoBNYNM51mV036caC90xzbo/o/HJhL4SHOKZIDTGB9eoDAgLXvBD4vdrlg4hW4u+4SbKfrK0nLnsqdRbYolnq4hQwESeMoDCAZXxa0hO2lOJ5YD+EliTNH1J4VTht+r+kjesxXJtbft/trCFSASoefIyMni5O0xah6rYOAt1vJVALgXJSEnLVjSZtvNRv5CYWvs39elLGdk3OEZHcpboHGLD24xxtuTwUpF5k9xOfM5HkDN/b+q/T14FDzlMUa0s0Jh8U4IaOLzzcFmEmjVwPM7518rVYpO+u6nvSrqxdPKoQGj8EffhHeD6jQH3zflLfdah5nf7/JCX6wwSRx7EqE4thixFnMLN2D7XlsD8LirMlfjjFBEkXyIHsyVsn+BQ61USb3YdVm58DsV+x8fK4VVvB+JjxY614olazJQdKCmWTR0Xp+fTTdWnLxcan9USCp1MAlKR55wVoICAhTOZfnHtP/x/Vt1fEmTUE1xao+iSCq4Oolj5eOTJFqgiPMyQ2Q2DVAYZEEQVgjxQ/7CBcAz1zn9bykevytSVa940ix3YmVxmhysulewCh8i5TJtdnIf5rgcnk9BXXOTPBMtMtUd7MSQfxg4yUCsP8V3ljhcjzMoZE+0D1LKyhY/fCDU2lVOe37MSZ9t+Yh3wJxbUEcaD0d1Jj+MPtpmPtKNQk1cJu19Zd4m4Tj5SoYJ3ApImjPJ/G4CDvZ4nkqrEKyY+AV/tg/ED9XuOURwW/xIas8giLBQ5h1Q7wxbHimW3m1oxF8KeDnD6qxZ41Bb8t+pJD7XdR4u9G8vOAa5/PzuyVIVcd87qOHxLbuLcDP0mLwAjpXGVwIba2w0/69H6oKUerzl4fl+7gBsTqH+t1+gsVGqM57jnZG2yYongAErXJXSVar8PiuRMa/ByJQCdcJevj8lblLLFSW72E0uckywppdcn0dRvEjbgAsS4aCq+m3jEesxxST1+wPSkT8nS4jyRdPmLxmypM+gmbRBWAFtQtZf4cFPnPABHtx61WlAw8Cdln7nZ7LTrplo9GVAzLxfQpNRYStT/Y6QoZHz40XkWVQDbgOP+ehp+vA+MMcIw08RpmNCML4JMYCgKQ74uwkT6jmomjWhEaQOxJM4NmRdWkNPYcQPcaoo6ij8up+G2O1T/ouwgMnBEFoMt3QT22VWqqct+l42Nat9FHDnPIjifhKBSj/wIOByutr6q4rrbKSaZZhwx4FA6rufMYS2va+C9RdExhk81kkNtE4XrDg+3+ocpGZL2eoRHtl9FriHEeIOzt6/RLqzG65lWZe4sSru017GkovGS/H4OK3JRu+ouDGDdRxgWHc4Xvx2FIdUofbjBsCdNnTmWqFk0qGNWjELXUSPmsO2mYBQFap6tnLCok0G7ul5JOM76mNp0FeHbmlaDfex1ouXeA5fKRRhtu8pAhgDsiVWeFhxhtOIHzv6N93qAu0l2/wIpXsnsGUp91hrEAQl+D2h8jmpDmjEc68zF1Ano+kItFYXamcgzKx2uJyl5twlbOjehtW9WwZVsw=="></div>
+</section>
+<section id="exercice-2.5-interroger-mtcars" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="exercice-2.5-interroger-mtcars">Exercice 2.5 · Interroger <code>mtcars</code></h3>
+<p>Dans le jeu de données <code>mtcars</code>, on considère qu’une voiture est « économe » si sa consommation <code>mpg</code> (miles par gallon) est <strong>supérieure à 25</strong>.</p>
+<ol type="1">
+<li>calculez dans <code>n_econome</code> le <strong>nombre</strong> de voitures économes ;</li>
+<li>calculez dans <code>poids_moyen</code> le <strong>poids moyen</strong> (colonne <code>wt</code>) de ces voitures.</li>
+</ol>
+<div id="qwebr-insertion-location-35"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="verif-label">
+<p>✔ Vérification</p>
+</div>
+<div id="qwebr-insertion-location-36"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled" title="Indice">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-10-contents" aria-controls="callout-10" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Indice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-10" class="callout-10-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Deux approches : <code>sum(mtcars$mpg &gt; 25)</code> pour compter, et <code>mtcars$wt[mtcars$mpg &gt; 25]</code> pour sélectionner les poids.</p>
+</div>
+</div>
+</div>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-5" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="0JYlAXuOKR65ousB" data-ct="7ERjDPSm780rZRScpTbR+K4UHuTTDjPvqcHsjbuRKF6wYYt+X1zGes0nKv4eQvAcrTqaEgDxIkJAxuBgr6NxG85EuE9pzfZ5q2c7WQni3ecFmlxqG5FHIZPqLJWYIzJnAJ03N4sgtZZMsUuKhpOuDQGe0eVLqrgJPiMItFlISCOltoKFt1/QotyTzGqWWBwuaQcgKCNgHGI84/S4UCPSngpturcE68sKTuMke4lkQq93xocJuDqlGKelS2xq8sRtFpR3afWWjZ2OTO5R37ETboy9wx7gngGqxq4/w57PuSbZatc0RFGoX3JZLMy7A55+onksqGkPktw59l1SvNEhNqhFv/Gh6kdQYsQaDJjVMVU4xNugQi0tDkKj03WP5kGMSu1a3GMRCzopscRRWa4kXBXN3p+3xWpKUAiW99PPh5mdKlB+flHq+w0FB+27wdc4M+EHY30DmIuuMq/6824fMyOyGrDZLKl+zaW+dgwstjumeUR0QWm5rIZxFEkHWEWUnc52gmy2P/bjLgbET6d2KawYxWtJyjAKWib7M6F8UOaUQoMls+h46o19xO6PihgzSfnfm9VnXxzgKGOpQx7kMHP4OQLclByBZbyEKndn31GuqgVE/spIC/ChD1gPWgcFRb0lOu5I8IfssBvXPoBoeAzTFOGSebWrtTzJ78lJLO1zcyVXdoyrueT+VrgzJglghGGKt2UKeH2+hqA/FJfOtbXb5wBgHxQlK4KZTjtzGizevoGuJHdQ/DPkfG0Yh15goTDm8F1y9g8FJ7h5InZhII2+nhxpmva34XVHOvSMvWWde37pBt6pJlcP2/r3JB6E5+sh8tHjRI0lnTP02cah0SicVgd0a7me2WMN6UH/JV+bo9LNHuJcAd3uat7Jyz4Ctksk/X+/VKH9uZAMd9b36luT6zfsLWD9iWzifIDpmiYgU8BEXxu43UzBEDoZLIQblGhTJ8IgObFTZZRsLKQrQ4GIvb5A2v4wPtF2auSujHLHb3IVZRPb8bFUnGjFnym/zq3wgkSu3GrVBj9D6u+x"></div>
+</section>
+<section id="exercice-2.6-mini-synthèse-résultats-détudiants" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="exercice-2.6-mini-synthèse-résultats-détudiants">Exercice 2.6 · Mini-synthèse : résultats d’étudiants</h3>
+<p>À partir de ce data frame :</p>
+<ol type="1">
+<li>ajoutez une colonne <code>moyenne</code> = moyenne de <code>maths</code> et <code>stats</code> ;</li>
+<li>ajoutez une colonne <code>admis</code> (<code>TRUE</code> si <code>moyenne &gt;= 10</code>) ;</li>
+<li>stockez dans <code>n_admis</code> le <strong>nombre d’étudiants admis</strong>.</li>
+</ol>
+<div id="qwebr-insertion-location-37"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="verif-label">
+<p>✔ Vérification</p>
+</div>
+<div id="qwebr-insertion-location-38"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-6" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="0XrBidbTytPQr7lL" data-ct="9J+6WwjOrFVu+TuR8E7vC0wx0C57pPnNUhS16rExLuKZ3WTkHBRB+0j7z6xdgYFtVfFNeDG3QluvLQKGk3XtxmGbGAAsiu85RO/BTVOhGZBxHnjQ3ti728o9FiY1HDjcDcIUjsp7M7e3r3A5Qx76xDiqUDs6CKMocuFi201ZMarOfwr+NjV7z6ZKyPecq0sSVVk4u7xgloLqGeKl0loHyLx6uIXl0Cc85ZiLOIlTqB3wfh6WSAYWDAFlVbZPtCAgWWZSg7P48WTyNDwqeATQHEKlijo+0YJbW5x2EEIPOMHSppiaHYMtrqGO9Ww3YNKDBxsFAIFaLRyxxuXAswlJjpyGiQmQ2ywGgVS6vU2e576oqrTUJJDs6+vwYpXFPx7gbUpcdJw6EYDDoUwbjtfAHMsMP+HY7con2LFIcJdatQoRuFQXnecXmyTVK/UzSAqnEVMDEsaYBj+2Y+8aMsGVZ1pCndpBWRRR8NmKG1XwuP07iRh6s7558kIf3Nwb1nV3dz3vN6L0qoA1VxEMHmtynCKyRBHr73n6JqYH2l0mXuXPC7i1qMKDs/L5rcMCc+OzLQa8D6yJ/jty8Gs6nbbWSojlra0osIuidrYpQXURcuSmcFDC4+p6GhR5pBymk62trhy80dVbRBIZVGGtz3R8UNIIhYIO032oY/ppTxrRwa8A2o9KsfHoRy4vw9LBsZoEgkq6J4+vEM+SBTzIx5GxSqjNV8xU8Hz4R7BA9hVYq0/gaoOisFH+o6bjrpTTc3BJJM/0ubV0c+FV5DIlVj68X8DO0stamIsWzcKzUYGdRaZP4PWFaN1xW3gweq564xRdiCYKer5E22n+pM5N1+/t95FGfz8PSamYhxgJWbXy+7hoWRwQNoko+tlLd6BtmlBxl1RgOIsgCzhlo/fdq9/5/i8Q6vmzdBYza28i1LcFLdpWqrIFT/kuB6KaeaOzIZU1zB6awVzLeKRPWnqpPrhOCW8nX1NmwQuY63fugbz8HOadGdNKJLf1xvpVNqA0OLqD8RKbP5ikJRb/D+gQqb3gKqZGxwbkOh6O8XyB/ij4TT81+YCoX1pf33HFmFObKhoFIl2rVZR8XrDwdiBURC73W+3yJz8gOs2RY9IgFR7HFZZ6Ae/SPImfTlK+4LKafY6wCOoMLXVPnFOADNjzNEpi9WhU1nkP1GfvUEal9wxGH9nXzknFSENAQNl+FapR1XJRbHj2m3TP/TgiIKkcCoGOrgnSx7co6pTXyGEdYnOlj2i38Pz5UqrNd4DvbUUw1+KaduVj2WK+ATO34HwhnDv1WW9FSxAL+X4+jxH9zLE2ZIW3gLitCZSW6DF9x+Wa4J19MK53KgVNOHWvKG0a0WHPhpk0T7m0c7zZLCrkgZc3VP2QW+wvKlOnQ1oIB4xwsmUbQFPxGegfe+DP+x/XM6pFx0Tjj3icB/JIL+CWcv7DHgvTX5vxIHGqiAOX4oSN9duotBFUO/QXpxs5o4LvMdaGwyJ013VRIJQK9f7W7KLNk6eqwL3IdFuEaE5uKRLgRtR3r7i6CKExbC9aqdpNfvJ/PtUeGEAGoeU1B4hOfSazKR7LmiFaLG1RWyZZjkmGY7j5vxzYJFBe3jkJlQc+xFyMUJOdWgWtqZdV/QLayx7xII9BAVSxvubvjWjE2pwlIhTgGFAbY6ZYJRaX0/JYVBJq68G2r2mm8zHx/3ykLNT2rDTncbyIQegBTECk+ihrURzAnA+PP6VuJGe4epmFK8/wHQpPIYc74QgXuAdAOdm5AqjbqHMyXbUyV/dk6QqL1qOeBe/YbONnmcSA3RbtXRLH4olo6Dlbfcn57QRAUhs2bAZ/aD9mZ3puatNDL/iEqLOmUTMRildXmBM5v6cMDM2C7IzseqBhbBHlepBrkTlW1KIMLlYQzNY/US2dEFKY68iyXcPdCd6Ky5Ui32gQBnKcoOT9eDVsvXDq5Ii8D/7LLqx8xNbKsOdHhrmeCRWUMZM/smcnRTcEmrpOrauWeI+qpQ11xjNID9//KoKpObTp6HXFgP7Xpsp20yk+0s1q8y05kqYYO/IymPENdd9WJ9geprSH956FrNay8ley3A83TyT9H+3bR4GHdVvoGzJulVHNNQSDinRK+R0iUedSMYTLHDrapG+o/g/wbC4LZ7RObl5JkeXbHe5YH07L7Yiy/4XjIv0rflEaavfU7iMEOW3Hz2YUfTctxrxmssJhonLCAmWkOgqTD18xZo3hlBdwEqtlA1ttBLHmaz63d1j1o31PNCMQN1GiG44C0wlz7zP0xkHs9zzLl3RSX94VyWGw4VTdlc+oxD58+R8ZLlMET8dhZa3Kfv1kuGD6akRkewteLROdDUcVSNQ5z3U7H89NDqQAY+e/ZRCZael3J3eJ+FYJmqJXmSq5BVUqIZdaXMNpZ/PwPkQA50PYEJGjGsVNJ+yUvE2Iu38FTxBGQJrJyRCUGavfevIAn6/Q2xjb+xy2nMNpRDdJbuzdd0srXH1hYyVzJT8KVjB+eDBMzaeKQDUHYSu8i3rGMHKeg2c5HB1bDyQ7oC7Gm5ag6OYrvx6RORj9xAzYSR9n/Kxc4kPpiZEyDzLSWzKetMlw4nV4Vs1cLeQZ5XsE6OR8gTtILo8frfAANqtADCfMf26BipPCZ3OHRv3Nb9l4klCEQP+z4sQQbfwnyOMGsFTKfJz+MPUsv0mvSnGuG0lcBiZbU/5N2DtKugcD8KwKGnqU/KZ1x2jZrHKHmtnY+LmGFX7Mk6udSPIxjPMtIbxfJWkDQjvmUCmcgudGtIU9O9F6/e2TFuZ/JIrucIFF9rRJnp1sF2Akn/j27Vmo/aRFhPKGRskfQDfONXeXfJnA4D/mlxTZTy/jpjnPLON0XqV8ERZAfv+LJoz7YGzZom5Qkdj2dUzVHA0f3D2dhaU94JSG+xEWflhxKN9qQMysfkhZZxfJDVZNafTsbfZWuYBrXMkI1BueWfCu3l+f7sRgZVM+ikhSQLPyr1dUgKg32bUZfz8PUXtc+RDqkRLj4rJ3YERoyuyXLOXwgCqAsS4PoeiHMOyTrLsdDOhwYe9BCS+1CY4AC9qRIFaVzHJPyNwy4W6x8DqjOqSbxfFXVsJdkLYs8jL/VDsbMDFFZxJvrm617GLqIh6AfAbUbkAS6kSrW4/mnzHwHCmJr6uoYbEM3LIu"></div>
+</section>
+<section id="défi-bonus-moyennes-par-espèce" class="level3 exercice">
+<h3 class="anchored" data-anchor-id="défi-bonus-moyennes-par-espèce">Défi (bonus) · Moyennes par espèce</h3>
+<p>Avec <code>iris</code>, calculez la <strong>longueur moyenne des pétales</strong> (<code>Petal.Length</code>) pour chaque espèce, puis trouvez l’espèce dont la moyenne est la plus grande.</p>
+<div id="qwebr-insertion-location-39"></div>
+<noscript>Please enable JavaScript to experience the dynamic code cell content on this page.</noscript>
+<div class="callout callout-style-default callout-tip callout-titled" title="Indice">
+<div class="callout-header d-flex align-content-center collapsed" data-bs-toggle="collapse" data-bs-target=".callout-11-contents" aria-controls="callout-11" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Astuce</span>Indice
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-11" class="callout-11-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p><code>tapply(valeurs, groupes, fonction)</code> puis <code>which.max()</code> et <code>names()</code>.</p>
+</div>
+</div>
+</div>
+<div class="solution-verrou" data-page="r-seance-2" data-sol="r-seance-2-7" data-titre="Solution" data-iter="600000" data-salt="mza6/kr22fnncPwpH1g9iQ==" data-iv="oJeKmQC6B9RkbsIW" data-ct="TcPTKRFEytGPbK7MYSY3bJOXt6m6KJXrdpTq+MYQVqtW/Yyg3wAUaaADlGP7KKm3dThO7jm/VbGd4bC5hscHkAPgrUVXCeIhq0KVCSV3QsP6vFFEMYBWOL2VpMMGNtijZdfvWQ60ApMMTzD6ZnUjIumGTTMAEKyOIrh3wm6ZQRhObq+8CYNchhI9JsrnXN9kCZ8nOuLBSxS37wVQKaxqsyNR6wMWP5hcRKTanJOeVRnOZdPTAkQzC8is9NF+zc9eOahm20alYfrGSGQtTzcec7QeD5jQBdHKLrx6Hcu/Osv3RWEMgTgTFnR/twtkwMJxBHhGNa6v2t042as8COyz7R93gzVJFA8xGfkZd+1yXo2BvZ0x2kGyaOJbpGRxcDsdkRS8fmPpkx17R+6Hx3UQBC0b4eOLZrYscVea5n9m+U7e2ttqMKuOkaIGb4IdUhFVhhYOLpQws2GyQXleKNnHvMHZIvHvHfpseRz0/0cqTJQ6cH4AowIJtXH5JWHdnUTzyMXvY7/f4PaKKkCGu7C2f4qXOrUj4MrbuZZZXmIIDARGUgu+EedsdW+u9X9aIk6Y7zM7o4mivTZi2PJ5p62Zvp9fh+OmR6atwKXke7+R8FX4+ThhZ3UcI7o5BzKebq1CjxWOxZ9mfiE87mIUPQeGBlAFe2tOcSQ972QMg5eLeVD+/gRsK7rNV0K/lnNZp2bi4kNRhEc0A79sFbAIivtWz4d4WkBa6zaZ1hbL28J6CPG60jB55frYrzhwJ9AUCj02YsTp0cuFwV1LTvgdLvMVlegNgGMRnpLS4yi/bUMf0we6R0BnCcjuYF4soM8uTratjEkeuQw4/BfYmudLuMfgaKAUECvF1FzNVm/TC43MITbSYfrork7oWjHDPXUU9UtsdztFKlxZNXVtsbrxfMQbgWl2ZtlFn9MKPbrf/0VCP1NJxZGaIUdr/Q7VyYJB/iusfOZ6rzSdBTNUAwdS0o2ruQjH6Q=="></div>
+</section>
+</section>
+<section id="synthese" class="level2">
+<h2 class="anchored" data-anchor-id="synthese">7. Synthèse</h2>
+<div class="callout callout-style-default callout-important callout-titled" title="À retenir">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+<span class="screen-reader-only">Important</span>À retenir
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<ul>
+<li>4 types de base : <strong>numeric, integer, character, logical</strong> ; <code>class()</code> pour connaître le type, <code>as.*()</code> pour convertir.</li>
+<li>Un vecteur ne contient <strong>qu’un seul type</strong> (coercition automatique).</li>
+<li><strong><code>NA</code></strong> = valeur manquante : utilisez <code>na.rm = TRUE</code> ou <code>is.na()</code>.</li>
+<li>Indexation avec <code>[ ]</code> : positions, positions négatives, conditions logiques. <strong>La numérotation commence à 1.</strong></li>
+<li><strong>Facteur</strong> = variable catégorielle ; <strong>matrice</strong> = tableau d’un seul type ; <strong>liste</strong> = conteneur hétérogène (<code>$</code> / <code>[[ ]]</code>) ; <strong>data frame</strong> = tableau de colonnes (<code>df[lignes, colonnes]</code>, <code>df$col</code>).</li>
+<li>Les opérations sont <strong>vectorisées</strong> : évitez les boucles inutiles.</li>
+<li>Fonctions clés : <code>mean, median, sd, sum, min, max, sort, table, unique, paste, ifelse, which</code>.</li>
+</ul>
+</div>
+</div>
+</section>
+<section id="travail-à-faire-pour-la-séance-3" class="level2">
+<h2 class="anchored" data-anchor-id="travail-à-faire-pour-la-séance-3">Travail à faire pour la séance 3</h2>
+<ol type="1">
+<li>Reprenez <strong>tous les exercices</strong> de cette séance dans un script <code>seance2.R</code> dans RStudio (projet <code>cours_R</code>).</li>
+<li>Dans RStudio, explorez <code>?iris</code> et <code>?mtcars</code>, puis décrivez en 3 lignes chaque colonne de <code>mtcars</code> (commentaires dans le script).</li>
+<li>Vérifiez que RStudio fonctionne et que votre projet <code>cours_R</code> est prêt : la séance 3 est un <strong>lab</strong> (projet d’analyse) qui se fait principalement dans RStudio. Facultatif : préparez un petit fichier CSV personnel à importer.</li>
+<li>Facultatif : écrivez une fonction <code>imc(poids, taille)</code> qui calcule l’indice de masse corporelle (<span class="math inline">\(\text{poids} / \text{taille}^2\)</span>).</li>
+</ol>
+<hr>
+<p><a href="./r-seance-1.html">← Séance 1</a> | <a href="./cours-r.html">Programme du cours</a> | <a href="./r-seance-3.html">Séance 3 : Lab importation et nettoyage →</a></p>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copié");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copié");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/nevermind78\.github\.io\/R_Py\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+<script type="module">
+// Handle cell initialization initialization
+qwebrCellDetails.map(
+  (entry) => {
+    // Handle the creation of the element
+    qwebrCreateHTMLElement(entry);
+    // In the event of interactive, initialize the monaco editor
+    if (entry.options.context == EvalTypes.Interactive) {
+      qwebrCreateMonacoEditorInstance(entry);
+    }
+  }
+);
+
+// Identify non-interactive cells (in order)
+const filteredEntries = qwebrCellDetails.filter(entry => {
+  const contextOption = entry.options && entry.options.context;
+  return ['output', 'setup'].includes(contextOption) || (contextOption == "interactive" && entry.options && entry.options.autorun === 'true');
+});
+
+// Condition non-interactive cells to only be run after webR finishes its initialization.
+qwebrInstance.then(
+  async () => {
+    const nHiddenCells = filteredEntries.length;
+    var currentHiddenCell = 0;
+
+
+    // Modify button state
+    qwebrSetInteractiveButtonState(`🟡 Running hidden code cells ...`, false);
+
+    // Begin processing non-interactive sections
+    // Due to the iteration policy, we must use a for() loop.
+    // Otherwise, we would need to switch to using reduce with an empty
+    // starting promise
+    for (const entry of filteredEntries) {
+
+      // Determine cell being examined
+      currentHiddenCell = currentHiddenCell + 1;
+      const formattedMessage = `Evaluating hidden cell ${currentHiddenCell} out of ${nHiddenCells}`;
+
+      // Update the document status header
+      if (qwebrShowStartupMessage) {
+        qwebrUpdateStatusHeader(formattedMessage);
+      }
+
+      // Display the update in non-active areas
+      qwebrUpdateStatusMessage(formattedMessage);
+
+      // Extract details on the active cell
+      const evalType = entry.options.context;
+      const cellCode = entry.code;
+      const qwebrCounter = entry.id;
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        activeContainer.classList.remove('qwebr-cell-needs-evaluation');
+        activeContainer.classList.add('qwebr-cell-evaluated');
+
+        // Update status on the code cell
+        const activeStatus = document.getElementById(`qwebr-status-text-${qwebrCounter}`);
+        activeStatus.innerText = " Evaluating hidden code cell...";
+        activeStatus.classList.remove('qwebr-cell-needs-evaluation');
+        activeStatus.classList.add('qwebr-cell-evaluated');
+      }
+
+      switch (evalType) {
+        case 'interactive':
+          // TODO: Make this more standardized.
+          // At the moment, we're overriding the interactive status update by pretending its
+          // output-like. 
+          const tempOptions = entry.options;
+          tempOptions["context"] = "output"
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, tempOptions);
+          break;
+        case 'output':
+          // Run the code in a non-interactive state that is geared to displaying output
+          await qwebrExecuteCode(`${cellCode}`, qwebrCounter, entry.options);
+          break;
+        case 'setup':
+          const activeDiv = document.getElementById(`qwebr-noninteractive-setup-area-${qwebrCounter}`);
+
+          // Store code in history
+          qwebrLogCodeToHistory(cellCode, entry.options);
+
+          // Run the code in a non-interactive state with all output thrown away
+          await mainWebR.evalRVoid(`${cellCode}`);
+          break;
+        default: 
+          break; 
+      }
+
+      if (['output', 'setup'].includes(evalType)) {
+        // Disable further global status updates
+        const activeContainer = document.getElementById(`qwebr-non-interactive-loading-container-${qwebrCounter}`);
+        // Disable visibility
+        activeContainer.style.visibility = 'hidden';
+        activeContainer.style.display = 'none';
+      }
+    }
+  }
+).then(
+  () => {
+    // Release document status as ready
+
+    if (qwebrShowStartupMessage) {
+      qwebrStartupMessage.innerText = "🟢 Ready!"
+    }
+  
+    qwebrSetInteractiveButtonState(
+      `<i class="fa-solid fa-play qwebr-icon-run-code"></i> <span>Run Code</span>`, 
+      true
+    );  
+  }
+);
+</script>
+
+
+
+
+</body></html>

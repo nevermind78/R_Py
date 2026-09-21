@@ -1,0 +1,6 @@
+# Dossiers que Quarto ne doit ni générer ni copier dans le site publié
+_docs-enseignant/
+docs-enseignant/
+_solutions/
+.solutions-src/
+scripts/

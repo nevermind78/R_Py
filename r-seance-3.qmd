@@ -1,0 +1,518 @@
+---
+title: "Séance 3 · Lab : importer et nettoyer des données"
+subtitle: "Programmation statistique avec R · Lab 1/3 du projet « Solea » · 2 heures"
+format: html
+filters:
+  - webr
+---
+
+```{=html}
+<script>qwebrChargerDonnees(["data/ventes_brutes.csv", "data/ventes_propres.csv"]);</script>
+```
+
+```{webr-r}
+#| context: setup
+# Fonction utilisée par les cellules de vérification des tâches
+verifier <- function(condition, succes = "Bravo !") {
+  if (isTRUE(condition)) {
+    cat("✅", succes, "\n")
+  } else {
+    cat("❌ Pas encore : relisez la consigne, exécutez votre code (et les tâches précédentes), puis relancez cette cellule.\n")
+  }
+}
+```
+
+::: {.objectifs}
+**Compétences visées.** À la fin du lab, vous saurez :
+
+- **importer** un fichier CSV « à la française » (séparateur `;`, virgule décimale, accents) et diagnostiquer un import raté ;
+- réaliser un **audit de qualité** : doublons, valeurs manquantes, modalités incohérentes, valeurs aberrantes ;
+- **nettoyer** un jeu de données : texte, dates, valeurs manquantes, aberrations ;
+- **documenter** vos décisions et **exporter** un fichier propre.
+:::
+
+::: {.mission}
+<div class="mission-titre">Mission</div>
+
+Vous venez d'être recruté(e) comme analyste chez **Solea**, une boutique en ligne (fictive) d'articles de maison, de sport et de beauté. La directrice commerciale vous écrit :
+
+> « Voici l'export brut du logiciel de caisse pour l'année 2024. Impossible de l'utiliser tel quel : des collègues l'ont modifié dans Excel, il y a des erreurs de saisie et des trous. Je vous laisse le nettoyer. **Dans les prochaines séances, nous en tirerons nos indicateurs et un tableau de bord.** Dites-moi ce que vous avez corrigé, et pourquoi. »
+
+**Votre livrable** : un script de nettoyage reproductible, un fichier `ventes_nettoyees.csv` et un journal des corrections.
+:::
+
+**Déroulement (2 h)**
+
+| Durée | Étape |
+|:--|:--|
+| 15 min | Boîte à outils : importer, auditer, nettoyer |
+| 10 min | Tâche 1 · Importer le fichier |
+| 15 min | Tâche 2 · Auditer les données |
+| 5 min | Tâche 3 · Supprimer les doublons |
+| 15 min | Tâche 4 · Harmoniser les textes |
+| 10 min | Tâche 5 · Convertir les dates |
+| 10 min | Tâche 6 · Traiter les valeurs aberrantes |
+| 10 min | Tâche 7 · Traiter les valeurs manquantes |
+| 10 min | Tâche 8 · Contrôle final et export |
+| 20 min | Journal de nettoyage, synthèse |
+
+::: {.callout-note title="Comment travailler pendant un lab"}
+- Les tâches se font **dans l'ordre** : chaque tâche modifie l'objet `ventes` créé à la tâche 1. Si vous êtes perdu(e), ré-exécutez votre code de la tâche 1 (import) puis reprenez.
+- Chaque tâche contient une cellule où écrire **votre code**, suivie d'une cellule de **vérification** (libellé vert). Les indices sont **repliés** : cherchez d'abord ! Les **solutions** restent verrouillées : elles se débloquent avec le **code communiqué en fin de séance**.
+- Le bouton **Masquer** de chaque cellule cache sa sortie une fois lue, pour garder la page lisible.
+- Quand une cellule affiche un data frame (`head(ventes)`, `View(ventes)`...), le bouton **Tableau** l'affiche en tableau HTML défilant : pratique pour parcourir 400 lignes.
+- **Pour travailler dans RStudio**, téléchargez les données : [ventes_brutes.csv](data/ventes_brutes.csv){download="ventes_brutes.csv"} · [ventes_propres.csv](data/ventes_propres.csv){download="ventes_propres.csv"} (à placer dans le dossier de votre projet).
+:::
+
+## 1. Boîte à outils {#outils}
+
+### Importer : la famille `read.*`
+
+| Fonction | Séparateur | Décimale | Typique de |
+|:--|:--|:--|:--|
+| `read.csv()` | `,` | `.` | CSV « international » |
+| `read.csv2()` | `;` | `,` | CSV exporté d'Excel en français |
+| `read.delim()` | tabulation | `.` | fichiers `.tsv`, `.txt` |
+| `read.table()` | à préciser | à préciser | cas généraux |
+
+Arguments importants : `sep`, `dec`, `header`, `na.strings` (quelles valeurs comptent comme manquantes), `skip` (lignes à ignorer), `nrows`, `stringsAsFactors`, `fileEncoding` (encodage : `"UTF-8"` pour les accents).
+
+```{webr-r}
+# Même contenu, deux formats : comparez les résultats
+texte <- "nom;taille
+Amel;1,65
+Bilel;1,80"
+
+read.csv(text = texte)                  # mauvais réglages : tout dans une colonne
+read.csv2(text = texte)                 # bon réglage : taille est numérique
+read.table(text = texte, header = TRUE, sep = ";", dec = ",")   # équivalent explicite
+```
+
+Autres formats : les packages `readr` (`read_csv()`), `readxl` (`read_excel()`, fichiers Excel), `haven` (SPSS, Stata, SAS) s'utilisent de la même façon :
+
+```r
+library(readxl)
+donnees <- read_excel("fichier.xlsx", sheet = 1)
+```
+
+::: {.callout-tip title="Regarder avant d'importer"}
+`readLines("fichier.csv", n = 5)` affiche les premières lignes **brutes** : on repère le séparateur, la décimale, les guillemets, les en-têtes. Faites-le systématiquement.
+:::
+
+### Auditer : les fonctions de diagnostic
+
+```{webr-r}
+# Jeu de données d'exemple avec des valeurs manquantes : airquality
+dim(airquality)
+str(airquality)
+summary(airquality)
+colSums(is.na(airquality))       # nombre de NA par colonne
+sum(duplicated(airquality))      # nombre de lignes en double
+```
+
+### Nettoyer : les outils
+
+```{webr-r}
+# --- Texte : espaces, casse
+villes <- c("  PARIS", "lyon ", "Lille")
+trimws(villes)                                   # supprime les espaces autour
+tolower(trimws(villes))                          # ... et met en minuscules
+x <- tolower(trimws(villes))
+paste0(toupper(substr(x, 1, 1)), substring(x, 2))   # 1re lettre en majuscule
+
+# --- Dates : le paramètre format décrit COMMENT la date est écrite
+as.Date("15/03/2024", format = "%d/%m/%Y")
+as.Date("2024-03-15")                            # format ISO : pas besoin de format
+as.Date("2024-12-25") - as.Date("2024-03-15")    # calculs sur dates
+format(as.Date("2024-03-15"), "%m")              # extraire le mois
+
+# --- Remplacer des NA
+v <- c(10, NA, 30)
+ifelse(is.na(v), 0, v)                           # par une constante
+v[is.na(v)] <- mean(v, na.rm = TRUE); v          # par la moyenne
+
+# --- Valeur de remplacement calculée par groupe : ave()
+prix <- c(10, NA, 12, 20, NA)
+groupe <- c("a", "a", "a", "b", "b")
+ave(prix, groupe, FUN = function(x) median(x, na.rm = TRUE))
+```
+
+Codes de format des dates : `%d` jour, `%m` mois (numérique), `%Y` année sur 4 chiffres, `%y` sur 2 chiffres, `%B` nom du mois (dépend de la langue du système).
+
+## 2. Le lab {#lab}
+
+::: {.tache}
+### Tâche 0 · Explorer le dossier de travail
+
+<div class="duree">⏱ 5 min</div>
+
+Vérifiez que les fichiers sont bien là, puis regardez **à quoi ressemble le fichier brut** avant de l'importer.
+
+```{webr-r}
+list.files()
+readLines("ventes_brutes.csv", n = 6)
+```
+
+**Question** : quel est le séparateur de colonnes ? Quel est le séparateur décimal ? Que remarquez-vous sur les colonnes `categorie` et `ville` ?
+
+::: {.callout-note collapse="true" title="Réponse"}
+Séparateur de colonnes : `;`. Décimale : `,` (ex. `29,9`). Les colonnes `categorie` et `ville` mélangent majuscules, minuscules et parfois des espaces à la fin (`Beauté`, `beaute`, `PARIS`, `lyon `). Certaines cellules sont vides (`;;`).
+:::
+:::
+
+::: {.tache}
+### Tâche 1 · Importer le fichier
+
+<div class="duree">⏱ 10 min</div>
+
+**a)** Exécutez d'abord la tentative « naïve » et **lisez le message d'erreur** :
+
+```{webr-r}
+essai <- read.csv("ventes_brutes.csv")
+```
+
+R s'attend à des colonnes séparées par des virgules : il ne trouve qu'**une seule colonne** dans l'en-tête (tout est collé, car le séparateur réel est `;`), puis des virgules décimales dans les lignes suivantes qu'il prend pour des séparateurs. D'où l'erreur « plus de colonnes que de noms de colonnes ».
+
+**b)** Importez correctement le fichier dans un objet `ventes`. Exigences : les nombres à virgule doivent être lus comme des **nombres**, les cellules vides doivent devenir des **`NA`** (y compris dans les colonnes de texte), et l'encodage doit être `"UTF-8"`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("ventes") && ncol(ventes) == 10 && nrow(ventes) == 412 &&
+    is.numeric(ventes$prix_unitaire) &&
+    sum(is.na(ventes$mode_paiement)) == 15,
+  "Import réussi : 412 lignes × 10 colonnes, prix numériques, cellules vides = NA."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Le fichier est au format français : pensez à `read.csv2()`. L'argument `na.strings = c("", "NA")` dit à R que la chaîne vide est une valeur manquante.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-1.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 2 · Auditer les données
+
+<div class="duree">⏱ 15 min</div>
+
+Avant de corriger, **mesurez**. Explorez `ventes` (`str`, `summary`, `head`, `colSums(is.na(...))`, `table`, `unique`...) et calculez :
+
+- `n_doublons` : le nombre de **lignes en double** (identiques à une ligne précédente) ;
+- `n_cat_brut` : le nombre de **valeurs distinctes** dans `categorie` (on n'attend que 3 catégories !) ;
+- `n_ville_brut` : le nombre de valeurs distinctes dans `ville` ;
+- `q_max` : la **quantité maximale** commandée (ignorez les `NA`).
+
+```{webr-r}
+# Votre code ici : explorez, puis créez les 4 objets demandés
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("n_doublons") && exists("n_cat_brut") && exists("n_ville_brut") && exists("q_max") &&
+    n_doublons == 12 && n_cat_brut == 16 && n_ville_brut == 22 && q_max == 250,
+  "Audit correct : 12 doublons, 16 « catégories » au lieu de 3, 22 « villes » au lieu de 6, quantité max = 250 (!)."
+)
+```
+
+**Question** : quelles colonnes contiennent des valeurs manquantes, et combien ? Notez-le, vous en aurez besoin pour votre journal de nettoyage.
+
+::: {.callout-tip collapse="true" title="Indice"}
+`sum(duplicated(ventes))`, `length(unique(ventes$categorie))`, `max(ventes$quantite, na.rm = TRUE)`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-2.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 3 · Supprimer les doublons
+
+<div class="duree">⏱ 5 min</div>
+
+Le logiciel de caisse a parfois enregistré deux fois la même commande. Supprimez les lignes en double de `ventes` (gardez la première occurrence).
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  nrow(ventes) == 400 && !anyDuplicated(ventes),
+  "400 commandes uniques."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`duplicated()` renvoie `TRUE` pour chaque ligne déjà vue. Gardez les lignes pour lesquelles c'est `FALSE` : `ventes[!duplicated(ventes), ]`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-3.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 4 · Harmoniser les textes
+
+<div class="duree">⏱ 15 min</div>
+
+`categorie` et `ville` contiennent des variantes de la même modalité (`PARIS`, `paris `, `Paris`...). Harmonisez les deux colonnes : **espaces supprimés, première lettre en majuscule, le reste en minuscules**.
+
+Piège : après la mise en minuscules, regardez `table(ventes$categorie)`. Il reste **deux graphies** pour la beauté. Corrigez-la : la forme correcte est `Beauté`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  setequal(ventes$categorie, c("Maison", "Sport", "Beauté")) &&
+    setequal(ventes$ville, c("Paris", "Lyon", "Marseille", "Lille", "Bordeaux", "Nantes")),
+  "3 catégories et 6 villes propres."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Enchaînez `trimws()`, `tolower()`, puis `paste0(toupper(substr(x, 1, 1)), substring(x, 2))`. Pour `beaute` → `beauté`, remplacez avec une condition : `x[x == "beaute"] <- "beauté"` (à faire **avant** la mise en majuscule).
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-4.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 5 · Convertir les dates
+
+<div class="duree">⏱ 10 min</div>
+
+La colonne `date` est du **texte** au format `jj/mm/aaaa`. Convertissez-la en vrai type `Date`. Les commandes **sans date** ne peuvent pas être placées dans le temps : supprimez-les.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  inherits(ventes$date, "Date") && !anyNA(ventes$date) && nrow(ventes) == 392 &&
+    min(ventes$date) >= as.Date("2024-01-01") && max(ventes$date) <= as.Date("2024-12-31"),
+  "Dates converties, 392 commandes restantes, toutes en 2024."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`as.Date(x, format = "%d/%m/%Y")`. Une date illisible ou absente devient `NA` : filtrez avec `!is.na()`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-5.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 6 · Traiter les valeurs aberrantes
+
+<div class="duree">⏱ 10 min</div>
+
+Regardez la distribution de `quantite` : `summary()` puis `boxplot()`. Les quantités de 100 ou 250 sont des erreurs de saisie ; une quantité négative ou nulle n'a pas de sens pour une vente ; une quantité absente est inexploitable.
+
+**Règle retenue** : supprimer les commandes dont la quantité est manquante, inférieure ou égale à 0, ou supérieure à 20.
+
+```{webr-r}
+summary(ventes$quantite)
+boxplot(ventes$quantite, horizontal = TRUE, main = "Quantités commandées")
+```
+
+À vous d'appliquer la règle sur `ventes` :
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  nrow(ventes) == 383 && all(ventes$quantite %in% 1:5),
+  "383 commandes valides, quantités comprises entre 1 et 5."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Combinez les conditions avec `&` : quantité non manquante, `> 0`, `<= 20`. Attention : testez `!is.na()` **avant** les comparaisons.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-6.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 7 · Traiter les valeurs manquantes
+
+<div class="duree">⏱ 10 min</div>
+
+Il reste des `NA` dans `prix_unitaire`, `remise` et `mode_paiement`. Décisions de l'équipe :
+
+| Colonne | Décision | Justification |
+|:--|:--|:--|
+| `prix_unitaire` | remplacer par la **médiane du prix du même produit** | le prix catalogue d'un produit est unique |
+| `remise` | remplacer par **0** | pas de remise renseignée = pas de remise |
+| `mode_paiement` | remplacer par **`"Inconnu"`** | on ne peut pas deviner le mode de paiement |
+
+Appliquez ces trois décisions.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  !anyNA(ventes) && sum(ventes$mode_paiement == "Inconnu") == 14 &&
+    length(unique(ventes$prix_unitaire[ventes$produit == "Lampe de bureau"])) == 1,
+  "Plus aucune valeur manquante, et un seul prix par produit."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Pour le prix : `ave(ventes$prix_unitaire, ventes$produit, FUN = function(x) median(x, na.rm = TRUE))` calcule la médiane **par produit** (un vecteur de même longueur que `ventes`) ; `ifelse(is.na(prix), prix_ref, prix)` fait le remplacement.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-7.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 8 · Contrôle final et export
+
+<div class="duree">⏱ 10 min</div>
+
+**a)** Faites un contrôle d'ensemble de `ventes` (`str`, `summary`) : types cohérents, plus de `NA`, valeurs plausibles.
+
+**b)** Exportez le résultat dans `ventes_nettoyees.csv` (sans les numéros de ligne).
+
+```{webr-r}
+# Votre code ici : contrôle, puis export
+
+```
+
+**c)** Comparez votre fichier au fichier de référence de l'équipe data (`ventes_propres.csv`) :
+
+```{webr-r}
+#| read-only: true
+ref  <- read.csv("ventes_propres.csv")
+mine <- if (file.exists("ventes_nettoyees.csv")) read.csv("ventes_nettoyees.csv") else NULL
+verifier(
+  !is.null(mine) && identical(dim(mine), dim(ref)) &&
+    isTRUE(all.equal(mine, ref, check.attributes = FALSE)),
+  "🎉 Votre fichier est identique au fichier de référence : 383 lignes × 10 colonnes."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-3-8.qmd >}}
+
+::::
+:::
+
+## 3. Livrable et bilan {#livrable}
+
+::: {.livrable}
+**À rendre à la fin du lab (dans RStudio)**
+
+1. **Le script** `lab3_nettoyage.R` : import → audit → nettoyage → export, commenté et exécutable de haut en bas sur un R vierge.
+2. **Le fichier** `ventes_nettoyees.csv`.
+3. **Le journal de nettoyage**, sous forme de tableau, à compléter :
+
+| Problème constaté | Colonne | Lignes concernées | Décision | Justification |
+|:--|:--|--:|:--|:--|
+| Lignes en double | (toutes) | 12 | supprimées | une commande ne doit apparaître qu'une fois |
+| Dates absentes | `date` | 8 | *à compléter* | *à compléter* |
+| Quantités aberrantes ou absentes | `quantite` | 9 | *à compléter* | *à compléter* |
+| Textes incohérents | `categorie`, `ville` | *à compléter* | *à compléter* | *à compléter* |
+| Valeurs manquantes | `prix_unitaire`, `remise`, `mode_paiement` | *à compléter* | *à compléter* | *à compléter* |
+
+4. **Une réponse en 3 phrases** : sur 412 lignes brutes, combien de commandes avez-vous conservées ? Quel choix de nettoyage vous semble le plus discutable, et quel impact pourrait-il avoir sur les analyses de la séance 4 ?
+:::
+
+::: {.callout-important title="À retenir"}
+- **Regardez le fichier brut** (`readLines`) avant d'importer ; réglez `sep`, `dec`, `na.strings`, `fileEncoding`.
+- **Auditez avant de corriger** : `str`, `summary`, `colSums(is.na())`, `duplicated`, `table`.
+- Chaque nettoyage est une **décision** : documentez-la (ce qui est supprimé, imputé, corrigé, et pourquoi).
+- Un nettoyage se fait **dans un script**, jamais à la main dans un tableur : il doit être **reproductible**.
+- Ordre conseillé : doublons → textes → types (dates) → aberrations → manquants.
+:::
+
+## Pour la séance 4
+
+1. Terminez le livrable dans RStudio.
+2. Installez le package **dplyr** : `install.packages("dplyr")` (déjà fait si vous avez installé `tidyverse`).
+3. Lisez la première page de l'aide-mémoire *Data transformation with dplyr* ([posit.co/resources/cheatsheets](https://posit.co/resources/cheatsheets/)).
+
+---
+
+[← Séance 2](r-seance-2.qmd) | [Programme du cours](cours-r.qmd) | [Séance 4 : Lab dplyr →](r-seance-4.qmd)

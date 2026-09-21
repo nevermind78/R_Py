@@ -1,0 +1,10 @@
+# Profil « enseignant » : affiche les solutions en clair (aucun code demandé).
+# Sortie dans un dossier séparé pour ne jamais mélanger avec docs/ (publié pour les étudiants).
+project:
+  output-dir: _docs-enseignant
+
+website:
+  title: "Mes Cours de Programmation · VERSION ENSEIGNANT"
+
+# Solutions affichées telles quelles (filters/solutions.lua ne les retire pas)
+solutions: visibles

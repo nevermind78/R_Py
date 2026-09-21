@@ -1,0 +1,485 @@
+---
+title: "Séance 5 · Lab : le tableau de bord visuel"
+subtitle: "Programmation statistique avec R · Lab 3/3 du projet « Solea » · 2 heures"
+format: html
+filters:
+  - webr
+webr:
+  packages: ['dplyr', 'ggplot2']
+---
+
+```{=html}
+<script>qwebrChargerDonnees(["data/ventes_enrichies.csv"]);</script>
+```
+
+```{webr-r}
+#| context: setup
+# Fonctions utilisées par les cellules de vérification des tâches
+verifier <- function(condition, succes = "Bravo !") {
+  if (isTRUE(condition)) {
+    cat("✅", succes, "\n")
+  } else {
+    cat("❌ Pas encore : relisez la consigne, exécutez votre code (et affichez le graphique), puis relancez cette cellule.\n")
+  }
+}
+# Types de géométries (et classes parentes) utilisées par un graphique ggplot2
+geoms_de <- function(p) unique(unlist(lapply(p$layers, function(l) class(l$geom))))
+# Données réellement tracées par la 1re couche du graphique
+donnees_tracees <- function(p) suppressMessages(ggplot2::ggplot_build(p)$data[[1]])
+```
+
+::: {.objectifs}
+**Compétences visées.** À la fin du lab, vous saurez :
+
+- **choisir le graphique adapté** à une question (distribution, comparaison, évolution, relation) ;
+- construire des graphiques avec la **grammaire de `ggplot2`** : données, esthétiques (`aes`), géométries (`geom_*`) ;
+- **comparer des sous-groupes** avec les couleurs et les facettes ;
+- **soigner la communication** : titres, axes, thème, palette ;
+- traduire des graphiques en **recommandations** pour un décideur.
+:::
+
+::: {.mission}
+<div class="mission-titre">Mission</div>
+
+Le comité de direction de **Solea** a lieu jeudi. La directrice commerciale vous écrit :
+
+> « Vos chiffres sont très clairs, mais le comité ne lit pas les tableaux. Il me faut **quelques graphiques percutants** : comment se répartissent nos montants de commande, ce que rapporte chaque catégorie, comment évolue notre activité au fil de l'année, et si nos clients plus âgés dépensent plus. Terminez par **trois recommandations**. »
+
+Vous partez du tableau `ventes_enrichies` (383 commandes, 15 colonnes) construit à la fin de la séance 4.
+
+**Votre livrable** : un script `lab5_graphiques.R` qui produit les graphiques, et une note de 3 recommandations.
+:::
+
+**Déroulement (2 h)**
+
+| Durée | Étape |
+|:--|:--|
+| 25 min | Boîte à outils : choisir un graphique, grammaire de `ggplot2` |
+| 10 min | Tâche 1 · Distribution des montants |
+| 10 min | Tâche 2 · Comparer les catégories (boîtes à moustaches) |
+| 12 min | Tâche 3 · Le chiffre d'affaires par catégorie (barres) |
+| 15 min | Tâche 4 · L'évolution mensuelle (courbes) |
+| 8 min | Tâche 5 · Comparer les villes (facettes) |
+| 12 min | Tâche 6 · L'âge et le panier (nuage de points) |
+| 15 min | Tâche 7 · Soigner la communication |
+| 8 min | Tâche 8 · Recommandations |
+| 5 min | Synthèse |
+
+::: {.callout-note title="Rappels de fonctionnement"}
+- Pour chaque tâche, **assignez** le graphique à un objet (`p1 <- ggplot(...) + ...`), puis **affichez-le** en écrivant son nom sur une ligne (`p1`). La cellule de vérification inspecte l'objet.
+- Le bouton **Masquer** de chaque cellule cache sa sortie (graphique compris) pour alléger la page.
+- Pour travailler dans RStudio : [ventes_enrichies.csv](data/ventes_enrichies.csv){download="ventes_enrichies.csv"}.
+:::
+
+## 1. Boîte à outils {#outils}
+
+### Quel graphique pour quelle question ?
+
+| Votre question | Graphique | Fonction `ggplot2` |
+|:--|:--|:--|
+| Comment se **distribue** une variable numérique ? | histogramme, densité | `geom_histogram()`, `geom_density()` |
+| Comment **comparer la distribution** entre groupes ? | boîtes à moustaches | `geom_boxplot()` |
+| Comment **comparer des quantités** entre catégories ? | barres | `geom_col()`, `geom_bar()` |
+| Comment une valeur **évolue dans le temps** ? | courbe | `geom_line()` |
+| Y a-t-il une **relation** entre deux variables numériques ? | nuage de points (+ tendance) | `geom_point()`, `geom_smooth()` |
+
+### Graphiques de base (package `graphics`, inclus dans R)
+
+```{webr-r}
+par(mfrow = c(1, 2))                                 # deux graphiques côte à côte
+hist(iris$Sepal.Length, col = "steelblue", border = "white",
+     main = "Histogramme", xlab = "Longueur du sépale (cm)")
+boxplot(Sepal.Length ~ Species, data = iris, col = "orange",
+        main = "Boîtes à moustaches", xlab = "", ylab = "cm")
+```
+
+Rapides à écrire, mais peu flexibles : pour des graphiques soignés et composables, on utilise `ggplot2`.
+
+### La grammaire de `ggplot2`
+
+Un graphique = **des données** + **des correspondances `aes()`** entre variables et éléments visuels + **des couches `geom_*()`** que l'on **additionne avec `+`**.
+
+```{webr-r}
+library(ggplot2)
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +      # données + correspondances
+  geom_point()                               # couche : des points
+```
+
+**Mapper** une variable sur une esthétique (dans `aes()`) n'est pas la même chose que **fixer** une valeur (en dehors de `aes()`) :
+
+```{webr-r}
+library(ggplot2)
+
+# Variable -> couleur : une couleur par valeur de cyl
+ggplot(mtcars, aes(x = wt, y = mpg, color = factor(cyl))) +
+  geom_point(size = 3)
+
+# Valeur fixe : tous les points de la même couleur
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point(size = 3, color = "steelblue")
+```
+
+Facettes, titres et thème :
+
+```{webr-r}
+library(ggplot2)
+
+ggplot(mtcars, aes(x = wt, y = mpg)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, se = FALSE) +   # droite de tendance
+  facet_wrap(~ cyl) +                         # un panneau par valeur de cyl
+  labs(title = "Consommation et poids", x = "Poids (1000 lbs)", y = "Miles par gallon") +
+  theme_minimal()
+```
+
+::: {.callout-tip title="Bonnes pratiques"}
+- **Un message par graphique** ; un titre qui dit ce qu'il faut voir.
+- Axes **libellés avec unités** ; barres ordonnées (pas par ordre alphabétique sans raison).
+- Évitez les effets 3D et les camemberts à nombreuses parts.
+- Choisissez des palettes lisibles pour les daltoniens (`scale_color_brewer()`, `scale_fill_viridis_d()`).
+:::
+
+## 2. Le lab {#lab}
+
+### Point de départ : charger les données
+
+Cette cellule est déjà écrite : exécutez-la.
+
+```{webr-r}
+library(dplyr)
+library(ggplot2)
+
+ventes <- read.csv("ventes_enrichies.csv") |>
+  mutate(date = as.Date(date))
+
+glimpse(ventes)
+```
+
+::: {.tache}
+### Tâche 1 · Distribution des montants
+
+<div class="duree">⏱ 10 min</div>
+
+Construisez `p1`, un **histogramme** du `montant` des commandes (largeur de classe : 20 €). Habillez-le à votre goût (`fill`, `color`).
+
+**Question** : la distribution est-elle symétrique ? Comparez `mean(ventes$montant)` et `median(ventes$montant)`.
+
+```{webr-r}
+# Votre code ici : p1 <- ggplot(...) + ...
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("p1") && inherits(p1, "ggplot") && "GeomBar" %in% geoms_de(p1) &&
+    sum(donnees_tracees(p1)$count) == 383,
+  "Histogramme correct : les 383 commandes sont bien représentées."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`ggplot(ventes, aes(x = montant)) + geom_histogram(binwidth = 20)`. Pour `fill` et `color`, ce sont des arguments de `geom_histogram()` (valeurs fixes, hors `aes`).
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-1.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 2 · Comparer les catégories
+
+<div class="duree">⏱ 10 min</div>
+
+Construisez `p2`, des **boîtes à moustaches** du `montant` pour chaque `categorie`.
+
+**Question** : quelle catégorie a les paniers les plus élevés et les plus dispersés ?
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("p2") && inherits(p2, "ggplot") && "GeomBoxplot" %in% geoms_de(p2) &&
+    nrow(donnees_tracees(p2)) == 3,
+  "Trois boîtes, une par catégorie."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`aes(x = categorie, y = montant)` puis `geom_boxplot()`. Une boîte montre la médiane (trait central), les quartiles (bords) et les valeurs extrêmes (points).
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-2.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 3 · Le chiffre d'affaires par catégorie
+
+<div class="duree">⏱ 12 min</div>
+
+1. Calculez avec `dplyr` le chiffre d'affaires par catégorie dans `ca_cat` (colonnes `categorie` et `ca`).
+2. Construisez `p3`, un **diagramme en barres** du CA par catégorie, avec les barres **ordonnées de la plus grande à la plus petite**.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+d <- if (exists("p3") && inherits(p3, "ggplot")) donnees_tracees(p3) else NULL
+verifier(
+  !is.null(d) && "GeomBar" %in% geoms_de(p3) && nrow(d) == 3 &&
+    isTRUE(all.equal(d$y[order(d$x)], c(11455.47, 5684.57, 4141.2))),
+  "Barres correctes et ordonnées : Maison > Sport > Beauté."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`geom_col()` trace des barres à partir d'une valeur déjà calculée (contrairement à `geom_bar()` qui compte les lignes). Pour ordonner : `aes(x = reorder(categorie, -ca), y = ca)`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-3.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 4 · L'évolution mensuelle
+
+<div class="duree">⏱ 15 min</div>
+
+1. Calculez le CA par **mois et par catégorie** dans `ca_mois_cat` (colonnes `mois`, `categorie`, `ca`).
+2. Construisez `p4`, un graphique en **courbes** : le mois en abscisse, le CA en ordonnée, **une courbe (et une couleur) par catégorie**, avec des **points** sur chaque valeur mensuelle.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("p4") && inherits(p4, "ggplot") &&
+    all(c("GeomLine", "GeomPoint") %in% geoms_de(p4)) &&
+    nrow(donnees_tracees(p4)) == 36,
+  "3 courbes de 12 points : 36 valeurs tracées."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`group_by(mois, categorie)` puis `summarise(ca = sum(montant))`. Dans `aes()`, ajoutez `color = categorie` : `ggplot2` trace alors une courbe par valeur. Empilez `geom_line()` et `geom_point()`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-4.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 5 · Comparer les villes
+
+<div class="duree">⏱ 8 min</div>
+
+Construisez `p5`, un histogramme des montants (largeur de classe : 25 €) **découpé en un panneau par ville** avec `facet_wrap()`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("p5") && inherits(p5, "ggplot") && inherits(p5$facet, "FacetWrap") &&
+    length(unique(donnees_tracees(p5)$PANEL)) == 6,
+  "6 panneaux, un par ville."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Ajoutez `+ facet_wrap(~ ville)` à un histogramme. Ajoutez `scales = "free_y"` si les effectifs diffèrent beaucoup d'une ville à l'autre.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-5.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 6 · L'âge et le panier
+
+<div class="duree">⏱ 12 min</div>
+
+La directrice se demande si les clients plus âgés dépensent plus.
+
+1. Calculez dans `stats_clients` une ligne **par client** (`client_id`, `age`) avec son `panier` moyen.
+2. Construisez `p6`, un **nuage de points** âge / panier, avec une **droite de tendance** (`geom_smooth(method = "lm")`).
+
+**Question** : voyez-vous une relation ?
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("p6") && inherits(p6, "ggplot") &&
+    all(c("GeomPoint", "GeomSmooth") %in% geoms_de(p6)) &&
+    nrow(donnees_tracees(p6)) == 113,
+  "113 clients tracés avec leur droite de tendance."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`group_by(client_id, age) |> summarise(panier = mean(montant), .groups = "drop")`. Le graphique combine `geom_point()` et `geom_smooth(method = "lm")`.
+
+Si la console affiche `geom_smooth() using formula = 'y ~ x'`, ce n'est **pas une erreur** : `ggplot2` indique simplement la formule qu'il a utilisée. Ajoutez `formula = y ~ x` dans `geom_smooth()` pour la préciser et faire disparaître le message.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-6.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 7 · Soigner la communication
+
+<div class="duree">⏱ 15 min</div>
+
+Le graphique le plus important pour le comité est celui de **l'évolution mensuelle** (`p4`). Améliorez-le dans un nouvel objet `p7` :
+
+- un **titre** qui énonce le message (par exemple *« Un chiffre d'affaires porté par la fin d'année »*) et un **sous-titre** ;
+- des **axes libellés** (`x` : mois, `y` : CA en €) et une **légende** au titre explicite ;
+- le thème **`theme_minimal()`**, la légende en bas (`theme(legend.position = "bottom")`) ;
+- une **palette** lisible : `scale_color_brewer(palette = "Set2")`.
+
+```{webr-r}
+# Votre code ici : partez de p4 et ajoutez des couches avec +
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("p7") && inherits(p7, "ggplot") &&
+    !is.null(p7$labels$title) && !is.null(p7$labels$subtitle) &&
+    all(c("GeomLine", "GeomPoint") %in% geoms_de(p7)),
+  "Graphique soigné : titre, sous-titre et courbes présents."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+On peut ajouter des couches à un graphique existant : `p7 <- p4 + labs(...) + theme_minimal() + ...`. `labs()` accepte `title`, `subtitle`, `x`, `y`, `color`, `caption`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-7.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 8 · Recommandations
+
+<div class="duree">⏱ 8 min</div>
+
+En vous appuyant sur **vos graphiques** (et sur les indicateurs de la séance 4), rédigez pour la directrice **trois recommandations** chiffrées. Chacune doit citer le graphique qui la justifie.
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-5-8.qmd >}}
+
+::::
+:::
+
+## 3. Livrable et bilan {#livrable}
+
+::: {.livrable}
+**À rendre à la fin du lab (dans RStudio)**
+
+1. **Le script** `lab5_graphiques.R` : import → préparation → `p1` à `p7`, commenté, exécutable de haut en bas.
+2. **Deux images exportées** avec `ggsave()` : le graphique des catégories (`p3`) et l'évolution mensuelle soignée (`p7`).
+3. **La note de trois recommandations** de la tâche 8.
+
+**Auto-évaluation** : pour chaque graphique, pouvez-vous dire en une phrase *le message que doit retenir le comité* ? Si non, le graphique n'est pas prêt.
+:::
+
+::: {.callout-important title="À retenir"}
+- **La question guide le graphique** : distribution → histogramme/boîte ; comparaison → barres ; évolution → courbe ; relation → nuage de points.
+- `ggplot2` : `ggplot(données, aes(...)) + geom_*() + labs() + theme_*()` : on **construit par couches**.
+- **Mapper** une variable (dans `aes`) ≠ **fixer** une valeur (hors `aes`).
+- `facet_wrap(~ variable)` compare des sous-groupes sans surcharger un graphique.
+- Un bon graphique a un **titre qui énonce le message**, des axes **libellés**, un **ordre lisible** et une palette accessible.
+- Une **absence de relation** est un résultat à part entière.
+:::
+
+## Bilan du projet « Solea »
+
+Vous avez parcouru toute la chaîne d'un projet d'analyse de données :
+
+| Séance | Étape | Produit |
+|:--|:--|:--|
+| 3 | Importer, auditer, nettoyer | `ventes_nettoyees.csv` + journal de nettoyage |
+| 4 | Transformer, agréger, joindre | KPI et `ventes_enrichies` |
+| 5 | Visualiser, communiquer | Graphiques et recommandations |
+
+## Pour la séance 6
+
+1. Terminez le livrable dans RStudio.
+2. Relisez vos trois scripts : repérez les **morceaux de code répétés** (par exemple les agrégations par catégorie, par segment, par mois). À la séance 6, vous apprendrez à les factoriser avec des **fonctions**, des conditions et des boucles.
+
+---
+
+[← Séance 4](r-seance-4.qmd) | [Programme du cours](cours-r.qmd)

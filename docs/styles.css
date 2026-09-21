@@ -1,0 +1,147 @@
+/* Styles personnalisés */
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin: 10px 0;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: all 0.3s;
+}
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.grid {
+  display: grid;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+/* ---------- Cours R : blocs pédagogiques ---------- */
+
+/* Bandeau d'objectifs en haut de chaque séance */
+.objectifs {
+  border-left: 5px solid #276dc3;
+  background: #eef4fb;
+  padding: 0.8rem 1.2rem;
+  margin: 1.5rem 0;
+  border-radius: 0 6px 6px 0;
+}
+.objectifs > :first-child { margin-top: 0; }
+.objectifs > :last-child { margin-bottom: 0; }
+
+/* Exercice : encadré à gauche + libellé */
+.exercice {
+  border-left: 5px solid #e08a00;
+  background: #fff8ec;
+  padding: 0.2rem 1.2rem 0.6rem 1.2rem;
+  margin: 2rem 0;
+  border-radius: 0 6px 6px 0;
+}
+.exercice > h3 {
+  margin-top: 0.8rem;
+  font-size: 1.15rem;
+  color: #a35f00;
+}
+
+/* Petit libellé au-dessus des cellules de vérification */
+.verif-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2f7d32;
+  margin: 0.8rem 0 0.2rem 0;
+}
+
+/* Maquette de l'interface RStudio (4 volets) */
+.rstudio-mock {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 150px 150px;
+  gap: 6px;
+  max-width: 760px;
+  margin: 1.5rem auto;
+  font-size: 0.9rem;
+}
+.rstudio-mock .pane {
+  border: 2px solid #276dc3;
+  border-radius: 6px;
+  background: #f7faff;
+  padding: 0.5rem 0.8rem;
+}
+.rstudio-mock .pane b { display: block; color: #276dc3; font-size: 1rem; }
+.rstudio-mock .pane small { color: #555; }
+.rstudio-mock .p1 { background: #eef8ee; border-color: #2f7d32; }
+.rstudio-mock .p1 b { color: #2f7d32; }
+.rstudio-mock .p2 { background: #fdf1f1; border-color: #b23a3a; }
+.rstudio-mock .p2 b { color: #b23a3a; }
+.rstudio-mock .p3 { background: #fff8ec; border-color: #e08a00; }
+.rstudio-mock .p3 b { color: #a35f00; }
+
+/* Tableau de programme des séances */
+table.seances td:first-child { white-space: nowrap; font-weight: 600; }
+
+/* Étapes numérotées d'installation */
+.etape {
+  border: 1px solid #d0d7de;
+  border-radius: 6px;
+  padding: 0.3rem 1rem;
+  margin: 0.8rem 0;
+}
+
+/* ---------- Labs (séances 3 à 5) ---------- */
+
+/* Mise en situation : le « client » et sa demande */
+.mission {
+  border: 2px solid #1b5e6b;
+  background: #eaf6f8;
+  border-radius: 8px;
+  padding: 0.6rem 1.3rem;
+  margin: 1.5rem 0;
+}
+.mission > :first-child { margin-top: 0.4rem; }
+.mission > :last-child { margin-bottom: 0.4rem; }
+.mission .mission-titre {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  color: #1b5e6b;
+}
+
+/* Tâche d'un lab (analogue de .exercice, mais dans une progression) */
+.tache {
+  border-left: 5px solid #1b5e6b;
+  background: #f4fafb;
+  padding: 0.2rem 1.2rem 0.6rem 1.2rem;
+  margin: 2rem 0;
+  border-radius: 0 6px 6px 0;
+}
+.tache > h3 {
+  margin-top: 0.8rem;
+  font-size: 1.15rem;
+  color: #1b5e6b;
+}
+.tache .duree {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #5b6b70;
+  margin: -0.4rem 0 0.6rem 0;
+}
+
+/* Livrable final du lab */
+.livrable {
+  border: 2px dashed #7a3fa0;
+  background: #f8f2fc;
+  border-radius: 8px;
+  padding: 0.6rem 1.3rem;
+  margin: 2rem 0;
+}
+.livrable > :first-child { margin-top: 0.4rem; }
+.livrable > :last-child { margin-bottom: 0.4rem; }

@@ -1,0 +1,535 @@
+---
+title: "Séance 1 · Introduction à R et RStudio"
+subtitle: "Programmation statistique avec R · 2 heures"
+format: html
+filters:
+  - webr
+---
+
+::: {.objectifs}
+**Objectifs de la séance.** À la fin, vous saurez :
+
+- expliquer ce qu'est R et à quoi il sert ;
+- **installer R et RStudio** sur votre ordinateur et vérifier que tout fonctionne ;
+- vous repérer dans les **4 volets de RStudio** et utiliser les principaux raccourcis ;
+- utiliser la console comme calculatrice, créer des **objets**, appeler des **fonctions** ;
+- chercher de l'aide et **installer / charger un package**.
+:::
+
+**Déroulement (2 h)**
+
+| Durée | Étape |
+|:--|:--|
+| 15 min | Présentation du cours et de R |
+| 35 min | Installation de R et RStudio |
+| 25 min | Tour de l'interface RStudio |
+| 35 min | Premiers pas en R + exercices |
+| 10 min | Synthèse et travail à faire |
+
+## 1. Qu'est-ce que R ? {#presentation}
+
+**R** est à la fois un **langage de programmation** et un **environnement logiciel** dédiés à l'analyse statistique et à la visualisation de données. Il est libre, gratuit et multiplateforme (Windows, macOS, Linux).
+
+**Pourquoi R ?**
+
+- **Pensé pour la statistique** : régressions, tests, séries chronologiques, etc. sont disponibles nativement.
+- **Un écosystème énorme** : plus de 20 000 *packages* sur le [CRAN](https://cran.r-project.org/) (le dépôt officiel), couvrant la biologie, l'économie, la finance, les sciences sociales...
+- **Graphiques de qualité publication** (`ggplot2`).
+- **Reproductibilité** : votre analyse est un script, que l'on peut relire, partager et rejouer.
+- **Une communauté active** : forums, livres gratuits, formations.
+
+::: {.callout-note title="R et RStudio, ce n'est pas la même chose"}
+- **R** est le *moteur* : c'est lui qui exécute vos calculs.
+- **RStudio** est le *tableau de bord* : un environnement de développement (IDE) qui rend R agréable à utiliser (éditeur de code, aide, graphiques, gestion de projets...).
+
+On installe donc **R d'abord**, puis **RStudio**. RStudio ne fonctionne pas sans R.
+:::
+
+## 2. Installer R et RStudio {#installation}
+
+::: {.callout-tip title="Pas encore installé ? Vous pouvez quand même suivre la séance"}
+Toutes les cellules de code de cette page s'exécutent dans votre navigateur. Vous pouvez donc faire les exercices immédiatement, et terminer l'installation à la maison. Une alternative en ligne sans installation existe aussi : [Posit Cloud](https://posit.cloud/) (compte gratuit, limité en heures d'utilisation).
+:::
+
+### Étape 1 : installer R
+
+::: {.panel-tabset}
+
+### Windows
+
+1. Rendez-vous sur **<https://cran.r-project.org/>** et cliquez sur **Download R for Windows**.
+2. Cliquez sur **base**, puis sur **Download R-4.x.x for Windows** (le fichier `.exe`).
+3. Lancez l'installeur. Choisissez la langue, acceptez les options par défaut (**Suivant** jusqu'à **Terminer**).
+4. Vérification : le menu Démarrer contient maintenant **R x64 4.x.x**.
+
+::: {.callout-note title="Rtools (facultatif, plus tard)"}
+Rtools n'est nécessaire que pour installer certains packages qui doivent être *compilés* depuis leur code source. Dans ce cours, ce n'est en général pas nécessaire. Si un message d'erreur vous le demande un jour : <https://cran.r-project.org/bin/windows/Rtools/>.
+:::
+
+### macOS
+
+1. Rendez-vous sur **<https://cran.r-project.org/>** et cliquez sur **Download R for macOS**.
+2. Téléchargez le fichier `.pkg` adapté à votre Mac :
+   - **Apple silicon** (puces M1, M2, M3...) : version *arm64* ;
+   - **Intel** : version *x86_64*.
+
+   (Menu Pomme  → **À propos de ce Mac** pour connaître votre puce.)
+3. Ouvrez le `.pkg` et suivez l'assistant d'installation.
+
+### Linux (Ubuntu / Debian)
+
+Dans un terminal :
+
+```bash
+sudo apt update
+sudo apt install r-base r-base-dev
+```
+
+Pour obtenir une version plus récente que celle de la distribution, suivez les instructions du CRAN pour votre distribution : <https://cran.r-project.org/bin/linux/>.
+
+:::
+
+### Étape 2 : installer RStudio Desktop
+
+1. Allez sur **<https://posit.co/download/rstudio-desktop/>**.
+2. Téléchargez le programme d'installation correspondant à votre système (le site le propose automatiquement).
+3. Installez-le :
+   - **Windows** : double-clic sur le `.exe`, options par défaut ;
+   - **macOS** : ouvrez le `.dmg` et **glissez RStudio dans le dossier Applications** ;
+   - **Ubuntu/Debian** : `sudo apt install ./rstudio-*.deb` depuis le dossier de téléchargement.
+4. Lancez **RStudio**. Il détecte automatiquement l'installation de R.
+
+### Étape 3 : vérifier l'installation
+
+Dans RStudio, repérez le volet **Console** (en bas à gauche). Cliquez dedans, tapez la ligne suivante et validez avec **Entrée** :
+
+```r
+R.version.string
+```
+
+Vous devez voir s'afficher quelque chose comme `"R version 4.x.x (...)"`. Testez ensuite un graphique :
+
+```r
+plot(1:10)
+```
+
+Un graphique doit apparaître dans le volet en bas à droite (onglet **Plots**).
+
+::: {.callout-warning title="Problèmes fréquents"}
+- **« R introuvable » au démarrage de RStudio** : R n'est pas installé, ou a été installé après RStudio. Installez (ou réinstallez) R, puis relancez RStudio.
+- **Caractères accentués illisibles** : voir l'étape 4 ci-dessous (encodage UTF-8).
+- **Erreur lors de `install.packages()`** : vérifiez votre connexion Internet, puis tentez de changer de miroir CRAN (*Tools → Global Options → Packages → Primary CRAN repository*).
+- **Windows, dossier de travail dans OneDrive ou chemin avec accents/espaces** : cela peut causer des erreurs d'installation de packages ou de lecture de fichiers. Si vous rencontrez ce type de problème, placez vos projets dans un dossier simple, par exemple `C:/cours_R`.
+:::
+
+### Étape 4 : configurer RStudio (une seule fois)
+
+Menu **Tools → Global Options...** (sur macOS : **RStudio → Preferences...**).
+
+::: {.etape}
+**General → Basic**
+
+- Décochez **Restore .RData into workspace at startup**.
+- Réglez **Save workspace to .RData on exit** sur **Never**.
+
+*Pourquoi ?* Chaque session doit repartir d'un état propre, et le résultat doit dépendre de votre **script**, pas d'objets oubliés en mémoire. C'est la base de la reproductibilité.
+:::
+
+::: {.etape}
+**Code → Saving**
+
+- **Default text encoding** : **UTF-8** (indispensable pour les accents).
+:::
+
+::: {.etape}
+**Appearance** (facultatif)
+
+- Choisissez un thème (par exemple *Modern* ou *Tomorrow Night*) et une taille de police confortable.
+:::
+
+### Étape 5 : créer votre premier projet
+
+Un **projet RStudio** regroupe vos fichiers dans un dossier dédié et fixe automatiquement le **répertoire de travail**. C'est la bonne pratique dès le premier jour.
+
+1. Menu **File → New Project... → New Directory → New Project**.
+2. **Directory name** : `cours_R` ; choisissez le dossier parent avec **Browse...**.
+3. Cliquez **Create Project**.
+4. Créez un script : **File → New File → R Script** (ou `Ctrl + Shift + N`) et enregistrez-le sous `seance1.R`.
+
+## 3. Tour de l'interface RStudio {#interface}
+
+RStudio s'organise en **4 volets** :
+
+::: {.rstudio-mock}
+<div class="pane p1"><b>① Éditeur (Source)</b><small>Vos scripts <code>.R</code>, documents Quarto, données à visualiser. C'est ici que vous écrivez et sauvegardez votre code.</small></div>
+<div class="pane p3"><b>③ Environnement / Historique</b><small><i>Environment</i> : objets présents en mémoire (variables, tableaux). <i>History</i> : commandes déjà exécutées.</small></div>
+<div class="pane p2"><b>② Console</b><small>Là où R exécute les commandes et affiche les résultats. Invite <code>&gt;</code>. Onglets Terminal, Background Jobs.</small></div>
+<div class="pane"><b>④ Fichiers / Graphiques / Packages / Aide</b><small><i>Files</i>, <i>Plots</i>, <i>Packages</i>, <i>Help</i>, <i>Viewer</i>.</small></div>
+:::
+
+Si l'éditeur n'apparaît pas, créez un script : *File → New File → R Script*.
+
+### Console ou script ?
+
+| | Console | Script (`.R`) |
+|:--|:--|:--|
+| Usage | Tester rapidement une commande | Écrire l'analyse complète |
+| Sauvegarde | Non (l'historique seulement) | Oui, dans un fichier |
+| Exécution | `Entrée` | `Ctrl + Entrée` (ligne ou sélection) |
+
+**Règle d'or : tout ce qui compte s'écrit dans un script.** La console sert aux essais.
+
+### Raccourcis à connaître
+
+| Action | Windows / Linux | macOS |
+|:--|:--|:--|
+| Exécuter la ligne ou la sélection | `Ctrl + Entrée` | `Cmd + Entrée` |
+| Exécuter tout le script | `Ctrl + Shift + Entrée` | `Cmd + Shift + Entrée` |
+| Opérateur d'affectation `<-` | `Alt + -` | `Option + -` |
+| Opérateur pipe `\|>` | `Ctrl + Shift + M` | `Cmd + Shift + M` |
+| Commenter / décommenter | `Ctrl + Shift + C` | `Cmd + Shift + C` |
+| Vider la console | `Ctrl + L` | `Ctrl + L` |
+| Autocomplétion | `Tab` | `Tab` |
+| Aide sur la fonction sous le curseur | `F1` | `F1` |
+| Historique des commandes | `↑` / `↓` dans la console | idem |
+
+::: {.callout-tip title="Astuce"}
+Dans RStudio, tapez les 2-3 premières lettres d'une fonction puis `Tab` : RStudio propose l'autocomplétion et affiche l'aide de chaque argument.
+:::
+
+## 4. Premiers pas en R {#premiers-pas}
+
+À partir d'ici, toutes les cellules sont **exécutables et modifiables** dans la page. Essayez, modifiez, cassez, recommencez : c'est la meilleure façon d'apprendre !
+
+### 4.1 R comme calculatrice
+
+```{webr-r}
+2 + 3
+10 - 4
+6 * 7
+10 / 3
+2^10          # puissance
+10 %/% 3      # division entière
+10 %% 3       # reste de la division (modulo)
+(5 + 3) * 2   # les parenthèses fonctionnent comme en maths
+```
+
+Tout ce qui suit un `#` est un **commentaire** : R l'ignore. Commentez votre code pour expliquer le *pourquoi*.
+
+### 4.2 Créer des objets : l'affectation
+
+On stocke un résultat dans un **objet** (une variable) avec l'opérateur `<-` :
+
+```{webr-r}
+prix <- 19.99
+quantite <- 3
+total <- prix * quantite
+total
+```
+
+L'objet `total` existe maintenant en mémoire. Pour voir les objets actuellement créés :
+
+```{webr-r}
+ls()
+```
+
+::: {.callout-note title="Règles de nommage"}
+- Un nom peut contenir des lettres, chiffres, `.` et `_`, mais **ne commence pas par un chiffre** (`x1` est valide, `1x` non).
+- R est **sensible à la casse** : `Total` et `total` sont deux objets différents.
+- Évitez les accents et les espaces. Préférez `snake_case` : `prix_total`, `age_moyen`.
+- Évitez les noms de fonctions existantes (`c`, `t`, `mean`, `data`...).
+:::
+
+Essayez de provoquer l'erreur classique (casse différente) :
+
+```{webr-r}
+Total
+```
+
+Lire les messages d'erreur est une compétence à part entière : ici, R vous dit `objet 'Total' introuvable`.
+
+### 4.3 Appeler une fonction
+
+Une fonction s'appelle avec des **parenthèses** et des **arguments** : `nom_fonction(argument1, argument2)`.
+
+```{webr-r}
+sqrt(144)
+abs(-7.5)
+round(3.14159, digits = 2)
+round(3.14159, 2)             # même chose, sans nommer l'argument
+max(4, 9, 2)
+```
+
+Un argument peut être **nommé** (`digits = 2`) ou donné **par position** (`2`). Nommer les arguments rend le code plus lisible.
+
+### 4.4 Types de valeurs, aperçu
+
+```{webr-r}
+class(42)          # numérique
+class("bonjour")   # texte (character), toujours entre guillemets
+class(TRUE)        # logique (TRUE / FALSE)
+```
+
+Nous détaillerons tous les types de données à la séance 2.
+
+### 4.5 Obtenir de l'aide
+
+Dans RStudio, trois façons équivalentes d'ouvrir l'aide d'une fonction :
+
+```r
+?round
+help("round")
+# ou : placez le curseur sur "round" et appuyez sur F1
+```
+
+La page d'aide contient toujours : **Description**, **Usage** (les arguments), **Arguments**, **Value** et surtout **Examples**, que vous pouvez copier/coller et exécuter. Pour voir rapidement les arguments d'une fonction :
+
+```{webr-r}
+args(round)
+```
+
+::: {.callout-tip title="Chercher hors de R"}
+Si l'aide de R ne suffit pas : recopiez le message d'erreur (en anglais) dans un moteur de recherche, ou consultez [Stack Overflow](https://stackoverflow.com/questions/tagged/r) et la documentation [Posit](https://posit.co/resources/cheatsheets/) (aide-mémoires « cheatsheets »).
+:::
+
+### 4.6 Un premier graphique et un premier jeu de données
+
+R contient de nombreux **jeux de données** d'exemple. `mtcars` décrit 32 modèles de voitures :
+
+```{webr-r}
+head(mtcars)     # 6 premières lignes
+dim(mtcars)      # nombre de lignes et de colonnes
+mean(mtcars$mpg) # consommation moyenne (miles par gallon)
+```
+
+```{webr-r}
+plot(mtcars$wt, mtcars$mpg,
+     xlab = "Poids (1000 lbs)", ylab = "Consommation (mpg)",
+     main = "Plus la voiture est lourde, plus elle consomme",
+     pch = 19, col = "steelblue")
+```
+
+### 4.7 Packages : installer, puis charger {#packages}
+
+Un **package** est un ensemble de fonctions, de données et d'aide. R de base est déjà riche, mais la puissance de R vient des packages.
+
+```r
+# 1) INSTALLER : une seule fois par ordinateur (télécharge depuis le CRAN)
+install.packages("tidyverse")
+
+# 2) CHARGER : à chaque nouvelle session R
+library(tidyverse)
+```
+
+::: {.callout-note title="L'analogie de l'ampoule"}
+`install.packages()` = **acheter** l'ampoule (une seule fois).
+`library()` = **allumer** la lumière (à chaque fois que vous en avez besoin).
+:::
+
+Lancez `install.packages()` dans RStudio, sur votre machine. Dans les pages de ce cours, les packages nécessaires sont préchargés par le site : il suffit d'appeler `library()`.
+
+### 4.8 Répertoire de travail
+
+R lit et écrit les fichiers à partir d'un **répertoire de travail**. Pour l'afficher :
+
+```{webr-r}
+getwd()
+```
+
+(Dans cette page, il s'agit d'un dossier virtuel du navigateur ; sur votre machine, ce sera le dossier de votre projet RStudio.) C'est pourquoi on travaille en **projets** : le répertoire de travail est automatiquement le dossier du projet, et on utilise des **chemins relatifs** (`"donnees/notes.csv"`) qui fonctionnent sur tous les ordinateurs.
+
+## 5. Exercices {#exercices}
+
+::: {.exercice}
+### Exercice 1.1 · Aire d'un cercle
+
+Calculez l'aire d'un cercle de rayon 7 cm. La constante $\pi$ est disponible sous le nom `pi`. Stockez le résultat dans un objet nommé `aire`.
+
+Rappel : $\text{aire} = \pi \times r^2$
+
+```{webr-r}
+# Votre code ici : définissez rayon, puis calculez aire
+
+```
+
+::: {.verif-label}
+✔ Vérification (exécutez après votre solution)
+:::
+
+```{webr-r}
+#| read-only: true
+if (!exists("aire") || !is.numeric(aire)) {
+  cat("⚠️  L'objet 'aire' n'existe pas encore (ou n'est pas un nombre).\n")
+} else if (isTRUE(all.equal(aire, pi * 7^2))) {
+  cat("✅ Bravo ! aire =", round(aire, 2), "cm²\n")
+} else {
+  cat("❌ Pas tout à fait. Votre valeur :", aire, "\n")
+}
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Utilisez `^` pour la puissance : `rayon^2`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-1-1.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 1.2 · Prix TTC
+
+Un article coûte 45 € hors taxe (HT). La TVA est de 20 %. Calculez le prix TTC et stockez-le dans `prix_ttc`. Affichez-le arrondi à 1 décimale.
+
+```{webr-r}
+# Votre code ici
+prix_ht <- 45
+tva <- 0.20
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+if (!exists("prix_ttc")) {
+  cat("⚠️  L'objet 'prix_ttc' n'existe pas encore.\n")
+} else if (isTRUE(all.equal(prix_ttc, 54))) {
+  cat("✅ Correct : prix TTC =", prix_ttc, "€\n")
+} else {
+  cat("❌ Pas tout à fait. Votre valeur :", prix_ttc, "\n")
+}
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Prix TTC = prix HT × (1 + taux de TVA).
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-1-2.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 1.3 · Conversion de température
+
+Convertissez 37,5 °C en degrés Fahrenheit et stockez le résultat dans `temp_f`.
+
+Formule : $F = C \times \frac{9}{5} + 32$
+
+```{webr-r}
+# Votre code ici
+temp_c <- 37.5
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+if (!exists("temp_f")) {
+  cat("⚠️  L'objet 'temp_f' n'existe pas encore.\n")
+} else if (isTRUE(all.equal(temp_f, 99.5))) {
+  cat("✅ Correct :", temp_c, "°C =", temp_f, "°F\n")
+} else {
+  cat("❌ Pas tout à fait. Votre valeur :", temp_f, "\n")
+}
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-1-3.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 1.4 · Explorer un jeu de données
+
+Avec le jeu de données `mtcars` :
+
+1. affichez ses **3 premières lignes** (indice : `head()` a un argument `n`) ;
+2. calculez le **nombre de voitures** (nombre de lignes : `nrow()`) ;
+3. calculez la **puissance moyenne** (colonne `hp`), arrondie à 1 décimale, et stockez-la dans `hp_moyen`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+if (!exists("hp_moyen")) {
+  cat("⚠️  L'objet 'hp_moyen' n'existe pas encore.\n")
+} else if (isTRUE(all.equal(hp_moyen, round(mean(mtcars$hp), 1)))) {
+  cat("✅ Correct : puissance moyenne =", hp_moyen, "chevaux\n")
+} else {
+  cat("❌ Pas tout à fait. Votre valeur :", hp_moyen, "\n")
+}
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+On accède à une colonne avec `$` : `mtcars$hp`. Puis `mean()` et `round()`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-1-4.qmd >}}
+
+::::
+:::
+
+::: {.exercice}
+### Exercice 1.5 · À vous d'explorer
+
+Le jeu de données `iris` décrit 150 fleurs de 3 espèces. Sans aide de ma part :
+
+1. affichez ses premières lignes ;
+2. trouvez combien de lignes et de colonnes il contient ;
+3. tracez un histogramme de `iris$Sepal.Length` (fonction `hist()`).
+
+```{webr-r}
+# Votre code ici
+
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-1-5.qmd >}}
+
+::::
+:::
+
+## 6. Synthèse {#synthese}
+
+::: {.callout-important title="À retenir"}
+- **R** est le moteur, **RStudio** est l'interface. Installer R **puis** RStudio.
+- 4 volets : **Éditeur, Console, Environnement, Fichiers/Graphiques/Aide**.
+- On travaille dans un **script** et dans un **projet** ; on n'enregistre pas l'espace de travail (`.RData`).
+- `objet <- valeur` crée un objet ; `fonction(argument = valeur)` appelle une fonction.
+- R est **sensible à la casse** ; les commentaires commencent par `#`.
+- `?fonction` ouvre l'aide ; `install.packages("nom")` **une fois**, `library(nom)` **à chaque session**.
+:::
+
+## Travail à faire pour la séance 2
+
+1. **Terminer l'installation** de R et RStudio si ce n'est pas fait, et vérifier avec `R.version.string`.
+2. Dans RStudio, **créer un projet** `cours_R` et un script `seance1.R` contenant vos solutions aux exercices 1.1 à 1.4 (avec des commentaires).
+3. Installer le package `tidyverse` : `install.packages("tidyverse")` (cela peut prendre quelques minutes).
+4. Facultatif : parcourir la page d'aide de `?mean` et `?paste` et essayer un exemple de chaque.
+
+---
+
+[← Programme du cours](cours-r.qmd) | [Séance 2 : Types de données et fonctions de base →](r-seance-2.qmd)

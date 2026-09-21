@@ -1,0 +1,83 @@
+---
+title: "Cours Python Interactif"
+format: html
+filters:
+  - pyodide
+---
+
+## Introduction au langage Python
+
+Bienvenue dans ce cours interactif sur Python ! Vous pouvez exécuter le code directement dans votre navigateur grâce à Pyodide.
+
+### Exemple 1 : Les bases de Python
+
+Essayez ce code pour voir comment Python fonctionne :
+
+```{pyodide-python}
+# Créer une liste
+nombres = [1, 2, 3, 4, 5]
+
+# Calculer la moyenne
+moyenne = sum(nombres) / len(nombres)
+
+# Afficher le résultat
+print(f"La moyenne est: {moyenne}")
+
+# Créer une compréhension de liste
+carres = [x**2 for x in nombres]
+print(f"Les carrés sont: {carres}")
+```
+
+### Exemple 2 : Visualisation avec Matplotlib
+
+```{pyodide-python}
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Créer des données
+x = np.linspace(0, 10, 100)
+y = np.sin(x)
+
+# Créer un graphique
+plt.figure(figsize=(10, 6))
+plt.plot(x, y, 'b-', linewidth=2)
+plt.title('Fonction Sinus')
+plt.xlabel('x')
+plt.ylabel('sin(x)')
+plt.grid(True)
+plt.show()
+```
+
+### Exemple 3 : Analyse de données avec Pandas
+
+```{pyodide-python}
+import pandas as pd
+
+# Créer un DataFrame
+data = {
+    'nom': ['Alice', 'Bob', 'Charlie', 'Diana'],
+    'age': [25, 30, 35, 28],
+    'score': [85, 92, 78, 95]
+}
+
+df = pd.DataFrame(data)
+
+# Afficher les statistiques
+print(df.describe())
+print("\nPersonnes avec score > 80:")
+print(df[df['score'] > 80])
+```
+
+### Exercice pratique
+
+Modifiez le code ci-dessous pour créer votre propre programme :
+
+```{pyodide-python}
+# Votre code ici
+for i in range(5):
+    print(f"Ligne {i+1}")
+```
+
+---
+
+[← Retour à l'accueil](index.qmd) | [Voir le cours R →](cours-r.qmd)

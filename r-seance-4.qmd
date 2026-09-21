@@ -1,0 +1,533 @@
+---
+title: "Séance 4 · Lab : les indicateurs clés avec dplyr"
+subtitle: "Programmation statistique avec R · Lab 2/3 du projet « Solea » · 2 heures"
+format: html
+filters:
+  - webr
+webr:
+  packages: ['dplyr']
+---
+
+```{=html}
+<script>qwebrChargerDonnees(["data/ventes_propres.csv", "data/clients.csv"]);</script>
+```
+
+```{webr-r}
+#| context: setup
+# Fonction utilisée par les cellules de vérification des tâches
+verifier <- function(condition, succes = "Bravo !") {
+  if (isTRUE(condition)) {
+    cat("✅", succes, "\n")
+  } else {
+    cat("❌ Pas encore : relisez la consigne, exécutez votre code (et les tâches précédentes), puis relancez cette cellule.\n")
+  }
+}
+```
+
+::: {.objectifs}
+**Compétences visées.** À la fin du lab, vous saurez :
+
+- enchaîner des opérations avec le **pipe** `|>` ;
+- **sélectionner, filtrer, trier** et **créer des colonnes** avec `dplyr` ;
+- **agréger** des données par groupe (`group_by` + `summarise`, `count`) ;
+- **joindre** deux tables (`left_join`, `anti_join`) ;
+- transformer une question métier en un **tableau d'indicateurs (KPI)**.
+:::
+
+::: {.mission}
+<div class="mission-titre">Mission</div>
+
+La directrice commerciale de **Solea** a reçu votre fichier nettoyé (*bravo !*). Elle revient vers vous :
+
+> « Parfait. J'ai un comité de direction jeudi. Il me faut **le chiffre d'affaires**, le **panier moyen**, ce que rapporte **chaque catégorie**, nos **produits stars**, la **saisonnalité**, et ce que représentent nos **segments de clients**. J'aimerais aussi savoir combien de clients inscrits n'ont **jamais commandé**. »
+
+Deux tables vous sont fournies : `ventes_propres.csv` (383 commandes, celles du lab précédent) et `clients.csv` (130 clients inscrits).
+
+**Votre livrable** : un script `lab4_kpi.R` qui produit tous les indicateurs, et une note de 4 réponses chiffrées.
+:::
+
+**Déroulement (2 h)**
+
+| Durée | Étape |
+|:--|:--|
+| 20 min | Boîte à outils : les verbes de `dplyr` |
+| 10 min | Tâche 1 · Importer et préparer |
+| 10 min | Tâche 2 · Créer le montant et le mois |
+| 8 min | Tâche 3 · Les KPI globaux |
+| 10 min | Tâche 4 · Le chiffre d'affaires par catégorie |
+| 8 min | Tâche 5 · Les produits stars |
+| 10 min | Tâche 6 · La saisonnalité |
+| 15 min | Tâche 7 · Les clients : jointures |
+| 10 min | Tâche 8 · Défi : tranches de panier |
+| 10 min | Tâche 9 · Un pipeline complet |
+| 9 min | Note à la directrice, synthèse |
+
+::: {.callout-note title="Rappels de fonctionnement"}
+- Les tâches se font **dans l'ordre** ; elles réutilisent les objets créés avant. Si vous êtes perdu(e), ré-exécutez votre code des tâches 1 et 2.
+- Le bouton **Masquer** de chaque cellule cache sa sortie une fois lue.
+- Pour travailler dans RStudio : [ventes_propres.csv](data/ventes_propres.csv){download="ventes_propres.csv"} · [clients.csv](data/clients.csv){download="clients.csv"}.
+:::
+
+## 1. Boîte à outils {#outils}
+
+### Le pipe `|>`
+
+Le pipe transmet le résultat d'une étape à la suivante. On lit `|>` comme **« puis »** :
+
+```{webr-r}
+library(dplyr)
+
+# Sans pipe : fonctions imbriquées, lecture « de l'intérieur vers l'extérieur »
+round(sqrt(sum(c(4, 9, 16))), 1)
+
+# Avec pipe : lecture de gauche à droite
+c(4, 9, 16) |> sum() |> sqrt() |> round(1)
+```
+
+Raccourci RStudio : `Ctrl + Shift + M` (`Cmd + Shift + M` sur Mac). Vous rencontrerez aussi `%>%` (pipe de `magrittr`) : il fait la même chose.
+
+### Les verbes principaux
+
+| Verbe | Rôle | Exemple |
+|:--|:--|:--|
+| `filter()` | garder des **lignes** | `filter(cyl == 4)` |
+| `select()` | garder des **colonnes** | `select(mpg, wt)` |
+| `arrange()` | **trier** | `arrange(desc(mpg))` |
+| `mutate()` | **créer/modifier** des colonnes | `mutate(wt_kg = wt * 453.6)` |
+| `summarise()` | **résumer** en une ligne | `summarise(m = mean(mpg))` |
+| `group_by()` | **grouper** avant de résumer | `group_by(cyl)` |
+| `count()` | **compter** par modalité | `count(cyl)` |
+| `slice_max()` | les *n* **plus grandes** valeurs | `slice_max(mpg, n = 3)` |
+| `left_join()` | **joindre** deux tables | `left_join(a, b, by = "id")` |
+
+```{webr-r}
+library(dplyr)
+
+mtcars |> filter(cyl == 4, mpg > 30)                       # lignes : cyl = 4 ET mpg > 30
+mtcars |> select(mpg, cyl, wt) |> head(3)                  # colonnes
+mtcars |> arrange(desc(mpg)) |> head(3)                    # tri décroissant
+mtcars |> mutate(wt_kg = wt * 453.6) |> select(wt, wt_kg) |> head(3)
+```
+
+### Agréger : `group_by()` + `summarise()`
+
+```{webr-r}
+library(dplyr)
+
+mtcars |>
+  group_by(cyl) |>
+  summarise(
+    n = n(),                         # nombre de lignes du groupe
+    mpg_moyen = mean(mpg),
+    poids_max = max(wt),
+    .groups = "drop"
+  )
+
+mtcars |> count(cyl, gear)             # effectifs croisés
+mtcars |> slice_max(mpg, n = 3)        # les 3 consommations les plus économes
+```
+
+### Joindre deux tables
+
+```{webr-r}
+library(dplyr)
+
+equipes <- data.frame(id = c(1, 2, 3), nom = c("Lynx", "Ours", "Loup"))
+scores  <- data.frame(id = c(1, 1, 2, 4), points = c(10, 20, 5, 7))
+
+left_join(scores, equipes, by = "id")   # garde toutes les lignes de scores (id 4 : nom = NA)
+anti_join(equipes, scores, by = "id")   # lignes de equipes SANS correspondance dans scores
+```
+
+`left_join(x, y)` conserve toutes les lignes de `x` et ajoute les colonnes de `y` ; `anti_join(x, y)` garde les lignes de `x` qui n'ont **pas** de correspondance dans `y`.
+
+### Créer des catégories : `case_when()`
+
+```{webr-r}
+library(dplyr)
+
+mtcars |>
+  mutate(gamme = case_when(
+    hp < 100 ~ "faible",
+    hp < 200 ~ "moyenne",
+    TRUE     ~ "forte"            # « tous les autres cas »
+  )) |>
+  count(gamme)
+```
+
+Les conditions sont évaluées **dans l'ordre** : la première qui est vraie l'emporte.
+
+## 2. Le lab {#lab}
+
+::: {.tache}
+### Tâche 1 · Importer et préparer
+
+<div class="duree">⏱ 10 min</div>
+
+1. Chargez `dplyr`.
+2. Importez `ventes_propres.csv` dans `ventes` et `clients.csv` dans `clients` (`read.csv`).
+3. Dans `ventes`, la colonne `date` est du texte au format ISO (`aaaa-mm-jj`) : convertissez-la en `Date`.
+4. Inspectez les deux tables avec `glimpse()`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("ventes") && exists("clients") && nrow(ventes) == 383 && nrow(clients) == 130 &&
+    inherits(ventes$date, "Date"),
+  "383 commandes et 130 clients importés, dates converties."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Le format ISO est le format par défaut de `as.Date()` : `as.Date(ventes$date)` suffit. Avec `dplyr` : `mutate(date = as.Date(date))`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-1.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 2 · Créer le montant et le mois
+
+<div class="duree">⏱ 10 min</div>
+
+Ajoutez à `ventes` deux colonnes avec `mutate()` :
+
+- `montant` = `quantite × prix_unitaire × (1 − remise)`, **arrondi à 2 décimales** ;
+- `mois` = le numéro du mois (entier de 1 à 12), obtenu avec `as.integer(format(date, "%m"))`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  all(c("montant", "mois") %in% names(ventes)) &&
+    abs(sum(ventes$montant) - 21281.24) < 1 && setequal(ventes$mois, 1:12),
+  "Colonnes créées : le chiffre d'affaires total est cohérent."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-2.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 3 · Les KPI globaux
+
+<div class="duree">⏱ 8 min</div>
+
+Avec **un seul** `summarise()` sur `ventes`, créez un tableau `kpi_globaux` d'une ligne avec quatre colonnes :
+
+- `ca_total` : la somme des montants ;
+- `n_commandes` : le nombre de commandes ;
+- `panier_moyen` : le montant moyen par commande ;
+- `quantite_totale` : le nombre d'articles vendus.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("kpi_globaux") && all(c("ca_total", "n_commandes", "panier_moyen", "quantite_totale") %in% names(kpi_globaux)) &&
+    abs(kpi_globaux$ca_total - 21281.24) < 1 && kpi_globaux$n_commandes == 383 &&
+    abs(kpi_globaux$panier_moyen - 55.56) < 0.1 && kpi_globaux$quantite_totale == 811,
+  "CA total : 21 281 €, 383 commandes, panier moyen : 55,56 €, 811 articles vendus."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`n()` compte les lignes dans `summarise()`. Dans `summarise(a = ..., b = ...)`, chaque argument nomme une colonne du résultat.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-3.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 4 · Le chiffre d'affaires par catégorie
+
+<div class="duree">⏱ 10 min</div>
+
+Créez `ca_categorie`, un tableau avec **une ligne par catégorie**, trié du plus grand au plus petit chiffre d'affaires, avec les colonnes : `categorie`, `ca` (somme des montants), `n_commandes` et `panier_moyen`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("ca_categorie") && nrow(ca_categorie) == 3 &&
+    identical(as.character(ca_categorie$categorie), c("Maison", "Sport", "Beauté")) &&
+    abs(ca_categorie$ca[1] - 11455.47) < 1 && ca_categorie$n_commandes[1] == 126,
+  "Maison (11 455 €) devant Sport (5 685 €) et Beauté (4 141 €)."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`group_by(categorie) |> summarise(...) |> arrange(desc(ca))`.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-4.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 5 · Les produits stars
+
+<div class="duree">⏱ 8 min</div>
+
+Créez `top_produits` : les **5 produits qui rapportent le plus de chiffre d'affaires**, avec les colonnes `produit` et `ca`.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("top_produits") && nrow(top_produits) == 5 &&
+    top_produits$produit[1] == "Set de casseroles" && abs(top_produits$ca[1] - 5865.75) < 1,
+  "Le set de casseroles est le produit n°1 (5 866 €)."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Agrégez par `produit`, puis utilisez `slice_max(ca, n = 5)` (ou `arrange(desc(ca))` suivi de `head(5)`).
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-5.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 6 · La saisonnalité
+
+<div class="duree">⏱ 10 min</div>
+
+1. Créez `ca_mensuel` : une ligne par mois (colonnes `mois` et `ca`), trié par mois.
+2. Stockez dans `mois_pic` le **numéro du mois** au plus fort chiffre d'affaires.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("ca_mensuel") && exists("mois_pic") && nrow(ca_mensuel) == 12 &&
+    is.unsorted(ca_mensuel$mois) == FALSE && mois_pic == 12,
+  "12 mois, et le pic est en décembre (2 956 €)."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+Pour `mois_pic` : `ca_mensuel |> slice_max(ca, n = 1) |> pull(mois)`. `pull()` extrait une colonne sous forme de vecteur.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-6.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 7 · Les clients : jointures
+
+<div class="duree">⏱ 15 min</div>
+
+La table `clients` contient le `segment` (Standard, Premium, Nouveau), l'`age` et le `canal` d'acquisition de chaque client.
+
+1. Créez `ventes_clients` en **joignant** `clients` aux `ventes` par `client_id` (on veut garder toutes les commandes).
+2. Créez `ca_segment` : `segment`, `ca`, `n_commandes`, `panier_moyen`, trié par CA décroissant.
+3. Créez `clients_inactifs` : les clients inscrits qui n'ont **jamais commandé**.
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("ventes_clients") && exists("ca_segment") && exists("clients_inactifs") &&
+    nrow(ventes_clients) == 383 && "segment" %in% names(ventes_clients) &&
+    ca_segment$segment[1] == "Standard" && abs(ca_segment$ca[1] - 13605.53) < 1 &&
+    nrow(clients_inactifs) == 17,
+  "Segment Standard en tête (13 606 €) ; 17 clients inscrits n'ont jamais commandé."
+)
+```
+
+::: {.callout-tip collapse="true" title="Indice"}
+`left_join(ventes, clients, by = "client_id")` pour 1 ; `anti_join(clients, ventes, by = "client_id")` pour 3.
+:::
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-7.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 8 (défi) · Les tranches de panier
+
+<div class="duree">⏱ 10 min</div>
+
+Classez chaque commande selon son `montant` avec `case_when()` : **« Petit »** si montant < 30 €, **« Moyen »** si 30 € ≤ montant < 80 €, **« Grand »** sinon. Stockez dans `tranches` le tableau des effectifs par tranche (colonnes `tranche` et `n`).
+
+```{webr-r}
+# Votre code ici
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("tranches") && setequal(tranches$tranche, c("Petit", "Moyen", "Grand")) &&
+    tranches$n[tranches$tranche == "Petit"] == 157 &&
+    tranches$n[tranches$tranche == "Moyen"] == 155 &&
+    tranches$n[tranches$tranche == "Grand"] == 71,
+  "157 petits paniers, 155 moyens, 71 grands."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-8.qmd >}}
+
+::::
+:::
+
+::: {.tache}
+### Tâche 9 · Un pipeline complet
+
+<div class="duree">⏱ 10 min</div>
+
+Regroupez les tâches 1, 2 et 7(1) en **un seul enchaînement** qui part des fichiers et produit `ventes_enrichies` : import de `ventes_propres.csv`, conversion de la date, calcul de `montant` et `mois`, jointure avec `clients`. Ce pipeline sera le point de départ de la séance 5.
+
+```{webr-r}
+# Votre code ici : un seul enchaînement avec |>
+
+```
+
+::: {.verif-label}
+✔ Vérification
+:::
+
+```{webr-r}
+#| read-only: true
+verifier(
+  exists("ventes_enrichies") && nrow(ventes_enrichies) == 383 && ncol(ventes_enrichies) == 15 &&
+    inherits(ventes_enrichies$date, "Date") && abs(sum(ventes_enrichies$montant) - 21281.24) < 1,
+  "Pipeline complet : 383 lignes × 15 colonnes."
+)
+```
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-9.qmd >}}
+
+::::
+:::
+
+## 3. Livrable et bilan {#livrable}
+
+::: {.livrable}
+**À rendre à la fin du lab (dans RStudio)**
+
+1. **Le script** `lab4_kpi.R` : import → préparation → tous les indicateurs (tâches 1 à 9), commenté, exécutable de haut en bas.
+2. **La note à la directrice** : répondez en une phrase chiffrée à chacune de ses questions.
+
+   1. Quelle catégorie génère le plus de chiffre d'affaires, et quelle part du total représente-t-elle ?
+   2. Quel est le meilleur mois, et quelle explication proposez-vous ?
+   3. Quel segment de clients pèse le plus dans le CA ? Lequel a le panier moyen le plus élevé ?
+   4. Quelle part des clients inscrits n'a jamais commandé ?
+
+:::: {.corrige}
+
+{{< include _solutions/r-seance-4-10.qmd >}}
+
+::::
+:::
+
+::: {.callout-important title="À retenir"}
+- `|>` enchaîne les étapes : lisez-le comme « puis ».
+- Le triptyque de l'agrégation : **`group_by()` → `summarise()` → `arrange()`**.
+- `mutate()` ajoute des colonnes, `filter()` garde des lignes, `select()` garde des colonnes.
+- `left_join()` enrichit une table sans perdre de lignes ; `anti_join()` détecte ce qui n'a **pas** de correspondance.
+- Un indicateur (KPI) est toujours **une question métier traduite en un calcul** : formulez d'abord la question, puis le code.
+- Vérifiez vos résultats de deux façons : ordre de grandeur (est-ce plausible ?) et cohérence (la somme des parties = le total ?).
+:::
+
+## Pour la séance 5
+
+1. Terminez le livrable dans RStudio.
+2. Installez `ggplot2` (fait si vous avez installé `tidyverse`).
+3. La séance 5 démarre avec le tableau `ventes_enrichies` de la tâche 9 : vérifiez que votre pipeline fonctionne de bout en bout.
+
+---
+
+[← Séance 3](r-seance-3.qmd) | [Programme du cours](cours-r.qmd) | [Séance 5 : Lab visualisation →](r-seance-5.qmd)

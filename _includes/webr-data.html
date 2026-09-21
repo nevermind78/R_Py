@@ -1,0 +1,24 @@
+<script>
+// Copie des fichiers de données du site dans le dossier de travail virtuel de WebR,
+// pour que les étudiants puissent écrire read.csv("fichier.csv") comme dans RStudio.
+// Usage dans une page : qwebrChargerDonnees(["data/ventes_brutes.csv"]);
+globalThis.qwebrChargerDonnees = function (fichiers) {
+  const copier = () => qwebrInstance.then(async () => {
+    for (const chemin of fichiers) {
+      const reponse = await fetch(chemin);
+      if (!reponse.ok) {
+        console.error("Fichier de données introuvable : " + chemin);
+        continue;
+      }
+      const octets = new Uint8Array(await reponse.arrayBuffer());
+      await mainWebR.FS.writeFile("/home/web_user/" + chemin.split("/").pop(), octets);
+    }
+  });
+  // qwebrInstance est défini par un script « module », exécuté après l'analyse de la page
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", copier);
+  } else {
+    copier();
+  }
+};
+</script>

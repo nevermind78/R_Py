@@ -1,0 +1,13 @@
+# Codes de déverrouillage des solutions (un par séance).
+# 1. Copiez ce fichier en « codes-solutions.txt » (ignoré par git : il ne doit jamais être publié).
+# 2. Remplacez les codes ci-dessous. Pour en générer des solides :
+#        quarto run scripts/chiffrer-solutions.ts generer
+# 3. Régénérez le site (quarto render) : les solutions sont chiffrées avec ces codes.
+# Un code d'au moins 10 caractères est exigé. Majuscules et espaces autour sont sans importance.
+#
+# Sans code pour une séance, ses solutions restent indisponibles (jamais en clair).
+r-seance-1: exemple-code-a-remplacer
+r-seance-2: exemple-code-a-remplacer
+r-seance-3: exemple-code-a-remplacer
+r-seance-4: exemple-code-a-remplacer
+r-seance-5: exemple-code-a-remplacer

@@ -1,0 +1,167 @@
+<style>
+/* Solutions verrouillées : carte de saisie du code, puis solution déchiffrée */
+.solution-verrou { margin: 1rem 0; }
+
+.solution-carte {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem 1rem;
+  border: 1px dashed #8a97a3;
+  border-left: 5px solid #8a97a3;
+  border-radius: 0 6px 6px 0;
+  background: #f6f8fa;
+  padding: 0.6rem 1rem;
+  font-size: 0.95rem;
+}
+.solution-carte .solution-titre { font-weight: 600; }
+.solution-carte form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0; }
+.solution-carte input[type="text"] {
+  border: 1px solid #b8c1ca;
+  border-radius: 4px;
+  padding: 0.25rem 0.6rem;
+  min-width: 16rem;
+  font-family: monospace;
+}
+.solution-carte button {
+  border: 0;
+  border-radius: 4px;
+  background: #1b5e6b;
+  color: #fff;
+  padding: 0.3rem 0.9rem;
+  cursor: pointer;
+}
+.solution-carte button:disabled { opacity: 0.6; cursor: wait; }
+.solution-message { flex-basis: 100%; font-size: 0.85rem; min-height: 1.1em; margin: 0; }
+.solution-message.erreur { color: #b02a37; }
+.solution-indispo { color: #5b6b70; }
+
+.solution-revelee {
+  border-left: 5px solid #276dc3;
+  background: #eef4fb;
+  border-radius: 0 6px 6px 0;
+  padding: 0.4rem 1rem;
+}
+.solution-revelee > summary { cursor: pointer; font-weight: 600; color: #1d4f91; }
+.solution-revelee .solution-corps { margin-top: 0.6rem; }
+.solution-revelee .solution-corps > :last-child { margin-bottom: 0.4rem; }
+
+body.quarto-dark .solution-carte { background: #1e2227; border-color: #56626e; }
+body.quarto-dark .solution-revelee { background: #1d2a3a; }
+body.quarto-dark .solution-revelee > summary { color: #8ab4f8; }
+</style>
+<script>
+// Déchiffrement des solutions dans le navigateur.
+// Chaque solution est chiffrée (AES-GCM) avec une clé dérivée du code de la séance (PBKDF2) :
+// sans le code, le texte de la solution n'est nulle part dans la page.
+document.addEventListener("DOMContentLoaded", () => {
+  const blocs = Array.from(document.querySelectorAll(".solution-verrou"));
+  if (!blocs.length) return;
+
+  const CLE_SESSION = "solutions-code:" + location.pathname;
+  const octets = (b64) => Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+  // Même normalisation que le script de chiffrement : casse et espaces autour sans importance
+  const normaliser = (code) => code.normalize("NFC").trim().toLowerCase();
+  const disponible = !!(window.crypto && crypto.subtle);
+
+  async function deriverCle(code, bloc) {
+    const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(normaliser(code)), "PBKDF2", false, ["deriveKey"]);
+    return crypto.subtle.deriveKey(
+      { name: "PBKDF2", salt: octets(bloc.dataset.salt), iterations: parseInt(bloc.dataset.iter, 10), hash: "SHA-256" },
+      base, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+  }
+
+  async function dechiffrer(bloc, cle) {
+    const clair = await crypto.subtle.decrypt({ name: "AES-GCM", iv: octets(bloc.dataset.iv) }, cle, octets(bloc.dataset.ct));
+    return new TextDecoder().decode(clair);
+  }
+
+  function montrer(bloc, html, ouvrir) {
+    const details = document.createElement("details");
+    details.className = "solution-revelee";
+    details.open = ouvrir;
+    const titre = document.createElement("summary");
+    titre.textContent = bloc.dataset.titre || "Solution";
+    const corps = document.createElement("div");
+    corps.className = "solution-corps";
+    corps.innerHTML = html;
+    details.append(titre, corps);
+    bloc.replaceChildren(details);
+    bloc.dataset.deverrouille = "1";
+  }
+
+  // Un seul code débloque toutes les solutions de la page
+  async function deverrouiller(code, blocClique) {
+    const restants = blocs.filter((b) => b.dataset.ct && !b.dataset.deverrouille);
+    if (!restants.length) return true;
+    const cle = await deriverCle(code, restants[0]);
+    const textes = new Map();
+    for (const b of restants) textes.set(b, await dechiffrer(b, cle)); // lève une erreur si le code est faux
+    for (const [b, html] of textes) montrer(b, html, b === blocClique);
+    return true;
+  }
+
+  function construireCarte(bloc) {
+    const titre = bloc.dataset.titre || "Solution";
+    const carte = document.createElement("div");
+    carte.className = "solution-carte";
+    const label = document.createElement("span");
+    label.className = "solution-titre";
+    label.textContent = "🔒 " + titre;
+    carte.appendChild(label);
+
+    if (!bloc.dataset.ct || !disponible) {
+      const texte = document.createElement("span");
+      texte.className = "solution-indispo";
+      texte.textContent = disponible
+        ? "Non disponible pour le moment : elle sera communiquée après la séance."
+        : "Le déverrouillage nécessite un navigateur récent et une connexion sécurisée (https).";
+      carte.appendChild(texte);
+      bloc.replaceChildren(carte);
+      return;
+    }
+
+    const form = document.createElement("form");
+    const champ = document.createElement("input");
+    champ.type = "text";
+    champ.placeholder = "Code de fin de séance";
+    champ.autocomplete = "off";
+    champ.spellcheck = false;
+    champ.setAttribute("aria-label", "Code de déverrouillage des solutions");
+    const bouton = document.createElement("button");
+    bouton.type = "submit";
+    bouton.textContent = "Déverrouiller";
+    form.append(champ, bouton);
+    const message = document.createElement("p");
+    message.className = "solution-message";
+    message.setAttribute("aria-live", "polite");
+    carte.append(form, message);
+    bloc.replaceChildren(carte);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!champ.value.trim()) return;
+      bouton.disabled = true;
+      message.className = "solution-message";
+      message.textContent = "Vérification…";
+      try {
+        await deverrouiller(champ.value, bloc);
+        try { sessionStorage.setItem(CLE_SESSION, champ.value); } catch (_) { /* sans effet */ }
+      } catch (_) {
+        message.className = "solution-message erreur";
+        message.textContent = "Code incorrect. Vérifiez la saisie (majuscules et espaces sans importance).";
+        bouton.disabled = false;
+      }
+    });
+  }
+
+  blocs.forEach(construireCarte);
+
+  // Code déjà saisi dans cet onglet : on déverrouille directement
+  if (disponible) {
+    let memorise = null;
+    try { memorise = sessionStorage.getItem(CLE_SESSION); } catch (_) { /* sans effet */ }
+    if (memorise) deverrouiller(memorise, null).catch(() => {});
+  }
+});
+</script>
